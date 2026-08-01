@@ -1,0 +1,22 @@
+{
+  "short_name": "JS Photo",
+  "name": "JS Photo Enhance - AI & Canvas Photo Editor",
+  "description": "Professional photo enhancement app featuring real-time canvas filters, AI upscaling, HDR color grading, and multi-format exports.",
+  "icons": [
+    {
+      "src": "/pwa-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/pwa-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#09090b",
+  "theme_color": "#10b981",
+  "display": "standalone",
+  "orientation": "portrait"
+}
