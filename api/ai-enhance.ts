@@ -1,4 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};
+
 import {
   aiEnhanceManager,
   type AIEnhanceRequest,
@@ -33,6 +42,7 @@ export default async function handler(
     const result = await aiEnhanceManager.processRequest(requestData);
 
     return res.status(200).json(result);
+
   } catch (error: any) {
     console.error("AI Enhance Error:", error);
 
