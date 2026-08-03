@@ -434,62 +434,54 @@ export function useAppViewModel() {
   }, []);
 
   const handleRunAIEnhancement = useCallback(async (mode: string, options?: any) => {
-    if (!selectedPhoto) return;
+  if (!selectedPhoto) return;
 
-    setAiModalOpen(false);
-    setIsAIEnhancing(true);
-    setAiProgress(10);
-    setAiStepMessage('Initializing Real-ESRGAN / GFPGAN neural pipeline...');
+  setAiModalOpen(false);
+  setIsAIEnhancing(true);
 
-    // Progress simulation timer
-    const progressInterval = setInterval(() => {
-      setAiProgress((prev) => {
-        if (prev >= 90) return prev;
-        const next = prev + Math.floor(Math.random() * 15 + 5);
-        if (next > 30 && next < 60) {
-          setAiStepMessage('Running sub-pixel convolution & facial landmark alignment...');
-        } else if (next >= 60 && next < 85) {
-          setAiStepMessage('Reconstructing high frequency edge detail tensors...');
-        } else if (next >= 85) {
-          setAiStepMessage('Finalizing pixel buffer & color gamut expansion...');
-        }
-        return next;
+  try {
+    let imageData = selectedPhoto.url;
+
+    // যদি URL হয় তাহলে আগে Base64-তে convert করো
+    if (imageData.startsWith("http")) {
+      const img = await fetch(imageData);
+      const blob = await img.blob();
+
+      imageData = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
       });
-    }, 250);
-
-    try {
-      const response = await fetch('/api/ai-enhance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          imageData: selectedPhoto.url,
-          mode,
-          options
-        })
-      });
-
-      clearInterval(progressInterval);
-      setAiProgress(100);
-      setAiStepMessage('AI Enhancement Complete!');
-
-      const result = await response.json();
-
-      if (result && result.success && result.enhancedImageData) {
-        setLastAIResult(result);
-        setTimeout(() => {
-          setIsAIEnhancing(false);
-          setBeforeAfterModalOpen(true);
-          showToast(`AI Enhancement finished! (${result.processingTimeMs}ms)`);
-        }, 500);
-      } else {
-        throw new Error(result.error || 'Server failed to process AI request');
-      }
-    } catch (err: any) {
-      clearInterval(progressInterval);
-      setIsAIEnhancing(false);
-      showToast(err?.message || 'AI Enhancement failed. Check connection.');
     }
-  }, [selectedPhoto, showToast]);
+
+    const response = await fetch("/api/ai-enhance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        imageData,
+        mode,
+        options,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "AI Enhancement failed");
+    }
+
+    setLastAIResult(result);
+    setBeforeAfterModalOpen(true);
+
+  } catch (err: any) {
+    console.error(err);
+    showToast(err.message || "AI Enhancement failed");
+  } finally {
+    setIsAIEnhancing(false);
+  }
+}, [selectedPhoto, showToast]);
 
   const handleApplyAIResultToStudio = useCallback(() => {
     if (!lastAIResult || !selectedPhoto) return;
