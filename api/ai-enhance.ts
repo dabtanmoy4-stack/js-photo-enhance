@@ -29,6 +29,9 @@ export default async function handler(
   try {
     const requestData = req.body as AIEnhanceRequest;
 
+    console.log("Mode:", requestData.mode);
+console.log("Image starts with:", requestData.imageData.substring(0, 100));
+
     if (
       !requestData ||
       !requestData.imageData ||
