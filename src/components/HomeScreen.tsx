@@ -403,5 +403,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
   </div>
 
 </div>
+</div>
   );
 };
