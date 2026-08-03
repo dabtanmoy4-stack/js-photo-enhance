@@ -23,11 +23,45 @@ export const JSLogo: React.FC<JSLogoProps> = ({ size = 'md', showText = true, an
 
   return (
     <div className="flex items-center gap-3 select-none">
-      <div className={`relative flex items-center justify-center rounded-2xl bg-gradient-to-br from-black via-zinc-900 to-black p-0.5 shadow-lg shadow-emerald-950/30 border border-emerald-500/30 ${animated ? 'animate-pulse' : ''}`}>
+     <div
+  className={`
+    relative
+    flex
+    items-center
+    justify-center
+    rounded-2xl
+    p-[2px]
+    bg-gradient-to-br
+    from-violet-500
+    via-fuchsia-500
+    to-violet-700
+    shadow-[0_0_28px_rgba(168,85,247,0.45)]
+    border
+    border-violet-400/40
+    ${animated ? 'animate-pulse' : ''}
+  `}
+>
         {/* Glow effect */}
-        <div className="absolute -inset-1 rounded-2xl bg-emerald-500/20 blur-md opacity-70" />
+        <div className="absolute -inset-2 rounded-2xl bg-violet-500/25 blur-xl opacity-90" />
 
-        <div className={`relative ${sizeClasses} rounded-xl bg-black flex items-center justify-center overflow-hidden border border-emerald-500/40`}>
+        <div
+  className={`
+    relative
+    ${sizeClasses}
+    rounded-xl
+    flex
+    items-center
+    justify-center
+    overflow-hidden
+    border
+    border-violet-400/40
+    bg-gradient-to-br
+    from-[#14061F]
+    via-[#1B0830]
+    to-[#2B0E46]
+    backdrop-blur-xl
+  `}
+>
           {/* Subtle Grid overlay for Android Compose aesthetic */}
           <div 
             className="absolute inset-0 opacity-15 pointer-events-none"
