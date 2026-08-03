@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import { aiEnhanceManager, AIEnhanceRequest } from './src/server/aiEnhancer';
+import { aiEnhanceManager, AIEnhanceRequest } from './api/aiEnhancer';
 
 async function startServer() {
   const app = express();

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { AIEnhanceMode, AIEnhanceOptions } from '../server/aiEnhancer';
+import { AIEnhanceMode, AIEnhanceOptions } from '../../api/aiEnhancer';
 import { 
   Sparkles, 
   UserCheck, 
