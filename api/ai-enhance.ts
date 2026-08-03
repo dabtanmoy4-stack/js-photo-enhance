@@ -11,7 +11,8 @@ export const config = {
 import {
   aiEnhanceManager,
   type AIEnhanceRequest,
-} from "./aiEnhancer";
+} from "./aiEnhancer.js";
+
 
 export default async function handler(
   req: VercelRequest,
