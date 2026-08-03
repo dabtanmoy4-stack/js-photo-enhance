@@ -59,15 +59,13 @@ export const JSLogo: React.FC<JSLogoProps> = ({ size = 'md', showText = true, an
         </div>
       </div>
 
-      {showText && (
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1.5 font-black tracking-tight text-white leading-none">
-            <span className="text-lg font-bold">JS</span>
-            <span className="text-emerald-400 text-lg font-semibold tracking-wide">PHOTO</span>
-          </div>
-          <span className="text-[10px] uppercase font-mono tracking-widest text-emerald-500/80 mt-0.5 font-bold">
-            ENHANCE
-          </span>
+<div className="flex items-center gap-1.5 font-black tracking-tight text-white leading-none">
+  <span className="text-lg font-bold">JS</span>
+  <span className="text-emerald-400 text-lg font-semibold tracking-wide">AI</span>
+</div>
+<span className="text-[10px] uppercase font-mono tracking-widest text-emerald-500/80 mt-0.5 font-bold">
+  ASSISTANT
+</span>
         </div>
       )}
     </div>
