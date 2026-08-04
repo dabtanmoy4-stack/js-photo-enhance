@@ -76,14 +76,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
 
             <button
-              onClick={() => vm.openAIEnhanceModal("ai_enhance")}
-              className="flex-1 rounded-xl bg-violet-500 px-4 py-3 text-sm font-bold text-black transition hover:bg-violet-400"
-            >
-              <span className="flex items-center justify-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Open AI Studio
-              </span>
-            </button>
+  onClick={() => vm.showToast("AI Chat - Coming Soon")}
+  className="flex-1 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-3 text-sm font-bold text-white transition hover:scale-[1.02]"
+>
+  <span className="flex items-center justify-center gap-2">
+    <Sparkles className="h-4 w-4" />
+    AI Chat
+  </span>
+</button>
 
             <button
               onClick={vm.openRecentProjectsModal}
