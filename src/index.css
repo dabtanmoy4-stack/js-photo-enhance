@@ -1,47 +1,41 @@
 @import "tailwindcss";
-@keyframes aiBorderRotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
+
+@keyframes border-spin {
+  to {
     transform: rotate(360deg);
   }
 }
 
 .ai-border {
   position: relative;
-  border-radius: 24px;
   overflow: hidden;
-  isolation: isolate;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #18181b, #09090b);
 }
 
 .ai-border::before {
   content: "";
   position: absolute;
-  width: 250%;
-  height: 250%;
-  left: -75%;
-  top: -75%;
- background: conic-gradient(
-  transparent 0deg,
-  transparent 300deg,
-  #8b5cf6 325deg,
-  #c084fc 345deg,
-  #ffd700 360deg
-);
-  animation: aiBorderRotate 3.5s linear infinite;
+  inset: -150%;
+  background: conic-gradient(
+    #8b5cf6,
+    #c084fc,
+    #ffd700,
+    #c084fc,
+    #8b5cf6
+  );
+  animation: border-spin 4s linear infinite;
 }
 
 .ai-border::after {
   content: "";
   position: absolute;
   inset: 2px;
-  background: linear-gradient(to bottom right, #18181b, #09090b);
   border-radius: 22px;
-  z-index: 1;
+  background: linear-gradient(135deg, #18181b, #09090b);
 }
 
 .ai-border > * {
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
