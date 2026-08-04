@@ -358,12 +358,12 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-6">
         <div className="space-y-2">
-          <div className="w-16 h-16 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto shadow-lg shadow-emerald-950/30">
+          <div className="w-16 h-16 rounded-3xl bg-violet-500/10 border border-violet-500/30 flex items-center justify-center text-violet-400 mx-auto shadow-lg shadow-violet-950/30">
             <ImageIcon className="w-8 h-8" />
           </div>
           <h3 className="text-lg font-black text-white">No Image Loaded</h3>
           <p className="text-xs text-zinc-400 max-w-xs leading-relaxed">
-            Upload an image from your device, drag & drop, or press <code className="text-emerald-400 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">Ctrl + V</code> to paste from clipboard.
+            Upload an image from your device, drag & drop, or press <code className="text-violet-400 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">Ctrl + V</code> to paste from clipboard.
           </p>
         </div>
 
@@ -376,7 +376,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
   const presetsList: { id: PresetFilter; label: string }[] = [
     { id: 'none', label: 'Normal' },
-    { id: 'emerald_glow', label: 'Emerald' },
+    { id: 'violet_glow', label: 'violet' },
     { id: 'vivid', label: 'Vivid' },
     { id: 'clarity', label: 'Clarity' },
     { id: 'vintage', label: 'Vintage' },
@@ -387,15 +387,15 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
   return (
     <div className="flex-1 flex flex-col space-y-4 p-4 pb-8 select-none">
       {/* AI Neural Enhancement Suite Bar */}
-      <div className="p-3 rounded-2xl bg-zinc-900 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-2.5 shadow-lg shadow-emerald-950/20">
+      <div className="p-3 rounded-2xl bg-zinc-900 border border-violet-500/40 flex flex-wrap items-center justify-between gap-2.5 shadow-lg shadow-violet-950/20">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center font-bold">
-            <Sparkles className="w-4 h-4 fill-emerald-400" />
+          <div className="w-8 h-8 rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/40 flex items-center justify-center font-bold">
+            <Sparkles className="w-4 h-4 fill-violet-400" />
           </div>
           <div>
             <h4 className="text-xs font-black text-white flex items-center gap-1.5">
               AI Enhancement Suite
-              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-violet-500/20 text-violet-400 border border-violet-500/30">
                 Real-ESRGAN / GFPGAN
               </span>
             </h4>
@@ -408,7 +408,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
         <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 scrollbar-none">
           <button
             onClick={() => vm.openAIEnhanceModal('ai_enhance')}
-            className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs flex items-center gap-1.5 shadow-md transition-transform active:scale-95 shrink-0"
+            className="px-3 py-1.5 rounded-xl bg-violet-500 hover:bg-violet-400 text-black font-extrabold text-xs flex items-center gap-1.5 shadow-md transition-transform active:scale-95 shrink-0"
           >
             <Sparkles className="w-3.5 h-3.5 fill-black" />
             <span>AI Master</span>
@@ -416,14 +416,14 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
           <button
             onClick={() => vm.openAIEnhanceModal('face_enhance')}
-            className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-zinc-700 font-bold text-xs flex items-center gap-1 shrink-0 transition-colors"
+            className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-violet-400 border border-zinc-700 font-bold text-xs flex items-center gap-1 shrink-0 transition-colors"
           >
             <span>👤 Face Enhance</span>
           </button>
 
           <button
             onClick={() => vm.openAIEnhanceModal('upscale_4x')}
-            className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-zinc-700 font-bold text-xs flex items-center gap-1 shrink-0 transition-colors"
+            className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-violet-400 border border-zinc-700 font-bold text-xs flex items-center gap-1 shrink-0 transition-colors"
           >
             <span>🚀 4x Upscale</span>
           </button>
@@ -444,7 +444,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
           <button
             onClick={() => vm.openAIEnhanceModal('ai_enhance')}
-            className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-emerald-500/30 font-bold text-xs shrink-0"
+            className="px-2.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-violet-400 border border-violet-500/30 font-bold text-xs shrink-0"
           >
             <span>+ More</span>
           </button>
@@ -473,8 +473,8 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
         }}
         className={`relative w-full aspect-4/3 rounded-3xl bg-zinc-950 border overflow-hidden flex items-center justify-center shadow-2xl transition-all ${
           isDragOverCanvas
-            ? 'border-emerald-400 ring-4 ring-emerald-500/30 bg-emerald-950/20'
-            : 'border-emerald-900/40'
+            ? 'border-violet-400 ring-4 ring-violet-500/30 bg-violet-950/20'
+            : 'border-violet-900/40'
         } ${isPanning ? 'cursor-grabbing' : zoom > 1 ? 'cursor-grab' : 'cursor-default'}`}
       >
         {/* Canvas Display */}
@@ -494,7 +494,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
         {/* Drag & Drop Canvas Overlay Badge */}
         {isDragOverCanvas && (
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center gap-2 text-emerald-400 z-30">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center gap-2 text-violet-400 z-30">
             <Upload className="w-10 h-10 animate-bounce" />
             <span className="text-sm font-bold">Drop Image to Load into Studio</span>
           </div>
@@ -510,26 +510,26 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                 width: `${cropRect.width}%`,
                 height: `${cropRect.height}%`,
               }}
-              className="absolute border-2 border-emerald-400 bg-emerald-500/10 shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] rounded-lg"
+              className="absolute border-2 border-violet-400 bg-violet-500/10 shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] rounded-lg"
             >
               {/* Rule of Thirds Grid Lines */}
               <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none">
-                <div className="border-r border-b border-emerald-400/30" />
-                <div className="border-r border-b border-emerald-400/30" />
-                <div className="border-b border-emerald-400/30" />
-                <div className="border-r border-b border-emerald-400/30" />
-                <div className="border-r border-b border-emerald-400/30" />
-                <div className="border-b border-emerald-400/30" />
-                <div className="border-r border-emerald-400/30" />
-                <div className="border-r border-emerald-400/30" />
+                <div className="border-r border-b border-violet-400/30" />
+                <div className="border-r border-b border-violet-400/30" />
+                <div className="border-b border-violet-400/30" />
+                <div className="border-r border-b border-violet-400/30" />
+                <div className="border-r border-b border-violet-400/30" />
+                <div className="border-b border-violet-400/30" />
+                <div className="border-r border-violet-400/30" />
+                <div className="border-r border-violet-400/30" />
                 <div />
               </div>
 
               {/* Resize Corner Handles */}
-              <div className="absolute -top-2 -left-2 w-4 h-4 rounded-full bg-emerald-400 border-2 border-black" />
-              <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-emerald-400 border-2 border-black" />
-              <div className="absolute -bottom-2 -left-2 w-4 h-4 rounded-full bg-emerald-400 border-2 border-black" />
-              <div className="absolute -bottom-2 -right-2 w-4 h-4 rounded-full bg-emerald-400 border-2 border-black" />
+              <div className="absolute -top-2 -left-2 w-4 h-4 rounded-full bg-violet-400 border-2 border-black" />
+              <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-violet-400 border-2 border-black" />
+              <div className="absolute -bottom-2 -left-2 w-4 h-4 rounded-full bg-violet-400 border-2 border-black" />
+              <div className="absolute -bottom-2 -right-2 w-4 h-4 rounded-full bg-violet-400 border-2 border-black" />
             </div>
           </div>
         )}
@@ -544,7 +544,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
         {/* Top Floating Zoom & Pan Info Indicator */}
         {zoom !== 1.0 && (
-          <div className="absolute top-3 right-3 z-20 bg-black/80 backdrop-blur-md text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold flex items-center gap-1.5">
+          <div className="absolute top-3 right-3 z-20 bg-black/80 backdrop-blur-md text-violet-400 border border-violet-500/30 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold flex items-center gap-1.5">
             <Move className="w-3 h-3" />
             <span>{(zoom * 100).toFixed(0)}%</span>
             <button
@@ -559,20 +559,20 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
         {/* Bottom Floating Canvas Action Controls Bar */}
         <div className="absolute bottom-3 inset-x-3 z-20 flex items-center justify-between pointer-events-auto">
           {/* Zoom controls pill */}
-          <div className="flex items-center gap-1 bg-black/80 backdrop-blur-md p-1 rounded-2xl border border-emerald-500/30 text-white shadow-xl">
+          <div className="flex items-center gap-1 bg-black/80 backdrop-blur-md p-1 rounded-2xl border border-violet-500/30 text-white shadow-xl">
             <button
               onClick={handleZoomOut}
-              className="p-1.5 rounded-xl hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors"
+              className="p-1.5 rounded-xl hover:bg-violet-500/20 hover:text-violet-400 transition-colors"
               title="Zoom Out (-)"
             >
               <ZoomOut className="w-3.5 h-3.5" />
             </button>
-            <span className="text-[10px] font-mono w-10 text-center font-bold text-emerald-400">
+            <span className="text-[10px] font-mono w-10 text-center font-bold text-violet-400">
               {(zoom * 100).toFixed(0)}%
             </span>
             <button
               onClick={handleZoomIn}
-              className="p-1.5 rounded-xl hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors"
+              className="p-1.5 rounded-xl hover:bg-violet-500/20 hover:text-violet-400 transition-colors"
               title="Zoom In (+)"
             >
               <ZoomIn className="w-3.5 h-3.5" />
@@ -580,7 +580,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
             <div className="w-px h-3 bg-zinc-800 mx-0.5" />
             <button
               onClick={handleFitToScreen}
-              className="px-2 py-1 rounded-xl text-[10px] font-mono hover:bg-emerald-500/20 text-zinc-300 hover:text-emerald-400"
+              className="px-2 py-1 rounded-xl text-[10px] font-mono hover:bg-violet-500/20 text-zinc-300 hover:text-violet-400"
               title="Fit to Screen"
             >
               Fit
@@ -594,7 +594,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
               onMouseUp={() => vm.setCompareMode(false)}
               onTouchStart={() => vm.setCompareMode(true)}
               onTouchEnd={() => vm.setCompareMode(false)}
-              className="px-2.5 py-1.5 rounded-2xl bg-black/80 hover:bg-black text-emerald-400 border border-emerald-500/30 backdrop-blur-md text-[11px] font-bold flex items-center gap-1.5 transition-colors select-none"
+              className="px-2.5 py-1.5 rounded-2xl bg-black/80 hover:bg-black text-violet-400 border border-violet-500/30 backdrop-blur-md text-[11px] font-bold flex items-center gap-1.5 transition-colors select-none"
               title="Press & hold to compare original"
             >
               <Eye className="w-3.5 h-3.5" />
@@ -603,7 +603,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
             <button
               onClick={() => setIsFullscreenPreview(true)}
-              className="p-2 rounded-2xl bg-black/80 hover:bg-black text-emerald-400 border border-emerald-500/30 backdrop-blur-md text-xs font-bold transition-colors"
+              className="p-2 rounded-2xl bg-black/80 hover:bg-black text-violet-400 border border-violet-500/30 backdrop-blur-md text-xs font-bold transition-colors"
               title="Fullscreen Preview"
             >
               <Maximize2 className="w-4 h-4" />
@@ -611,7 +611,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
             <button
               onClick={handleDownloadImage}
-              className="p-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs shadow-lg"
+              className="p-2 rounded-2xl bg-violet-500 hover:bg-violet-400 text-black font-extrabold text-xs shadow-lg"
               title="Download Image"
             >
               <Download className="w-4 h-4" />
@@ -626,7 +626,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
           onClick={() => setActiveToolTab('transform')}
           className={`flex-1 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all ${
             activeToolTab === 'transform'
-              ? 'bg-emerald-500 text-black shadow-md'
+              ? 'bg-violet-500 text-black shadow-md'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
@@ -638,7 +638,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
           onClick={() => setActiveToolTab('adjust')}
           className={`flex-1 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all ${
             activeToolTab === 'adjust'
-              ? 'bg-emerald-500 text-black shadow-md'
+              ? 'bg-violet-500 text-black shadow-md'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
@@ -650,7 +650,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
           onClick={() => setActiveToolTab('presets')}
           className={`flex-1 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all ${
             activeToolTab === 'presets'
-              ? 'bg-emerald-500 text-black shadow-md'
+              ? 'bg-violet-500 text-black shadow-md'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
@@ -662,7 +662,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
           onClick={() => setActiveToolTab('upload')}
           className={`flex-1 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all ${
             activeToolTab === 'upload'
-              ? 'bg-emerald-500 text-black shadow-md'
+              ? 'bg-violet-500 text-black shadow-md'
               : 'text-zinc-400 hover:text-white'
           }`}
         >
@@ -682,11 +682,11 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
           >
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-white flex items-center gap-1.5">
-                <RotateCw className="w-3.5 h-3.5 text-emerald-400" /> Spatial Controls
+                <RotateCw className="w-3.5 h-3.5 text-violet-400" /> Spatial Controls
               </span>
               <button
                 onClick={handleResetAll}
-                className="text-[11px] text-zinc-400 hover:text-emerald-400 flex items-center gap-1 font-medium"
+                className="text-[11px] text-zinc-400 hover:text-violet-400 flex items-center gap-1 font-medium"
               >
                 <RotateCcw className="w-3 h-3" /> Reset All
               </button>
@@ -696,19 +696,19 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
             <div className="grid grid-cols-4 gap-2">
               <button
                 onClick={handleRotateLeft}
-                className="py-2.5 px-2 rounded-xl bg-black/60 hover:bg-emerald-500/20 hover:text-emerald-400 border border-zinc-800 text-zinc-300 flex flex-col items-center justify-center gap-1 transition-all"
+                className="py-2.5 px-2 rounded-xl bg-black/60 hover:bg-violet-500/20 hover:text-violet-400 border border-zinc-800 text-zinc-300 flex flex-col items-center justify-center gap-1 transition-all"
                 title="Rotate 90° Left"
               >
-                <RotateCcw className="w-4 h-4 text-emerald-400" />
+                <RotateCcw className="w-4 h-4 text-violet-400" />
                 <span className="text-[10px] font-bold">Rotate Left</span>
               </button>
 
               <button
                 onClick={handleRotateRight}
-                className="py-2.5 px-2 rounded-xl bg-black/60 hover:bg-emerald-500/20 hover:text-emerald-400 border border-zinc-800 text-zinc-300 flex flex-col items-center justify-center gap-1 transition-all"
+                className="py-2.5 px-2 rounded-xl bg-black/60 hover:bg-violet-500/20 hover:text-violet-400 border border-zinc-800 text-zinc-300 flex flex-col items-center justify-center gap-1 transition-all"
                 title="Rotate 90° Right"
               >
-                <RotateCw className="w-4 h-4 text-emerald-400" />
+                <RotateCw className="w-4 h-4 text-violet-400" />
                 <span className="text-[10px] font-bold">Rotate Right</span>
               </button>
 
@@ -716,8 +716,8 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                 onClick={handleToggleFlipH}
                 className={`py-2.5 px-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
                   flipH
-                    ? 'bg-emerald-500 text-black border-emerald-400 font-bold'
-                    : 'bg-black/60 hover:bg-emerald-500/20 text-zinc-300 border-zinc-800'
+                    ? 'bg-violet-500 text-black border-violet-400 font-bold'
+                    : 'bg-black/60 hover:bg-violet-500/20 text-zinc-300 border-zinc-800'
                 }`}
                 title="Flip Horizontal"
               >
@@ -729,8 +729,8 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                 onClick={handleToggleFlipV}
                 className={`py-2.5 px-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${
                   flipV
-                    ? 'bg-emerald-500 text-black border-emerald-400 font-bold'
-                    : 'bg-black/60 hover:bg-emerald-500/20 text-zinc-300 border-zinc-800'
+                    ? 'bg-violet-500 text-black border-violet-400 font-bold'
+                    : 'bg-black/60 hover:bg-violet-500/20 text-zinc-300 border-zinc-800'
                 }`}
                 title="Flip Vertical"
               >
@@ -746,8 +746,8 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                   onClick={() => setIsCropMode((prev) => !prev)}
                   className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all border ${
                     isCropMode
-                      ? 'bg-emerald-500 text-black border-emerald-400 shadow-md'
-                      : 'bg-black/60 text-zinc-300 border-zinc-800 hover:border-emerald-500/40'
+                      ? 'bg-violet-500 text-black border-violet-400 shadow-md'
+                      : 'bg-black/60 text-zinc-300 border-zinc-800 hover:border-violet-500/40'
                   }`}
                 >
                   <CropIcon className="w-4 h-4" />
@@ -758,7 +758,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={handleApplyCrop}
-                      className="px-3 py-1.5 rounded-xl bg-emerald-500 text-black font-extrabold text-xs flex items-center gap-1 shadow-md"
+                      className="px-3 py-1.5 rounded-xl bg-violet-500 text-black font-extrabold text-xs flex items-center gap-1 shadow-md"
                     >
                       <Check className="w-3.5 h-3.5" /> Apply
                     </button>
@@ -781,7 +781,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                       onClick={() => handleAspectChange(aspect)}
                       className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all border ${
                         selectedAspect === aspect
-                          ? 'bg-emerald-500 text-black border-emerald-400'
+                          ? 'bg-violet-500 text-black border-violet-400'
                           : 'bg-black/40 text-zinc-400 border-zinc-800'
                       }`}
                     >
@@ -804,7 +804,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
             {/* Header with Undo, Redo, Reset */}
             <div className="flex items-center justify-between pb-2 border-b border-zinc-800/80">
               <span className="font-extrabold text-xs text-white flex items-center gap-1.5 uppercase tracking-wide">
-                <Sliders className="w-3.5 h-3.5 text-emerald-400" /> Pro Adjustments
+                <Sliders className="w-3.5 h-3.5 text-violet-400" /> Pro Adjustments
               </span>
 
               <div className="flex items-center gap-1.5">
@@ -813,7 +813,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                   disabled={!vm.canUndo}
                   className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
                     vm.canUndo
-                      ? 'bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-zinc-700 active:scale-95'
+                      ? 'bg-zinc-800 hover:bg-zinc-700 text-violet-400 border border-zinc-700 active:scale-95'
                       : 'bg-zinc-900 text-zinc-600 cursor-not-allowed border border-zinc-850'
                   }`}
                   title="Undo last change"
@@ -827,7 +827,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                   disabled={!vm.canRedo}
                   className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
                     vm.canRedo
-                      ? 'bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-zinc-700 active:scale-95'
+                      ? 'bg-zinc-800 hover:bg-zinc-700 text-violet-400 border border-zinc-700 active:scale-95'
                       : 'bg-zinc-900 text-zinc-600 cursor-not-allowed border border-zinc-850'
                   }`}
                   title="Redo change"
@@ -849,7 +849,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
             {/* Light Controls Section */}
             <div className="space-y-2.5">
-              <div className="text-[10px] font-black uppercase tracking-wider text-emerald-400/90 flex items-center gap-1">
+              <div className="text-[10px] font-black uppercase tracking-wider text-violet-400/90 flex items-center gap-1">
                 <Sun className="w-3 h-3" /> Light & Tone
               </div>
 
@@ -858,9 +858,9 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                 <div className="space-y-1 bg-black/40 p-2.5 rounded-xl border border-zinc-850">
                   <div className="flex justify-between text-zinc-300 text-[11px] font-medium">
                     <span className="flex items-center gap-1 text-zinc-400">
-                      <Sun className="w-3 h-3 text-emerald-400" /> Brightness
+                      <Sun className="w-3 h-3 text-violet-400" /> Brightness
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.brightness}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.brightness}</span>
                   </div>
                   <input
                     type="range"
@@ -868,7 +868,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.brightness}
                     onChange={(e) => vm.updateAdjustment('brightness', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -876,9 +876,9 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                 <div className="space-y-1 bg-black/40 p-2.5 rounded-xl border border-zinc-850">
                   <div className="flex justify-between text-zinc-300 text-[11px] font-medium">
                     <span className="flex items-center gap-1 text-zinc-400">
-                      <Contrast className="w-3 h-3 text-emerald-400" /> Contrast
+                      <Contrast className="w-3 h-3 text-violet-400" /> Contrast
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.contrast}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.contrast}</span>
                   </div>
                   <input
                     type="range"
@@ -886,7 +886,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.contrast}
                     onChange={(e) => vm.updateAdjustment('contrast', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -894,9 +894,9 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                 <div className="space-y-1 bg-black/40 p-2.5 rounded-xl border border-zinc-850">
                   <div className="flex justify-between text-zinc-300 text-[11px] font-medium">
                     <span className="flex items-center gap-1 text-zinc-400">
-                      <Zap className="w-3 h-3 text-emerald-400" /> Exposure
+                      <Zap className="w-3 h-3 text-violet-400" /> Exposure
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.exposure}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.exposure}</span>
                   </div>
                   <input
                     type="range"
@@ -904,7 +904,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.exposure}
                     onChange={(e) => vm.updateAdjustment('exposure', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -914,7 +914,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     <span className="flex items-center gap-1 text-zinc-400">
                       <Sun className="w-3 h-3 text-amber-300" /> Highlights
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.highlights}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.highlights}</span>
                   </div>
                   <input
                     type="range"
@@ -922,7 +922,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.highlights}
                     onChange={(e) => vm.updateAdjustment('highlights', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -932,7 +932,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     <span className="flex items-center gap-1 text-zinc-400">
                       <Moon className="w-3 h-3 text-indigo-400" /> Shadows
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.shadows}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.shadows}</span>
                   </div>
                   <input
                     type="range"
@@ -940,7 +940,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.shadows}
                     onChange={(e) => vm.updateAdjustment('shadows', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
               </div>
@@ -948,7 +948,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
             {/* Color Controls Section */}
             <div className="space-y-2.5 pt-2 border-t border-zinc-800/80">
-              <div className="text-[10px] font-black uppercase tracking-wider text-emerald-400/90 flex items-center gap-1">
+              <div className="text-[10px] font-black uppercase tracking-wider text-violet-400/90 flex items-center gap-1">
                 <Palette className="w-3 h-3" /> Color & White Balance
               </div>
 
@@ -957,9 +957,9 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                 <div className="space-y-1 bg-black/40 p-2.5 rounded-xl border border-zinc-850">
                   <div className="flex justify-between text-zinc-300 text-[11px] font-medium">
                     <span className="flex items-center gap-1 text-zinc-400">
-                      <Aperture className="w-3 h-3 text-emerald-400" /> Saturation
+                      <Aperture className="w-3 h-3 text-violet-400" /> Saturation
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.saturation}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.saturation}</span>
                   </div>
                   <input
                     type="range"
@@ -967,7 +967,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.saturation}
                     onChange={(e) => vm.updateAdjustment('saturation', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -977,7 +977,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     <span className="flex items-center gap-1 text-zinc-400">
                       <Thermometer className="w-3 h-3 text-orange-400" /> Temperature
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.temperature}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.temperature}</span>
                   </div>
                   <input
                     type="range"
@@ -985,7 +985,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.temperature}
                     onChange={(e) => vm.updateAdjustment('temperature', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -995,7 +995,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     <span className="flex items-center gap-1 text-zinc-400">
                       <Flame className="w-3 h-3 text-pink-400" /> Tint
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.tint}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.tint}</span>
                   </div>
                   <input
                     type="range"
@@ -1003,7 +1003,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.tint}
                     onChange={(e) => vm.updateAdjustment('tint', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
               </div>
@@ -1011,7 +1011,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
 
             {/* Details & FX Section */}
             <div className="space-y-2.5 pt-2 border-t border-zinc-800/80">
-              <div className="text-[10px] font-black uppercase tracking-wider text-emerald-400/90 flex items-center gap-1">
+              <div className="text-[10px] font-black uppercase tracking-wider text-violet-400/90 flex items-center gap-1">
                 <Focus className="w-3 h-3" /> Sharpness & Blur FX
               </div>
 
@@ -1020,9 +1020,9 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                 <div className="space-y-1 bg-black/40 p-2.5 rounded-xl border border-zinc-850">
                   <div className="flex justify-between text-zinc-300 text-[11px] font-medium">
                     <span className="flex items-center gap-1 text-zinc-400">
-                      <Zap className="w-3 h-3 text-emerald-400" /> Sharpness
+                      <Zap className="w-3 h-3 text-violet-400" /> Sharpness
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.sharpness}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.sharpness}</span>
                   </div>
                   <input
                     type="range"
@@ -1030,7 +1030,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.sharpness}
                     onChange={(e) => vm.updateAdjustment('sharpness', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -1040,7 +1040,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     <span className="flex items-center gap-1 text-zinc-400">
                       <Volume2 className="w-3 h-3 text-cyan-400" /> Blur
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.blur}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.blur}</span>
                   </div>
                   <input
                     type="range"
@@ -1048,7 +1048,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="20"
                     value={adjustments.blur}
                     onChange={(e) => vm.updateAdjustment('blur', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -1058,7 +1058,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     <span className="flex items-center gap-1 text-zinc-400">
                       <Focus className="w-3 h-3 text-purple-400" /> Vignette
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{adjustments.vignette}</span>
+                    <span className="font-mono font-bold text-violet-400">{adjustments.vignette}</span>
                   </div>
                   <input
                     type="range"
@@ -1066,7 +1066,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                     max="100"
                     value={adjustments.vignette}
                     onChange={(e) => vm.updateAdjustment('vignette', Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
               </div>
@@ -1083,9 +1083,9 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
           >
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-white flex items-center gap-1.5">
-                <Wand2 className="w-3.5 h-3.5 text-emerald-400" /> Filter Presets
+                <Wand2 className="w-3.5 h-3.5 text-violet-400" /> Filter Presets
               </span>
-              <span className="font-mono text-[10px] text-emerald-400 uppercase font-semibold">
+              <span className="font-mono text-[10px] text-violet-400 uppercase font-semibold">
                 {vm.presetFilter}
               </span>
             </div>
@@ -1097,8 +1097,8 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
                   onClick={() => vm.applyPreset(preset.id)}
                   className={`p-3 rounded-xl text-xs font-semibold flex flex-col items-center gap-1 transition-all border ${
                     vm.presetFilter === preset.id
-                      ? 'bg-emerald-500 text-black border-emerald-400 font-bold shadow-md'
-                      : 'bg-black/60 text-zinc-300 border-zinc-800 hover:border-emerald-500/40'
+                      ? 'bg-violet-500 text-black border-violet-400 font-bold shadow-md'
+                      : 'bg-black/60 text-zinc-300 border-zinc-800 hover:border-violet-500/40'
                   }`}
                 >
                   <Sparkles className="w-4 h-4" />
@@ -1124,7 +1124,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
       {/* Save Button */}
       <button
         onClick={vm.savePhotoToGallery}
-        className="w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition-transform active:scale-95"
+        className="w-full py-3 rounded-2xl bg-violet-500 hover:bg-violet-400 text-black font-extrabold text-xs shadow-lg shadow-violet-950/40 flex items-center justify-center gap-2 transition-transform active:scale-95"
       >
         <Save className="w-4 h-4" />
         <span>Save Photo Adjustments</span>
@@ -1142,7 +1142,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
             {/* Top Bar */}
             <div className="flex items-center justify-between text-white p-2 border-b border-zinc-800">
               <div className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-emerald-400" />
+                <ImageIcon className="w-4 h-4 text-violet-400" />
                 <span className="font-bold text-sm">{photo.title}</span>
                 <span className="text-xs font-mono text-zinc-400">
                   ({photo.width} × {photo.height})
@@ -1152,7 +1152,7 @@ export const StudioScreen: React.FC<StudioScreenProps> = ({ vm }) => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleDownloadImage}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-500 text-black font-extrabold text-xs flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-xl bg-violet-500 text-black font-extrabold text-xs flex items-center gap-1"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Export</span>

@@ -136,12 +136,12 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="w-full max-w-2xl bg-zinc-950 border border-emerald-500/40 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+        className="w-full max-w-2xl bg-zinc-950 border border-violet-500/40 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
       >
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/80">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-violet-500/20 text-violet-400 border border-violet-500/40 flex items-center justify-center shadow-md">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
@@ -149,7 +149,7 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
                 AI Enhancement Suite
               </h3>
               <p className="text-xs text-zinc-400 font-mono">
-                Target: <span className="text-emerald-400 font-semibold">{photoTitle}</span>
+                Target: <span className="text-violet-400 font-semibold">{photoTitle}</span>
               </p>
             </div>
           </div>
@@ -166,9 +166,9 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
         <div className="p-4 sm:p-5 flex-1 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-zinc-800">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" /> Choose AI Neural Model Mode
+              <Sparkles className="w-3.5 h-3.5 text-violet-400" /> Choose AI Neural Model Mode
             </span>
-            <span className="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
+            <span className="text-[10px] text-violet-400 font-mono bg-violet-500/10 px-2 py-0.5 rounded-full border border-violet-500/30">
               10 Real AI Modes
             </span>
           </div>
@@ -183,15 +183,15 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
                   onClick={() => setSelectedMode(item.id)}
                   className={`p-3.5 rounded-2xl text-left border transition-all flex items-start gap-3 relative ${
                     isSelected
-                      ? 'bg-emerald-500/15 border-emerald-400 text-white shadow-lg ring-1 ring-emerald-500/30'
-                      : 'bg-zinc-900/60 border-zinc-800 hover:border-emerald-500/40 text-zinc-300 hover:bg-zinc-900'
+                      ? 'bg-violet-500/15 border-violet-400 text-white shadow-lg ring-1 ring-violet-500/30'
+                      : 'bg-zinc-900/60 border-zinc-800 hover:border-violet-500/40 text-zinc-300 hover:bg-zinc-900'
                   }`}
                 >
                   <div
                     className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
                       isSelected
-                        ? 'bg-emerald-500 text-black font-bold shadow-md'
-                        : 'bg-zinc-800 text-emerald-400 border border-zinc-700'
+                        ? 'bg-violet-500 text-black font-bold shadow-md'
+                        : 'bg-zinc-800 text-violet-400 border border-zinc-700'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -201,7 +201,7 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
                     <div className="flex items-center justify-between gap-1">
                       <span className="text-xs font-bold truncate text-white">{item.name}</span>
                       {item.badge && (
-                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30 shrink-0">
                           {item.badge}
                         </span>
                       )}
@@ -212,7 +212,7 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
                   </div>
 
                   {isSelected && (
-                    <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-emerald-400 text-black flex items-center justify-center shadow">
+                    <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-violet-400 text-black flex items-center justify-center shadow">
                       <Check className="w-3 h-3 stroke-[3]" />
                     </div>
                   )}
@@ -227,9 +227,9 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-semibold">
                 <span className="text-zinc-300 flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-emerald-400" /> Enhancement Strength
+                  <Sliders className="w-3.5 h-3.5 text-violet-400" /> Enhancement Strength
                 </span>
-                <span className="font-mono text-emerald-400 font-bold">{Math.round(strength * 100)}%</span>
+                <span className="font-mono text-violet-400 font-bold">{Math.round(strength * 100)}%</span>
               </div>
               <input
                 type="range"
@@ -238,7 +238,7 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
                 step="0.05"
                 value={strength}
                 onChange={(e) => setStrength(parseFloat(e.target.value))}
-                className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
               />
             </div>
 
@@ -246,7 +246,7 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
             <div>
               <button
                 onClick={() => setShowAdvanced((prev) => !prev)}
-                className="text-xs text-zinc-400 hover:text-emerald-400 font-bold flex items-center gap-1 transition-colors"
+                className="text-xs text-zinc-400 hover:text-violet-400 font-bold flex items-center gap-1 transition-colors"
               >
                 <Globe className="w-3.5 h-3.5" />
                 <span>{showAdvanced ? 'Hide Architecture & Remote API Options' : 'Configure Custom Real-ESRGAN / GFPGAN Remote Worker API'}</span>
@@ -269,7 +269,7 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
                       placeholder="https://my-realesrgan-worker.internal/api/enhance"
                       value={customApiUrl}
                       onChange={(e) => setCustomApiUrl(e.target.value)}
-                      className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 focus:border-emerald-500 focus:outline-hidden"
+                      className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2 text-xs font-mono text-violet-300 focus:border-violet-500 focus:outline-hidden"
                     />
                   </div>
                 </motion.div>
@@ -294,7 +294,7 @@ export const AIEnhanceModal: React.FC<AIEnhanceModalProps> = ({
 
             <button
               onClick={handleStart}
-              className="px-6 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-emerald-950/50 transition-transform active:scale-95"
+              className="px-6 py-2.5 rounded-2xl bg-violet-500 hover:bg-violet-400 text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-violet-950/50 transition-transform active:scale-95"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>Run AI Enhancement</span>

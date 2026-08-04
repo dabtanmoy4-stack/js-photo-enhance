@@ -110,14 +110,14 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
       {/* Top Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-800 text-white">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shadow-lg shadow-emerald-950/40">
+          <div className="w-9 h-9 rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/40 flex items-center justify-center shadow-lg shadow-violet-950/40">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
             <h3 className="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
               Before vs After AI Comparison
               {processingTimeMs && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-400 border border-violet-500/30">
                   {processingTimeMs}ms
                 </span>
               )}
@@ -125,7 +125,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             <p className="text-[11px] text-zinc-400 flex items-center gap-2 font-mono">
               <span>Model: {modelUsed}</span>
               {afterDimensions && (
-                <span className="text-emerald-400 font-bold">
+                <span className="text-violet-400 font-bold">
                   ({afterDimensions.width} × {afterDimensions.height} px)
                 </span>
               )}
@@ -139,7 +139,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             onClick={() => setViewMode('split')}
             className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all ${
               viewMode === 'split'
-                ? 'bg-emerald-500 text-black shadow-md'
+                ? 'bg-violet-500 text-black shadow-md'
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -151,7 +151,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             onClick={() => setViewMode('side-by-side')}
             className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all ${
               viewMode === 'side-by-side'
-                ? 'bg-emerald-500 text-black shadow-md'
+                ? 'bg-violet-500 text-black shadow-md'
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -164,7 +164,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             onMouseUp={() => setHoldShowOriginal(false)}
             onTouchStart={() => setHoldShowOriginal(true)}
             onTouchEnd={() => setHoldShowOriginal(false)}
-            className="px-3 py-1.5 rounded-xl text-zinc-300 hover:text-emerald-400 hover:bg-zinc-800 font-bold flex items-center gap-1.5 transition-all"
+            className="px-3 py-1.5 rounded-xl text-zinc-300 hover:text-violet-400 hover:bg-zinc-800 font-bold flex items-center gap-1.5 transition-all"
             title="Press & Hold to see Original"
           >
             <Eye className="w-3.5 h-3.5" />
@@ -174,7 +174,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
       </div>
 
       {/* Main Image Comparison Area */}
-      <div className="flex-1 my-3 relative overflow-hidden rounded-3xl border border-emerald-900/40 bg-zinc-950 flex items-center justify-center shadow-2xl">
+      <div className="flex-1 my-3 relative overflow-hidden rounded-3xl border border-violet-900/40 bg-zinc-950 flex items-center justify-center shadow-2xl">
         {/* SIDE-BY-SIDE MODE */}
         {viewMode === 'side-by-side' ? (
           <div className="w-full h-full grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
@@ -191,8 +191,8 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             </div>
 
             {/* After Box */}
-            <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black/60 border border-emerald-500/40 flex items-center justify-center">
-              <span className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur-md text-[10px] font-mono font-bold text-black shadow-lg">
+            <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black/60 border border-violet-500/40 flex items-center justify-center">
+              <span className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full bg-violet-500/90 backdrop-blur-md text-[10px] font-mono font-bold text-black shadow-lg">
                 ✨ {afterTitle} {afterDimensions ? `(${afterDimensions.width}×${afterDimensions.height})` : ''}
               </span>
               <img
@@ -241,9 +241,9 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             {!holdShowOriginal && (
               <div
                 style={{ left: `${sliderPosition}%` }}
-                className="absolute top-0 bottom-0 w-0.5 bg-emerald-400 shadow-[0_0_12px_#34d399] z-20 pointer-events-none"
+                className="absolute top-0 bottom-0 w-0.5 bg-violet-400 shadow-[0_0_12px_#34d399] z-20 pointer-events-none"
               >
-                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-emerald-400 text-black border-2 border-black flex items-center justify-center shadow-2xl">
+                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-violet-400 text-black border-2 border-black flex items-center justify-center shadow-2xl">
                   <Columns className="w-4 h-4" />
                 </div>
               </div>
@@ -257,7 +257,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             </div>
 
             <div className="absolute top-4 right-4 z-20 pointer-events-none">
-              <span className="px-3 py-1 rounded-full bg-emerald-500/90 text-black text-[10px] font-mono font-black shadow-lg flex items-center gap-1">
+              <span className="px-3 py-1 rounded-full bg-violet-500/90 text-black text-[10px] font-mono font-black shadow-lg flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> {afterTitle}
               </span>
             </div>
@@ -265,20 +265,20 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
         )}
 
         {/* Bottom Floating Zoom Controls */}
-        <div className="absolute bottom-4 right-4 z-30 flex items-center gap-1 bg-black/80 backdrop-blur-md p-1 rounded-2xl border border-emerald-500/30 text-white shadow-xl">
+        <div className="absolute bottom-4 right-4 z-30 flex items-center gap-1 bg-black/80 backdrop-blur-md p-1 rounded-2xl border border-violet-500/30 text-white shadow-xl">
           <button
             onClick={() => setZoom((prev) => Math.max(0.5, prev - 0.25))}
-            className="p-1.5 rounded-xl hover:bg-emerald-500/20 hover:text-emerald-400"
+            className="p-1.5 rounded-xl hover:bg-violet-500/20 hover:text-violet-400"
             title="Zoom Out"
           >
             <ZoomOut className="w-3.5 h-3.5" />
           </button>
-          <span className="text-[10px] font-mono w-10 text-center font-bold text-emerald-400">
+          <span className="text-[10px] font-mono w-10 text-center font-bold text-violet-400">
             {(zoom * 100).toFixed(0)}%
           </span>
           <button
             onClick={() => setZoom((prev) => Math.min(4.0, prev + 0.25))}
-            className="p-1.5 rounded-xl hover:bg-emerald-500/20 hover:text-emerald-400"
+            className="p-1.5 rounded-xl hover:bg-violet-500/20 hover:text-violet-400"
             title="Zoom In"
           >
             <ZoomIn className="w-3.5 h-3.5" />
@@ -289,7 +289,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
               setZoom(1.0);
               setPan({ x: 0, y: 0 });
             }}
-            className="px-2 py-1 rounded-xl text-[10px] font-mono text-zinc-300 hover:text-emerald-400"
+            className="px-2 py-1 rounded-xl text-[10px] font-mono text-zinc-300 hover:text-violet-400"
           >
             Fit
           </button>
@@ -308,14 +308,14 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={handleDownload}
-            className="px-4 py-2.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-emerald-400 border border-emerald-500/40 font-bold text-xs flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-violet-400 border border-violet-500/40 font-bold text-xs flex items-center gap-1.5 transition-colors"
           >
             <Download className="w-4 h-4" /> Download Result
           </button>
 
           <button
             onClick={onApply}
-            className="px-6 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-emerald-950/50 transition-transform active:scale-95"
+            className="px-6 py-2.5 rounded-2xl bg-violet-500 hover:bg-violet-400 text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-violet-950/50 transition-transform active:scale-95"
           >
             <Check className="w-4 h-4" /> Apply to Studio Canvas
           </button>

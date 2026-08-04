@@ -57,7 +57,7 @@ export interface PhotoItem {
   category?: string;
 }
 
-export type PresetFilter = 'none' | 'vivid' | 'clarity' | 'emerald_glow' | 'vintage' | 'high_contrast' | 'b_w';
+export type PresetFilter = 'none' | 'vivid' | 'clarity' | 'violet_glow' | 'vintage' | 'high_contrast' | 'b_w';
 
 export type DisplayMode = 'device' | 'fullscreen';
 

@@ -73,7 +73,7 @@ export const JSLogo: React.FC<JSLogoProps> = ({ size = 'md', showText = true, an
 
           {/* Aperture / Lens SVG Rings */}
           <svg
-            className={`absolute inset-0 w-full h-full text-emerald-500/30 ${animated ? 'animate-spin-slow' : ''}`}
+            className={`absolute inset-0 w-full h-full text-violet-500/30 ${animated ? 'animate-spin-slow' : ''}`}
             viewBox="0 0 100 100"
             fill="none"
           >
@@ -85,11 +85,11 @@ export const JSLogo: React.FC<JSLogoProps> = ({ size = 'md', showText = true, an
           {/* Core JS Badge Text */}
           <div className="relative z-10 flex items-center justify-center font-extrabold tracking-tighter">
             <span className="text-white font-mono drop-shadow-[0_0_8px_rgba(0,200,83,0.8)]">J</span>
-            <span className="text-emerald-400 font-mono drop-shadow-[0_0_8px_rgba(0,200,83,0.9)]">S</span>
+            <span className="text-violet-400 font-mono drop-shadow-[0_0_8px_rgba(0,200,83,0.9)]">S</span>
           </div>
 
           {/* Tiny camera sparkle dot */}
-          <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#00C853]" />
+          <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-violet-400 shadow-[0_0_6px_#00C853]" />
         </div>
       </div>
 

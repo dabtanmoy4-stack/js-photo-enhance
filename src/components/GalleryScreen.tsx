@@ -28,14 +28,14 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
       {/* Header Info Bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ImageIcon className="w-4 h-4 text-emerald-400" />
+          <ImageIcon className="w-4 h-4 text-violet-400" />
           <h2 className="text-sm font-bold text-white">Photos Gallery</h2>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold border border-emerald-500/30">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-400 font-mono font-bold border border-violet-500/30">
             {vm.photos.length} items
           </span>
         </div>
 
-        <label className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-emerald-400 font-bold text-xs border border-zinc-800 transition-colors">
+        <label className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-violet-400 font-bold text-xs border border-zinc-800 transition-colors">
           <Upload className="w-3.5 h-3.5" />
           <span>Upload</span>
           <input
@@ -58,7 +58,7 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
       {vm.photos.length === 0 ? (
         <div className="py-16 text-center space-y-3">
           <p className="text-xs text-zinc-500">No photos in gallery yet.</p>
-          <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-black font-bold text-xs">
+          <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-500 text-black font-bold text-xs">
             <Plus className="w-4 h-4" />
             <span>Add Your First Photo</span>
             <input
@@ -86,8 +86,8 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 className={`group relative rounded-2xl overflow-hidden bg-zinc-900 border transition-all ${
                   isSelected
-                    ? 'border-emerald-500 ring-2 ring-emerald-500/30'
-                    : 'border-zinc-800 hover:border-emerald-500/40'
+                    ? 'border-violet-500 ring-2 ring-violet-500/30'
+                    : 'border-zinc-800 hover:border-violet-500/40'
                 }`}
               >
                 {/* Image */}
@@ -101,7 +101,7 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
 
                   {/* Top Right Selected Badge */}
                   {isSelected && (
-                    <div className="absolute top-2 right-2 bg-emerald-500 text-black p-1 rounded-full shadow-md">
+                    <div className="absolute top-2 right-2 bg-violet-500 text-black p-1 rounded-full shadow-md">
                       <Check className="w-3 h-3 stroke-[3]" />
                     </div>
                   )}
@@ -114,7 +114,7 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
                           e.stopPropagation();
                           setActivePhotoModal(photo);
                         }}
-                        className="p-1.5 rounded-lg bg-black/60 text-white hover:text-emerald-400 backdrop-blur-md"
+                        className="p-1.5 rounded-lg bg-black/60 text-white hover:text-violet-400 backdrop-blur-md"
                         title="Photo details"
                       >
                         <Info className="w-3.5 h-3.5" />
@@ -124,7 +124,7 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
                     <div className="flex items-center justify-between gap-1">
                       <button
                         onClick={() => vm.setSelectedPhoto(photo, true)}
-                        className="flex-1 py-1 px-2 rounded-lg bg-emerald-500 text-black font-extrabold text-[11px] flex items-center justify-center gap-1"
+                        className="flex-1 py-1 px-2 rounded-lg bg-violet-500 text-black font-extrabold text-[11px] flex items-center justify-center gap-1"
                       >
                         <Sliders className="w-3 h-3" />
                         <span>Edit</span>
@@ -151,7 +151,7 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
                   </span>
                   <div className="flex items-center justify-between text-[10px] text-zinc-400 mt-0.5 font-mono">
                     <span>{photo.width}×{photo.height}</span>
-                    <span className="text-emerald-400">{photo.category || 'Local'}</span>
+                    <span className="text-violet-400">{photo.category || 'Local'}</span>
                   </div>
                 </div>
               </motion.div>
@@ -175,11 +175,11 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm rounded-3xl bg-zinc-900 border border-emerald-500/30 p-5 space-y-4 text-white shadow-2xl"
+              className="w-full max-w-sm rounded-3xl bg-zinc-900 border border-violet-500/30 p-5 space-y-4 text-white shadow-2xl"
             >
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Maximize2 className="w-4 h-4 text-emerald-400" />
+                  <Maximize2 className="w-4 h-4 text-violet-400" />
                   <span>Photo Metadata</span>
                 </h3>
                 <button
@@ -205,7 +205,7 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-800/60">
                   <span className="text-zinc-400">Resolution:</span>
-                  <span className="text-emerald-400">{activePhotoModal.width} × {activePhotoModal.height} px</span>
+                  <span className="text-violet-400">{activePhotoModal.width} × {activePhotoModal.height} px</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-800/60">
                   <span className="text-zinc-400">Size:</span>
@@ -223,7 +223,7 @@ export const GalleryScreen: React.FC<GalleryScreenProps> = ({ vm }) => {
                     vm.setSelectedPhoto(activePhotoModal, true);
                     setActivePhotoModal(null);
                   }}
-                  className="flex-1 py-2.5 rounded-xl bg-emerald-500 text-black font-extrabold text-xs flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 rounded-xl bg-violet-500 text-black font-extrabold text-xs flex items-center justify-center gap-1.5"
                 >
                   <Sliders className="w-4 h-4" />
                   <span>Open in Studio</span>

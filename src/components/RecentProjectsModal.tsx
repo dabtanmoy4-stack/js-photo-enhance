@@ -29,7 +29,7 @@ export const RecentProjectsModal: React.FC<RecentProjectsModalProps> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-2xl bg-violet-500/20 text-violet-400 border border-violet-500/30 flex items-center justify-center">
               <History className="w-5 h-5" />
             </div>
             <div>
@@ -77,7 +77,7 @@ export const RecentProjectsModal: React.FC<RecentProjectsModalProps> = ({
               {historyItems.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative p-3 rounded-2xl bg-zinc-950 border border-zinc-850 hover:border-emerald-500/50 transition-all flex flex-col justify-between"
+                  className="group relative p-3 rounded-2xl bg-zinc-950 border border-zinc-850 hover:border-violet-500/50 transition-all flex flex-col justify-between"
                 >
                   <div className="relative aspect-video rounded-xl overflow-hidden bg-black mb-2.5 border border-zinc-800">
                     <img
@@ -87,7 +87,7 @@ export const RecentProjectsModal: React.FC<RecentProjectsModalProps> = ({
                     />
 
                     <div className="absolute top-2 right-2 flex items-center gap-1">
-                      <span className="px-2 py-0.5 rounded-lg bg-black/70 backdrop-blur-md text-[9px] font-mono font-bold text-emerald-400 border border-emerald-500/30">
+                      <span className="px-2 py-0.5 rounded-lg bg-black/70 backdrop-blur-md text-[9px] font-mono font-bold text-violet-400 border border-violet-500/30">
                         {item.format.toUpperCase()}
                       </span>
                     </div>
@@ -95,7 +95,7 @@ export const RecentProjectsModal: React.FC<RecentProjectsModalProps> = ({
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                       <button
                         onClick={() => onSelectProject(item)}
-                        className="px-3 py-1.5 rounded-xl bg-emerald-500 text-black text-xs font-black flex items-center gap-1 shadow-lg"
+                        className="px-3 py-1.5 rounded-xl bg-violet-500 text-black text-xs font-black flex items-center gap-1 shadow-lg"
                       >
                         <Eye className="w-3.5 h-3.5" /> Re-open
                       </button>
@@ -116,7 +116,7 @@ export const RecentProjectsModal: React.FC<RecentProjectsModalProps> = ({
 
                     <div className="flex items-center justify-between text-[10px] text-zinc-400 mt-1">
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-emerald-400" /> {item.timestamp}
+                        <Clock className="w-3 h-3 text-violet-400" /> {item.timestamp}
                       </span>
                       <span className="font-mono text-zinc-500">{item.width}×{item.height} px</span>
                     </div>

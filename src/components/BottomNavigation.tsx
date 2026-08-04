@@ -22,7 +22,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   ];
 
   return (
-    <nav className="sticky bottom-0 z-30 bg-black/95 backdrop-blur-md border-t border-emerald-900/40 text-white py-2 px-3 shadow-2xl">
+    <nav className="sticky bottom-0 z-30 bg-black/95 backdrop-blur-md border-t border-violet-900/40 text-white py-2 px-3 shadow-2xl">
       <div className="flex items-center justify-around max-w-lg mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -38,7 +38,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               {isActive && (
                 <motion.div
                   layoutId="bottomNavIndicator"
-                  className="absolute inset-0 bg-emerald-500/15 rounded-2xl border border-emerald-500/30"
+                  className="absolute inset-0 bg-violet-500/15 rounded-2xl border border-violet-500/30"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
@@ -47,7 +47,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               <div
                 className={`relative p-1.5 rounded-xl transition-all ${
                   isActive
-                    ? 'text-emerald-400 scale-110'
+                    ? 'text-violet-400 scale-110'
                     : 'text-zinc-400 group-hover:text-zinc-200'
                 }`}
               >
@@ -55,14 +55,14 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
                 {/* Optional Badge */}
                 {tab.badge && (
-                  <span className="absolute -top-1 -right-2 px-1 py-0.2 bg-emerald-500 text-black text-[9px] font-black rounded-full font-mono">
+                  <span className="absolute -top-1 -right-2 px-1 py-0.2 bg-violet-500 text-black text-[9px] font-black rounded-full font-mono">
                     {tab.badge}
                   </span>
                 )}
 
                 {/* Count Badge */}
                 {typeof tab.count === 'number' && tab.count > 0 && (
-                  <span className="absolute -top-1 -right-2 px-1.5 py-0.2 bg-zinc-800 text-emerald-400 text-[9px] font-mono font-bold rounded-full border border-emerald-500/40">
+                  <span className="absolute -top-1 -right-2 px-1.5 py-0.2 bg-zinc-800 text-violet-400 text-[9px] font-mono font-bold rounded-full border border-violet-500/40">
                     {tab.count}
                   </span>
                 )}

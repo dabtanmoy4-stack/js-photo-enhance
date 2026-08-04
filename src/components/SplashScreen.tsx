@@ -31,7 +31,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="relative z-10 pt-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-xs font-mono"
+        className="relative z-10 pt-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-950/60 border border-violet-500/30 text-violet-400 text-xs font-mono"
       >
         <Cpu className="w-3.5 h-3.5 animate-pulse" />
         <span>Material 3 Compose Engine</span>
@@ -44,7 +44,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           <motion.div
             animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.7, 0.3] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -inset-6 rounded-full bg-emerald-500/20 blur-xl"
+            className="absolute -inset-6 rounded-full bg-violet-500/20 blur-xl"
           />
 
           <motion.div
@@ -65,10 +65,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         >
           <div className="flex items-center justify-center gap-2">
             <h1 className="text-3xl font-black tracking-tight text-white">
-              JS <span className="text-emerald-400 font-extrabold">PHOTO</span>
+              JS <span className="text-violet-400 font-extrabold">PHOTO</span>
             </h1>
           </div>
-          <p className="text-emerald-400/90 text-sm font-mono tracking-widest uppercase font-semibold">
+          <p className="text-violet-400/90 text-sm font-mono tracking-widest uppercase font-semibold">
             Enhance & Clarity Studio
           </p>
         </motion.div>
@@ -80,7 +80,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           transition={{ delay: 0.6 }}
           className="mt-6 flex items-center gap-2 text-xs text-zinc-400"
         >
-          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+          <Sparkles className="w-3.5 h-3.5 text-violet-400" />
           <span>Initializing MVVM Architecture & Image Engine...</span>
         </motion.div>
 
@@ -95,7 +95,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
             initial={{ x: '-100%' }}
             animate={{ x: '0%' }}
             transition={{ duration: 1.6, ease: 'easeInOut' }}
-            className="h-full bg-gradient-to-r from-emerald-600 via-emerald-400 to-emerald-300 rounded-full"
+            className="h-full bg-gradient-to-r from-violet-600 via-violet-400 to-violet-300 rounded-full"
           />
         </motion.div>
       </div>
@@ -107,7 +107,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         transition={{ delay: 0.5 }}
         className="relative z-10 flex flex-col items-center gap-1.5 text-center text-xs text-zinc-500"
       >
-        <div className="flex items-center gap-1.5 text-emerald-500/80 font-medium">
+        <div className="flex items-center gap-1.5 text-violet-500/80 font-medium">
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>Jetpack Compose v1.7 • Material 3</span>
         </div>

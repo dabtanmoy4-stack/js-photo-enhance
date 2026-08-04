@@ -25,7 +25,7 @@ export default function App() {
   const vm = useAppViewModel();
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased selection:bg-emerald-500 selection:text-black">
+    <div className="min-h-screen bg-black text-white font-sans antialiased selection:bg-violet-500 selection:text-black">
       {/* Splash Screen Overlay */}
       <AnimatePresence>
         {vm.showSplash && (
@@ -109,7 +109,7 @@ export default function App() {
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
-                className="sticky top-14 z-40 px-4 py-2 mx-4 my-2 rounded-xl bg-emerald-500 text-black font-extrabold text-xs shadow-lg shadow-emerald-950/50 flex items-center justify-between"
+                className="sticky top-14 z-40 px-4 py-2 mx-4 my-2 rounded-xl bg-violet-500 text-black font-extrabold text-xs shadow-lg shadow-violet-950/50 flex items-center justify-between"
               >
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 fill-black" />

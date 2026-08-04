@@ -73,10 +73,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
   return (
     <div className="flex-1 p-4 space-y-4 pb-8 text-xs max-w-4xl mx-auto">
       {/* App Version & Architecture Banner */}
-      <div className="p-4 rounded-2xl bg-zinc-900 border border-emerald-500/30 space-y-3 shadow-lg">
+      <div className="p-4 rounded-2xl bg-zinc-900 border border-violet-500/30 space-y-3 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-black">
+            <div className="w-8 h-8 rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/30 flex items-center justify-center font-black">
               JS
             </div>
             <div>
@@ -84,7 +84,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
               <p className="text-[10px] text-zinc-400">Jetpack Compose M3 Architecture</p>
             </div>
           </div>
-          <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold border border-emerald-500/30">
+          <span className="px-2.5 py-1 rounded-full bg-violet-500/20 text-violet-400 font-mono text-[10px] font-bold border border-violet-500/30">
             v1.2.0 Production Ready
           </span>
         </div>
@@ -94,13 +94,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
         </p>
 
         <div className="flex flex-wrap gap-1.5 pt-1">
-          <span className="px-2 py-1 rounded-lg bg-black text-emerald-400 font-mono text-[10px] border border-zinc-800">
+          <span className="px-2 py-1 rounded-lg bg-black text-violet-400 font-mono text-[10px] border border-zinc-800">
             Jetpack Compose M3
           </span>
-          <span className="px-2 py-1 rounded-lg bg-black text-emerald-400 font-mono text-[10px] border border-zinc-800">
+          <span className="px-2 py-1 rounded-lg bg-black text-violet-400 font-mono text-[10px] border border-zinc-800">
             MVVM Architecture
           </span>
-          <span className="px-2 py-1 rounded-lg bg-black text-emerald-400 font-mono text-[10px] border border-zinc-800">
+          <span className="px-2 py-1 rounded-lg bg-black text-violet-400 font-mono text-[10px] border border-zinc-800">
             GPU Canvas Acceleration
           </span>
         </div>
@@ -110,10 +110,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
       <div className="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-white font-bold text-xs">
-            <Globe className="w-4 h-4 text-emerald-400" />
+            <Globe className="w-4 h-4 text-violet-400" />
             <span>App Language</span>
           </div>
-          <span className="font-mono text-[10px] text-emerald-400 font-bold uppercase">
+          <span className="font-mono text-[10px] text-violet-400 font-bold uppercase">
             {languages.find((l) => l.code === vm.language)?.label}
           </span>
         </div>
@@ -128,7 +128,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
               }}
               className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
                 vm.language === lang.code
-                  ? 'bg-emerald-500/10 border-emerald-500 text-white font-bold shadow-md shadow-emerald-950/20'
+                  ? 'bg-violet-500/10 border-violet-500 text-white font-bold shadow-md shadow-violet-950/20'
                   : 'bg-black/40 border-zinc-800 hover:border-zinc-700 text-zinc-400'
               }`}
             >
@@ -136,7 +136,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                 <span>{lang.flag}</span>
                 <span className="text-xs">{lang.label}</span>
               </div>
-              {vm.language === lang.code && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+              {vm.language === lang.code && <Check className="w-3.5 h-3.5 text-violet-400" />}
             </button>
           ))}
         </div>
@@ -146,7 +146,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
       <div className="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-white font-bold text-xs">
-            <Zap className="w-4 h-4 text-emerald-400" />
+            <Zap className="w-4 h-4 text-violet-400" />
             <span>UI Animations & Motion</span>
           </div>
           <button
@@ -155,7 +155,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
               vm.showToast(vm.animationsEnabled ? 'UI animations disabled' : 'UI animations enabled');
             }}
             className={`w-11 h-6 rounded-full transition-colors relative p-0.5 ${
-              vm.animationsEnabled ? 'bg-emerald-500' : 'bg-zinc-800 border border-zinc-700'
+              vm.animationsEnabled ? 'bg-violet-500' : 'bg-zinc-800 border border-zinc-700'
             }`}
           >
             <div
@@ -174,10 +174,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
       <div className="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-white font-bold">
-            <Smartphone className="w-4 h-4 text-emerald-400" />
+            <Smartphone className="w-4 h-4 text-violet-400" />
             <span>Display Frame Mode</span>
           </div>
-          <span className="font-mono text-[10px] text-emerald-400 uppercase font-bold">
+          <span className="font-mono text-[10px] text-violet-400 uppercase font-bold">
             {vm.displayMode}
           </span>
         </div>
@@ -187,24 +187,24 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
             onClick={() => vm.setDisplayMode('device')}
             className={`p-3 rounded-xl border flex items-center justify-between transition-all ${
               vm.displayMode === 'device'
-                ? 'bg-emerald-500/10 border-emerald-500 text-white font-bold'
+                ? 'bg-violet-500/10 border-violet-500 text-white font-bold'
                 : 'bg-black/40 border-zinc-800 text-zinc-400 hover:text-white'
             }`}
           >
             <span>Android Pixel Frame</span>
-            {vm.displayMode === 'device' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+            {vm.displayMode === 'device' && <CheckCircle2 className="w-4 h-4 text-violet-400" />}
           </button>
 
           <button
             onClick={() => vm.setDisplayMode('fullscreen')}
             className={`p-3 rounded-xl border flex items-center justify-between transition-all ${
               vm.displayMode === 'fullscreen'
-                ? 'bg-emerald-500/10 border-emerald-500 text-white font-bold'
+                ? 'bg-violet-500/10 border-violet-500 text-white font-bold'
                 : 'bg-black/40 border-zinc-800 text-zinc-400 hover:text-white'
             }`}
           >
             <span>Edge-To-Edge View</span>
-            {vm.displayMode === 'fullscreen' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+            {vm.displayMode === 'fullscreen' && <CheckCircle2 className="w-4 h-4 text-violet-400" />}
           </button>
         </div>
       </div>
@@ -216,27 +216,27 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <button
             onClick={() => setActiveModal('about')}
-            className="p-3 rounded-xl bg-black/40 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/40 text-left transition-colors flex flex-col items-start gap-1"
+            className="p-3 rounded-xl bg-black/40 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/40 text-left transition-colors flex flex-col items-start gap-1"
           >
-            <Info className="w-4 h-4 text-emerald-400" />
+            <Info className="w-4 h-4 text-violet-400" />
             <span className="font-bold text-white">About</span>
             <span className="text-[10px] text-zinc-500">Tech specs & bio</span>
           </button>
 
           <button
             onClick={() => setActiveModal('privacy')}
-            className="p-3 rounded-xl bg-black/40 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/40 text-left transition-colors flex flex-col items-start gap-1"
+            className="p-3 rounded-xl bg-black/40 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/40 text-left transition-colors flex flex-col items-start gap-1"
           >
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-violet-400" />
             <span className="font-bold text-white">Privacy Policy</span>
             <span className="text-[10px] text-zinc-500">Local data policy</span>
           </button>
 
           <button
             onClick={() => setActiveModal('terms')}
-            className="p-3 rounded-xl bg-black/40 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/40 text-left transition-colors flex flex-col items-start gap-1"
+            className="p-3 rounded-xl bg-black/40 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/40 text-left transition-colors flex flex-col items-start gap-1"
           >
-            <FileText className="w-4 h-4 text-emerald-400" />
+            <FileText className="w-4 h-4 text-violet-400" />
             <span className="font-bold text-white">Terms of Use</span>
             <span className="text-[10px] text-zinc-500">License & rights</span>
           </button>
@@ -246,9 +246,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
               setContactSent(false);
               setActiveModal('contact');
             }}
-            className="p-3 rounded-xl bg-black/40 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/40 text-left transition-colors flex flex-col items-start gap-1"
+            className="p-3 rounded-xl bg-black/40 hover:bg-zinc-800 border border-zinc-800 hover:border-violet-500/40 text-left transition-colors flex flex-col items-start gap-1"
           >
-            <Mail className="w-4 h-4 text-emerald-400" />
+            <Mail className="w-4 h-4 text-violet-400" />
             <span className="font-bold text-white">Contact Us</span>
             <span className="text-[10px] text-zinc-500">Feedback & support</span>
           </button>
@@ -259,7 +259,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
       <div className="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-white font-bold">
-            <HardDrive className="w-4 h-4 text-emerald-400" />
+            <HardDrive className="w-4 h-4 text-violet-400" />
             <span>Local Storage & Cache</span>
           </div>
           <span className="font-mono text-[10px] text-zinc-400">
@@ -293,10 +293,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
             >
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
                 <div className="flex items-center gap-2 font-black text-sm text-white capitalize">
-                  {activeModal === 'privacy' && <ShieldCheck className="w-5 h-5 text-emerald-400" />}
-                  {activeModal === 'terms' && <FileText className="w-5 h-5 text-emerald-400" />}
-                  {activeModal === 'about' && <Info className="w-5 h-5 text-emerald-400" />}
-                  {activeModal === 'contact' && <Mail className="w-5 h-5 text-emerald-400" />}
+                  {activeModal === 'privacy' && <ShieldCheck className="w-5 h-5 text-violet-400" />}
+                  {activeModal === 'terms' && <FileText className="w-5 h-5 text-violet-400" />}
+                  {activeModal === 'about' && <Info className="w-5 h-5 text-violet-400" />}
+                  {activeModal === 'contact' && <Mail className="w-5 h-5 text-violet-400" />}
                   <span>
                     {activeModal === 'privacy' && 'Privacy Policy'}
                     {activeModal === 'terms' && 'Terms of Service'}
@@ -373,7 +373,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                   <>
                     {contactSent ? (
                       <div className="py-8 flex flex-col items-center justify-center text-center space-y-3">
-                        <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/40">
+                        <div className="w-14 h-14 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center border border-violet-500/40">
                           <Check className="w-8 h-8 stroke-[3]" />
                         </div>
                         <h4 className="font-black text-sm text-white">Thank You!</h4>
@@ -382,7 +382,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                         </p>
                         <button
                           onClick={() => setActiveModal(null)}
-                          className="mt-2 py-2 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs"
+                          className="mt-2 py-2 px-6 rounded-xl bg-violet-500 hover:bg-violet-400 text-black font-extrabold text-xs"
                         >
                           Close
                         </button>
@@ -397,7 +397,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                             value={contactName}
                             onChange={(e) => setContactName(e.target.value)}
                             placeholder="John Doe"
-                            className="w-full bg-black/50 border border-zinc-800 rounded-xl px-3 py-2 text-white focus:border-emerald-500 focus:outline-none"
+                            className="w-full bg-black/50 border border-zinc-800 rounded-xl px-3 py-2 text-white focus:border-violet-500 focus:outline-none"
                           />
                         </div>
 
@@ -409,7 +409,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                             value={contactEmail}
                             onChange={(e) => setContactEmail(e.target.value)}
                             placeholder="john@example.com"
-                            className="w-full bg-black/50 border border-zinc-800 rounded-xl px-3 py-2 text-white focus:border-emerald-500 focus:outline-none"
+                            className="w-full bg-black/50 border border-zinc-800 rounded-xl px-3 py-2 text-white focus:border-violet-500 focus:outline-none"
                           />
                         </div>
 
@@ -418,7 +418,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                           <select
                             value={contactCategory}
                             onChange={(e) => setContactCategory(e.target.value)}
-                            className="w-full bg-black/50 border border-zinc-800 rounded-xl px-3 py-2 text-white focus:border-emerald-500 focus:outline-none"
+                            className="w-full bg-black/50 border border-zinc-800 rounded-xl px-3 py-2 text-white focus:border-violet-500 focus:outline-none"
                           >
                             <option value="Feedback">Feature Feedback</option>
                             <option value="Bug">Report an Issue</option>
@@ -434,14 +434,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                             value={contactMessage}
                             onChange={(e) => setContactMessage(e.target.value)}
                             placeholder="Tell us what you think or report an issue..."
-                            className="w-full bg-black/50 border border-zinc-800 rounded-xl px-3 py-2 text-white focus:border-emerald-500 focus:outline-none resize-none"
+                            className="w-full bg-black/50 border border-zinc-800 rounded-xl px-3 py-2 text-white focus:border-violet-500 focus:outline-none resize-none"
                           />
                         </div>
 
                         <button
                           type="submit"
                           disabled={isSending}
-                          className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40"
+                          className="w-full py-2.5 px-4 rounded-xl bg-violet-500 hover:bg-violet-400 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-violet-950/40"
                         >
                           {isSending ? (
                             <span>Sending...</span>

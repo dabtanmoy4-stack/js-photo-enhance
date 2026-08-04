@@ -324,7 +324,7 @@ export function useAppViewModel() {
       case 'clarity':
         newAdj = { ...DEFAULT_ADJUSTMENTS, brightness: 5, contrast: 30, exposure: 10, highlights: -15, shadows: 20, saturation: 10, sharpness: 50, temperature: -5 };
         break;
-      case 'emerald_glow':
+      case 'violet_glow':
         newAdj = { ...DEFAULT_ADJUSTMENTS, brightness: 15, contrast: 15, exposure: 5, saturation: 20, sharpness: 15, vignette: 25, temperature: -15, tint: -10 };
         break;
       case 'vintage':

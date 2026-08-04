@@ -313,7 +313,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-2xl bg-violet-500/20 text-violet-400 border border-violet-500/30 flex items-center justify-center">
               <Download className="w-5 h-5" />
             </div>
             <div>
@@ -344,7 +344,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', stiffness: 200, damping: 12 }}
-                  className="w-20 h-20 rounded-full bg-emerald-500 text-black flex items-center justify-center shadow-lg shadow-emerald-500/30"
+                  className="w-20 h-20 rounded-full bg-violet-500 text-black flex items-center justify-center shadow-lg shadow-violet-500/30"
                 >
                   <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
                 </motion.div>
@@ -360,13 +360,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <div>
                 <h4 className="text-lg font-black text-white">Export Complete!</h4>
                 <p className="text-xs text-zinc-400 mt-1">
-                  Saved as <span className="text-emerald-400 font-mono font-bold">{fileName}.{format}</span> ({finalWidth} × {finalHeight} px)
+                  Saved as <span className="text-violet-400 font-mono font-bold">{fileName}.{format}</span> ({finalWidth} × {finalHeight} px)
                 </p>
               </div>
 
               {/* Thumbnail Preview */}
               {exportedUrl && (
-                <div className="relative rounded-2xl overflow-hidden border border-emerald-500/40 shadow-xl max-w-xs aspect-video bg-black/50">
+                <div className="relative rounded-2xl overflow-hidden border border-violet-500/40 shadow-xl max-w-xs aspect-video bg-black/50">
                   <img src={exportedUrl} alt="Exported photo" className="w-full h-full object-contain" />
                 </div>
               )}
@@ -381,7 +381,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     link.click();
                     document.body.removeChild(link);
                   }}
-                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40"
+                  className="w-full py-2.5 px-4 rounded-xl bg-violet-500 hover:bg-violet-400 text-black font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-violet-950/40"
                 >
                   <Download className="w-4 h-4" /> Download Again
                 </button>
@@ -399,7 +399,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               {/* File Name Input */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
-                  <FileImage className="w-3.5 h-3.5 text-emerald-400" /> Output File Name
+                  <FileImage className="w-3.5 h-3.5 text-violet-400" /> Output File Name
                 </label>
                 <div className="flex items-center rounded-xl bg-black/50 border border-zinc-800 px-3 py-2 text-xs font-mono">
                   <input
@@ -423,7 +423,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                       onClick={() => setFormat(fmt)}
                       className={`p-3 rounded-2xl border text-left transition-all ${
                         format === fmt
-                          ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-bold shadow-md shadow-emerald-950/20'
+                          ? 'bg-violet-500/10 border-violet-500 text-violet-400 font-bold shadow-md shadow-violet-950/20'
                           : 'bg-black/40 border-zinc-800 hover:border-zinc-700 text-zinc-400'
                       }`}
                     >
@@ -441,9 +441,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 <div className="space-y-2 bg-black/40 p-3 rounded-2xl border border-zinc-850">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-zinc-300 flex items-center gap-1">
-                      <Sliders className="w-3.5 h-3.5 text-emerald-400" /> Export Quality
+                      <Sliders className="w-3.5 h-3.5 text-violet-400" /> Export Quality
                     </span>
-                    <span className="font-mono font-bold text-emerald-400">{Math.round(quality * 100)}%</span>
+                    <span className="font-mono font-bold text-violet-400">{Math.round(quality * 100)}%</span>
                   </div>
 
                   <input
@@ -453,14 +453,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     step="0.05"
                     value={quality}
                     onChange={(e) => setQuality(Number(e.target.value))}
-                    className="w-full accent-emerald-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-violet-500 h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
                   />
 
                   <div className="flex justify-between text-[10px] text-zinc-500">
                     <button onClick={() => setQuality(0.3)} className="hover:text-zinc-300">Low (30%)</button>
                     <button onClick={() => setQuality(0.6)} className="hover:text-zinc-300">Medium (60%)</button>
                     <button onClick={() => setQuality(0.85)} className="hover:text-zinc-300">High (85%)</button>
-                    <button onClick={() => setQuality(1.0)} className="hover:text-emerald-400 font-bold">Max (100%)</button>
+                    <button onClick={() => setQuality(1.0)} className="hover:text-violet-400 font-bold">Max (100%)</button>
                   </div>
                 </div>
               )}
@@ -468,7 +468,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               {/* Resolution Selector */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
-                  <Maximize2 className="w-3.5 h-3.5 text-emerald-400" /> Resolution Mode
+                  <Maximize2 className="w-3.5 h-3.5 text-violet-400" /> Resolution Mode
                 </label>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -476,7 +476,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     onClick={() => setResolutionMode('original')}
                     className={`p-2.5 rounded-xl border text-center transition-all ${
                       resolutionMode === 'original'
-                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-bold'
+                        ? 'bg-violet-500/10 border-violet-500 text-violet-400 font-bold'
                         : 'bg-black/40 border-zinc-800 text-zinc-400 hover:border-zinc-700'
                     }`}
                   >
@@ -488,7 +488,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     onClick={() => setResolutionMode('2x')}
                     className={`p-2.5 rounded-xl border text-center transition-all ${
                       resolutionMode === '2x'
-                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-bold'
+                        ? 'bg-violet-500/10 border-violet-500 text-violet-400 font-bold'
                         : 'bg-black/40 border-zinc-800 text-zinc-400 hover:border-zinc-700'
                     }`}
                   >
@@ -500,7 +500,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     onClick={() => setResolutionMode('4x')}
                     className={`p-2.5 rounded-xl border text-center transition-all ${
                       resolutionMode === '4x'
-                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-bold'
+                        ? 'bg-violet-500/10 border-violet-500 text-violet-400 font-bold'
                         : 'bg-black/40 border-zinc-800 text-zinc-400 hover:border-zinc-700'
                     }`}
                   >
@@ -512,7 +512,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     onClick={() => setResolutionMode('custom')}
                     className={`p-2.5 rounded-xl border text-center transition-all ${
                       resolutionMode === 'custom'
-                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-bold'
+                        ? 'bg-violet-500/10 border-violet-500 text-violet-400 font-bold'
                         : 'bg-black/40 border-zinc-800 text-zinc-400 hover:border-zinc-700'
                     }`}
                   >
@@ -530,7 +530,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                         onClick={() => setKeepAspectRatio(!keepAspectRatio)}
                         className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg border ${
                           keepAspectRatio
-                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                            ? 'bg-violet-500/20 text-violet-400 border-violet-500/40'
                             : 'bg-zinc-800 text-zinc-400 border-zinc-700'
                         }`}
                       >
@@ -546,7 +546,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                           type="number"
                           value={customWidth}
                           onChange={(e) => handleWidthChange(Number(e.target.value))}
-                          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-white focus:border-emerald-500 focus:outline-none"
+                          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-white focus:border-violet-500 focus:outline-none"
                         />
                       </div>
                       <div>
@@ -555,7 +555,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                           type="number"
                           value={customHeight}
                           onChange={(e) => handleHeightChange(Number(e.target.value))}
-                          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-white focus:border-emerald-500 focus:outline-none"
+                          className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-white focus:border-violet-500 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -572,7 +572,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
                 <div>
                   <div className="text-zinc-400 text-[11px]">Est. File Size</div>
-                  <div className="font-mono font-bold text-emerald-400">
+                  <div className="font-mono font-bold text-violet-400">
                     {estimatedSizeKb > 1024 ? `${(estimatedSizeKb / 1024).toFixed(2)} MB` : `${estimatedSizeKb} KB`}
                   </div>
                 </div>
@@ -587,7 +587,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             <button
               onClick={handleDownload}
               disabled={isExporting}
-              className="flex-1 py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40 transition-transform active:scale-95 disabled:opacity-50"
+              className="flex-1 py-3 px-4 rounded-xl bg-violet-500 hover:bg-violet-400 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-violet-950/40 transition-transform active:scale-95 disabled:opacity-50"
             >
               {isExporting ? (
                 <>
@@ -608,7 +608,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               className="py-3 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs border border-zinc-700 flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
               title="Share or Copy Link"
             >
-              {copySuccess ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+              {copySuccess ? <Check className="w-4 h-4 text-violet-400" /> : <Share2 className="w-4 h-4" />}
               <span>{copySuccess ? 'Copied' : 'Share'}</span>
             </button>
           </div>
