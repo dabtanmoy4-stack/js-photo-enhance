@@ -30,10 +30,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl border border-violet-500/30 bg-gradient-to-br from-zinc-900 via-black to-zinc-950 p-6 shadow-xl"
-      >
-
-        <div className="absolute right-0 top-0 h-52 w-52 rounded-full bg-violet-500/10 blur-3xl" />
+        className="ai-border rounded-3xl p-6 shadow-xl"
+        >
+       <div className="absolute right-0 top-0 h-52 w-52 rounded-full bg-violet-500/10 blur-3xl" />
 
         <div className="relative z-10">
 
@@ -226,7 +225,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
     
         </div>
 
-        
+
       {/* ================= RECENT PROJECTS ================= */}
 
       {vm.projectHistory.length > 0 && (
