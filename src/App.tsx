@@ -20,6 +20,7 @@ import { ExportModal } from './components/ExportModal';
 import { RecentProjectsModal } from './components/RecentProjectsModal';
 import { AnimatePresence, motion } from 'motion/react';
 import { Sparkles } from 'lucide-react';
+import { SideMenu } from './components/SideMenu';
 
 export default function App() {
   const vm = useAppViewModel();
@@ -101,7 +102,13 @@ export default function App() {
         <div className="flex flex-col min-h-full">
           {/* Material 3 Top App Bar */}
           <TopAppBar vm={vm} />
-
+<SideMenu
+  isOpen={vm.sideMenuOpen}
+  onClose={vm.toggleSideMenu}
+  activeTab={vm.activeTab}
+  onTabChange={vm.setActiveTab}
+  onOpenHistory={vm.openRecentProjectsModal}
+/>
           {/* Toast Notification Banner */}
           <AnimatePresence>
             {vm.toastMessage && (
@@ -177,12 +184,7 @@ export default function App() {
           </main>
 
           {/* Material 3 Bottom Navigation */}
-          <BottomNavigation
-            activeTab={vm.activeTab}
-            onTabChange={vm.setActiveTab}
-            galleryCount={vm.photos.length}
-          />
-        </div>
+       
       </AndroidFrame>
     </div>
   );

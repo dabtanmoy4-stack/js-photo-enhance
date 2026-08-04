@@ -10,7 +10,11 @@ export function useAppViewModel() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('home');
   const [showSplash, setShowSplash] = useState<boolean>(true);
   const [displayMode, setDisplayMode] = useState<DisplayMode>('device');
-  
+  const [sideMenuOpen, setSideMenuOpen] = useState(false);
+
+const toggleSideMenu = useCallback(() => {
+  setSideMenuOpen(prev => !prev);
+}, []);
   // App Settings State (Language, Animation Toggle)
   const [language, setLanguageState] = useState<string>(() => {
     try {
@@ -525,6 +529,7 @@ export function useAppViewModel() {
     activeTab,
     showSplash,
     displayMode,
+    sideMenuOpen
     photos,
     selectedPhoto,
     adjustments,
@@ -559,6 +564,7 @@ export function useAppViewModel() {
     setActiveTab,
     setShowSplash,
     setDisplayMode,
+    toggleSideMenu,
     setSelectedPhoto: handleSelectPhoto,
     uploadPhoto: handleUploadPhoto,
     updateAdjustment: handleUpdateAdjustment,
