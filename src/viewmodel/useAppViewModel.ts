@@ -529,7 +529,7 @@ const toggleSideMenu = useCallback(() => {
     activeTab,
     showSplash,
     displayMode,
-    sideMenuOpen
+    sideMenuOpen,
     photos,
     selectedPhoto,
     adjustments,
