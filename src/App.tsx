@@ -184,7 +184,12 @@ export default function App() {
           </main>
 
           {/* Material 3 Bottom Navigation */}
-       
+          <BottomNavigation
+            activeTab={vm.activeTab}
+            onTabChange={vm.setActiveTab}
+            galleryCount={vm.photos.length}
+          />
+        </div>
       </AndroidFrame>
     </div>
   );
