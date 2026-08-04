@@ -124,7 +124,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
         </div>
 
-      
+      </motion.div>
+
+      {/* Upload Area */}
+
+      <UploadDropZone onFileSelect={vm.uploadPhoto} />
 
       {/* ================= AI TOOLS ================= */}
 
