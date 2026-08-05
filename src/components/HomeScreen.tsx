@@ -114,7 +114,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
                 className="hidden"
                 onChange={(e) => {
                   if (e.target.files?.[0]) {
-                    vm.uploadPhoto(e.target.files[0]);
+              
                   }
                 }}
               />
@@ -128,7 +128,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       {/* Upload Area */}
 
-      <UploadDropZone onFileSelect={vm.uploadPhoto} />
+    
 
       {/* ================= AI TOOLS ================= */}
 
