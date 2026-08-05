@@ -1,5 +1,5 @@
 // JS Photo Enhance Service Worker for Offline PWA Support
-const CACHE_NAME = 'js-photo-enhance-v1';
+const CACHE_NAME = 'JS Ai Hub-v1';
 const ASSETS = [
   '/',
   '/index.html',
