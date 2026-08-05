@@ -13,7 +13,13 @@ import {
   Languages,
   Bot,
   Smartphone,
+  Upload,
+  Zap,
+  ShieldCheck,
 } from "lucide-react";
+interface HomeScreenProps {
+  vm: AppViewModel;
+}
 export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
   return (
     <div className="flex-1 p-4 sm:p-5 pb-8 space-y-5">
@@ -78,22 +84,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
   </span>
 </button>
 
-            <button
-              onClick={vm.openRecentProjectsModal}
-              className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm font-bold text-white hover:bg-zinc-800"
-            >
-              History ({vm.projectHistory.length})
-            </button>
-            <button
-              onClick={() => vm.showToast("AI Chat - Coming Soon")}
-              className="rounded-xl bg-violet-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-violet-500"
-            >
-              <span className="flex items-center justify-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                AI Chat
-              </span>
-            </button>
-
             <label className="cursor-pointer rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm font-bold text-white hover:bg-zinc-800">
 
               <span className="flex items-center justify-center gap-2">
@@ -119,114 +109,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       </motion.div>
 
-      {/* Upload Area */}
+    
 
     
 
- {/* ================= AI TOOLS ================= */}
-
-<div className="space-y-3">
-
-  <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-white">
-    <Sparkles className="h-4 w-4 text-violet-400" />
-    AI Tools
-  </h2>
-
-  <div className="grid grid-cols-2 gap-3">
-
-    {/* JS Image Studio */}
-    <button
-      onClick={() => vm.openAIEnhanceModal("image_studio")}
-      className="group relative overflow-hidden rounded-2xl bg-zinc-900 p-[1px] p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
-    >
-      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
-        <ImageIcon className="h-6 w-6 text-violet-400" />
-      </div>
-
-      <h3 className="text-sm font-bold text-white">
-        JS Image Studio
-      </h3>
-
-      <p className="mt-1 text-xs text-zinc-400">
-        AI Photo Enhance
-      </p>
-    </button>
-
-    {/* Image AI */}
-    <button
-      onClick={() => vm.showToast("Image AI - Coming Soon")}
-      className="group relative overflow-hidden rounded-2xl bg-zinc-900 p-[1px] p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
-    >
-      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
-        <Sparkles className="h-6 w-6 text-violet-400" />
-      </div>
-
-      <h3 className="text-sm font-bold text-white">
-        Image AI
-      </h3>
-
-      <p className="mt-1 text-xs text-zinc-400">
-        Coming Soon
-      </p>
-    </button>
-
-    {/* JS AI Video */}
-    <button
-      onClick={() => vm.showToast("JS AI Video - Coming Soon")}
-      className="group relative overflow-hidden rounded-2xl bg-zinc-900 p-[1px] p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
-    >
-      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
-        <Video className="h-6 w-6 text-violet-400" />
-      </div>
-
-      <h3 className="text-sm font-bold text-white">
-        JS AI Video
-      </h3>
-
-      <p className="mt-1 text-xs text-zinc-400">
-        Coming Soon
-      </p>
-    </button>
-
-    {/* JS AI Music */}
-    <button
-      onClick={() => vm.showToast("JS AI Music - Coming Soon")}
-      className="group relative overflow-hidden rounded-2xl bg-zinc-900 p-[1px] p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
-    >
-      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
-        <Music4 className="h-6 w-6 text-violet-400" />
-      </div>
-
-      <h3 className="text-sm font-bold text-white">
-        JS AI Music
-      </h3>
-
-      <p className="mt-1 text-xs text-zinc-400">
-        Coming Soon
-      </p>
-    </button>
-        {/* JS AI Code */}
-    <button
-      onClick={() => vm.showToast("JS AI Code Generator - Coming Soon")}
-      className="group relative overflow-hidden rounded-2xl bg-zinc-900 p-[1px] p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
-    >
-      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
-        <Code2 className="h-6 w-6 text-violet-400" />
-      </div>
-
-      <h3 className="text-sm font-bold text-white">
-        JS AI Code
-      </h3>
-
-      <p className="mt-1 text-xs text-zinc-400">
-        Coming Soon
-      </p>
-    </button>
-
-    {/* JS AI App Builder */}
-    <button
-      onClick={() => vm.showToast(
-        {/* ================= AI TOOLS ================= */}
+{/* ================= AI TOOLS ================= */}
 
 <div className="space-y-4">
 
@@ -245,7 +132,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       <div className="absolute inset-0 animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_0deg,#facc15,#8b5cf6,#facc15,#8b5cf6,#facc15)]" />
 
-      <div className="ai-card transition-all duration-300 hoveai-card-content p-5r:scale-[1.03]">
+      <div className="ai-card-content p-5">
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
           <ImageIcon className="h-6 w-6 text-violet-400" />
@@ -272,7 +159,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       <div className="absolute inset-0 animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_0deg,#8b5cf6,#facc15,#8b5cf6,#facc15,#8b5cf6)]" />
 
-      <div className="ai-card transition-all duration-300 hoveai-card-content p-5r:scale-[1.03]">
+      <div className="ai-card-content p-5">
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
           <Sparkles className="h-6 w-6 text-violet-400" />
@@ -299,7 +186,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       <div className="absolute inset-0 animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_0deg,#facc15,#8b5cf6,#facc15,#8b5cf6)]" />
 
-      <div className="ai-card transition-all duration-300 hoveai-card-content p-5r:scale-[1.03]">
+      <div className="ai-card-content p-5">
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
           <Video className="h-6 w-6 text-violet-400" />
@@ -326,7 +213,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       <div className="absolute inset-0 animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_0deg,#8b5cf6,#facc15,#8b5cf6,#facc15)]" />
 
-      <div className="ai-card transition-all duration-300 hoveai-card-content p-5r:scale-[1.03]">
+      <div className="ai-card-content p-5">
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
           <Music4 className="h-6 w-6 text-violet-400" />
@@ -352,7 +239,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       <div className="absolute inset-0 animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_0deg,#facc15,#8b5cf6,#facc15,#8b5cf6)]" />
 
-      <div className="ai-card transition-all duration-300 hoveai-card-content p-5r:scale-[1.03]">
+      <div className="ai-card-content p-5">
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
           <Code2 className="h-6 w-6 text-violet-400" />
@@ -379,7 +266,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       <div className="absolute inset-0 animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_0deg,#8b5cf6,#facc15,#8b5cf6,#facc15)]" />
 
-      <div className="ai-card transition-all duration-300 hoveai-card-content p-5r:scale-[1.03]">
+      <div className="ai-card-content p-5">
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
           <Smartphone className="h-6 w-6 text-violet-400" />
@@ -406,7 +293,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       <div className="absolute inset-0 animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_0deg,#facc15,#8b5cf6,#facc15,#8b5cf6)]" />
 
-      <div className="ai-card transition-all duration-300 hoveai-card-content p-5r:scale-[1.03]">
+      <div className="ai-card-content p-5">
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
           <Languages className="h-6 w-6 text-violet-400" />
@@ -433,7 +320,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
       <div className="absolute inset-0 animate-[spin_5s_linear_infinite] bg-[conic-gradient(from_0deg,#8b5cf6,#facc15,#8b5cf6,#facc15)]" />
 
-      <div className="ai-card transition-all duration-300 hoveai-card-content p-5r:scale-[1.03]">
+      <div className="ai-card-content p-5">
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
           <Bot className="h-6 w-6 text-violet-400" />
