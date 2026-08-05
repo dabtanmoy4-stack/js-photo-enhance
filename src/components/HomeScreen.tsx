@@ -173,24 +173,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
     </p>
   </button>
 
-  {/* AI Chat */}
-  <button
-    onClick={() => vm.showToast("AI Chat - Coming Soon")}
-    className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition hover:border-violet-500/50"
-  >
-    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
-      <Sparkles className="h-5 w-5 text-violet-400" />
-    </div>
-
-    <h3 className="text-sm font-bold text-white">
-      AI Chat
-    </h3>
-
-    <p className="mt-1 text-xs text-zinc-400">
-      Coming Soon
-    </p>
-  </button>
-
   {/* Image AI */}
   <button
     onClick={() => vm.showToast("Image AI - Coming Soon")}
