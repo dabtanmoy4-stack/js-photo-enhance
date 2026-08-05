@@ -173,6 +173,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
     </p>
   </button>
 
+ 
+
   {/* Image AI */}
   <button
     onClick={() => vm.showToast("Image AI - Coming Soon")}
