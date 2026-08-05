@@ -15,11 +15,13 @@ import {
   CheckCircle2,
   History,
   Download,
+  Video,
+  Music4,
+  Code2,
+  Languages,
+  Bot,
+  Smartphone,
 } from "lucide-react";
-
-interface HomeScreenProps {
-  vm: AppViewModel;
-}
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
   return (
@@ -130,118 +132,162 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
     
 
-      {/* ================= AI TOOLS ================= */}
+ {/* ================= AI TOOLS ================= */}
 
-      <div className="space-y-3">
+<div className="space-y-3">
 
-        <div className="flex items-center justify-between">
+  <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-white">
+    <Sparkles className="h-4 w-4 text-violet-400" />
+    AI Tools
+  </h2>
 
-          <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-white">
-            <Sparkles className="h-4 w-4 text-violet-400" />
-            AI Tools
-          </h2>
+  <div className="grid grid-cols-2 gap-3">
 
-          <button
-            onClick={() => vm.openAIEnhanceModal("ai_enhance")}
-            className="flex items-center gap-1 text-xs font-bold text-violet-400 hover:text-violet-300"
-          >
-            View All
-            <ChevronRight className="h-4 w-4" />
-          </button>
+    {/* JS Image Studio */}
+    <button
+      onClick={() => vm.openAIEnhanceModal("image_studio")}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
+        <ImageIcon className="h-6 w-6 text-violet-400" />
+      </div>
 
-        </div>
+      <h3 className="text-sm font-bold text-white">
+        JS Image Studio
+      </h3>
 
-        <div className="grid gap-3">
+      <p className="mt-1 text-xs text-zinc-400">
+        AI Photo Enhance
+      </p>
+    </button>
 
-   <div className="grid grid-cols-2 gap-3">
+    {/* Image AI */}
+    <button
+      onClick={() => vm.showToast("Image AI - Coming Soon")}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
+        <Sparkles className="h-6 w-6 text-violet-400" />
+      </div>
 
-  {/* JS Image Studio */}
-  <button
-    onClick={() => vm.openAIEnhanceModal("image_studio")}
-    className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition hover:border-violet-500/50"
-  >
-    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
-      <ImageIcon className="h-5 w-5 text-violet-400" />
-    </div>
+      <h3 className="text-sm font-bold text-white">
+        Image AI
+      </h3>
 
-    <h3 className="text-sm font-bold text-white">
-      JS Image Studio
-    </h3>
+      <p className="mt-1 text-xs text-zinc-400">
+        Coming Soon
+      </p>
+    </button>
 
-    <p className="mt-1 text-xs text-zinc-400">
-      AI Enhance
-    </p>
-  </button>
+    {/* JS AI Video */}
+    <button
+      onClick={() => vm.showToast("JS AI Video - Coming Soon")}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
+        <Video className="h-6 w-6 text-violet-400" />
+      </div>
 
- 
+      <h3 className="text-sm font-bold text-white">
+        JS AI Video
+      </h3>
 
-  {/* Image AI */}
-  <button
-    onClick={() => vm.showToast("Image AI - Coming Soon")}
-    className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition hover:border-violet-500/50"
-  >
-    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
-      <ImageIcon className="h-5 w-5 text-violet-400" />
-    </div>
+      <p className="mt-1 text-xs text-zinc-400">
+        Coming Soon
+      </p>
+    </button>
 
-    <h3 className="text-sm font-bold text-white">
-      Image AI
-    </h3>
+    {/* JS AI Music */}
+    <button
+      onClick={() => vm.showToast("JS AI Music - Coming Soon")}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
+        <Music4 className="h-6 w-6 text-violet-400" />
+      </div>
 
-    <p className="mt-1 text-xs text-zinc-400">
-      Coming Soon
-    </p>
-  </button>
+      <h3 className="text-sm font-bold text-white">
+        JS AI Music
+      </h3>
+
+      <p className="mt-1 text-xs text-zinc-400">
+        Coming Soon
+      </p>
+    </button>
+        {/* JS AI Code */}
+    <button
+      onClick={() => vm.showToast("JS AI Code Generator - Coming Soon")}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
+        <Code2 className="h-6 w-6 text-violet-400" />
+      </div>
+
+      <h3 className="text-sm font-bold text-white">
+        JS AI Code
+      </h3>
+
+      <p className="mt-1 text-xs text-zinc-400">
+        Coming Soon
+      </p>
+    </button>
+
+    {/* JS AI App Builder */}
+    <button
+      onClick={() => vm.showToast("JS AI App Builder - Coming Soon")}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
+        <Smartphone className="h-6 w-6 text-violet-400" />
+      </div>
+
+      <h3 className="text-sm font-bold text-white">
+        JS AI App Builder
+      </h3>
+
+      <p className="mt-1 text-xs text-zinc-400">
+        Coming Soon
+      </p>
+    </button>
+
+    {/* JS AI Translator */}
+    <button
+      onClick={() => vm.showToast("JS AI Translator - Coming Soon")}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
+        <Languages className="h-6 w-6 text-violet-400" />
+      </div>
+
+      <h3 className="text-sm font-bold text-white">
+        JS AI Translator
+      </h3>
+
+      <p className="mt-1 text-xs text-zinc-400">
+        Coming Soon
+      </p>
+    </button>
+
+    {/* JS AI Writer */}
+    <button
+      onClick={() => vm.showToast("JS AI Writer - Coming Soon")}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition-all duration-300 hover:border-violet-500 hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/20">
+        <Bot className="h-6 w-6 text-violet-400" />
+      </div>
+
+      <h3 className="text-sm font-bold text-white">
+        JS AI Writer
+      </h3>
+
+      <p className="mt-1 text-xs text-zinc-400">
+        Coming Soon
+      </p>
+    </button>
+      </div>
 
 </div>
-          <div className="grid grid-cols-2 gap-3">
-
-            <button
-              onClick={() => vm.showToast("AI Chat - Coming Soon")}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition hover:border-violet-500/50"
-            >
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
-                <Sparkles className="h-5 w-5 text-violet-400" />
-              </div>
-
-              <h3 className="text-sm font-bold text-white">
-                AI Chat
-              </h3>
-
-              <p className="mt-1 text-xs text-zinc-400">
-                Coming Soon
-              </p>
-            </button>
-
-            <button
-              onClick={() => vm.showToast("Image AI - Coming Soon")}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition hover:border-violet-500/50"
-            >
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
-                <ImageIcon className="h-5 w-5 text-violet-400" />
-              </div>
-
-              <h3 className="text-sm font-bold text-white">
-                Image AI
-              </h3>
-
-              <p className="mt-1 text-xs text-zinc-400">
-                Coming Soon
-              </p>
-            </button>
-
-          </div>
-
-      </div>
-    
-        </div>
-
-
-  
-
-     
-
-   
       {/* ================= AI STATUS ================= */}
 
       <div className="rounded-2xl border border-violet-500/30 bg-gradient-to-br from-zinc-900 to-[#1A0B2E] p-4 space-y-3">
