@@ -225,7 +225,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
     {/* JS AI App Builder */}
     <button
-      onClick={() => vm.showToast({/* ================= AI TOOLS ================= */}
+      onClick={() => vm.showToast(
+        {/* ================= AI TOOLS ================= */}
 
 <div className="space-y-4">
 
