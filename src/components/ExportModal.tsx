@@ -273,7 +273,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
-          title: 'Enhanced Photo from JS Photo Studio',
+          title: 'Enhanced Photo from JS Ai Hub Studio',
           text: `Check out this enhanced photo rendered with JS Neural Studio!`,
           files: [file]
         });

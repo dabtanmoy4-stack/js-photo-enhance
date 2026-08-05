@@ -1,5 +1,5 @@
 {
-  "name": "JS Photo Enhance",
+  "name": "JS Ai Hub Enhance",
   "description": "Android Photo Enhance app with Jetpack Compose Material 3 design, splash screen, bottom navigation, home dashboard, and enhancement suite.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

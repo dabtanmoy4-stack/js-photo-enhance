@@ -55,7 +55,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-zinc-800">
               <h2 className="text-xl font-black text-white">
-                JS Photo Enhance
+                JS Ai Hub Enhance
               </h2>
 
               <button

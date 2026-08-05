@@ -15,7 +15,7 @@ async function startServer() {
   app.get('/api/health', (req, res) => {
     res.json({
       status: 'ok',
-      service: 'JS Photo Enhance AI Server',
+      service: 'JS Ai Hub Enhance AI Server',
       timestamp: new Date().toISOString()
     });
   });

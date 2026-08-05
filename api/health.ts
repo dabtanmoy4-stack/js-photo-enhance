@@ -6,7 +6,7 @@ export default function handler(
 ) {
   res.status(200).json({
     status: "ok",
-    service: "JS Photo Enhance AI Server",
+    service: "JS Ai Hub Enhance AI Server",
     timestamp: new Date().toISOString(),
   });
 }

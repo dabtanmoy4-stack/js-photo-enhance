@@ -58,7 +58,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
     setTimeout(() => {
       setIsSending(false);
       setContactSent(true);
-      vm.showToast('Message submitted to JS Photo Studio support!');
+      vm.showToast('Message submitted to JS Ai Hub Studio support!');
     }, 1200);
   };
 
@@ -80,7 +80,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
               JS
             </div>
             <div>
-              <h3 className="font-extrabold text-white text-sm">JS Photo Enhance Pro</h3>
+              <h3 className="font-extrabold text-white text-sm">JS Ai Hub Enhance Pro</h3>
               <p className="text-[10px] text-zinc-400">Jetpack Compose M3 Architecture</p>
             </div>
           </div>
@@ -300,7 +300,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                   <span>
                     {activeModal === 'privacy' && 'Privacy Policy'}
                     {activeModal === 'terms' && 'Terms of Service'}
-                    {activeModal === 'about' && 'About JS Photo Enhance'}
+                    {activeModal === 'about' && 'About JS Ai Hub Enhance'}
                     {activeModal === 'contact' && 'Contact Support'}
                   </span>
                 </div>
@@ -316,7 +316,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                 {activeModal === 'about' && (
                   <>
                     <p className="font-semibold text-white">
-                      JS Photo Enhance is a cutting-edge web application engineered for instant, non-destructive photo editing and high-resolution quality enhancement.
+                      JS Ai Hub Enhance is a cutting-edge web application engineered for instant, non-destructive photo editing and high-resolution quality enhancement.
                     </p>
                     <div className="p-3 bg-black/40 rounded-xl border border-zinc-800 space-y-1.5 font-mono text-[11px]">
                       <div>• Framework: React 18 + Vite + TypeScript</div>
@@ -335,7 +335,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                   <>
                     <h4 className="font-bold text-white">1. Zero Server Image Storage</h4>
                     <p>
-                      JS Photo Enhance processes 100% of your images locally in your browser using HTML5 Canvas APIs. Your original images and edited photos are never uploaded to any remote server or third-party cloud.
+                      JS Ai Hub Enhance processes 100% of your images locally in your browser using HTML5 Canvas APIs. Your original images and edited photos are never uploaded to any remote server or third-party cloud.
                     </p>
 
                     <h4 className="font-bold text-white mt-2">2. Local Storage Usage</h4>
@@ -354,7 +354,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ vm }) => {
                   <>
                     <h4 className="font-bold text-white">1. Ownership & License</h4>
                     <p>
-                      You retain full copyright and complete ownership of all photos uploaded or created with JS Photo Enhance.
+                      You retain full copyright and complete ownership of all photos uploaded or created with JS Ai Hub Enhance.
                     </p>
 
                     <h4 className="font-bold text-white mt-2">2. Acceptable Use</h4>

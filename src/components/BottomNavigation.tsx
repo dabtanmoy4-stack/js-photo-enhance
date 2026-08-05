@@ -28,7 +28,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   return (
     <aside className="w-64 min-h-screen bg-black border-r border-violet-900/40 p-4 flex flex-col">
       <h2 className="text-xl font-black text-white mb-8">
-        JS Photo Enhance
+        JS Ai Hub Enhance
       </h2>
 
       <div className="flex flex-col gap-3">
