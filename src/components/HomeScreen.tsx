@@ -153,36 +153,63 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
         <div className="grid gap-3">
 
-          <button
-            onClick={() => vm.openAIEnhanceModal("image_studio")}
-            className="rounded-3xl bg-gradient-to-r from-violet-600 to-fuchsia-600 p-5 text-left shadow-xl transition hover:scale-[1.02]"
-          >
+   <div className="grid grid-cols-2 gap-3">
 
-            <div className="flex items-center gap-4">
+  {/* JS Image Studio */}
+  <button
+    onClick={() => vm.openAIEnhanceModal("image_studio")}
+    className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition hover:border-violet-500/50"
+  >
+    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
+      <ImageIcon className="h-5 w-5 text-violet-400" />
+    </div>
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
+    <h3 className="text-sm font-bold text-white">
+      JS Image Studio
+    </h3>
 
-                <ImageIcon className="h-7 w-7 text-white" />
+    <p className="mt-1 text-xs text-zinc-400">
+      AI Enhance
+    </p>
+  </button>
 
-              </div>
+  {/* AI Chat */}
+  <button
+    onClick={() => vm.showToast("AI Chat - Coming Soon")}
+    className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition hover:border-violet-500/50"
+  >
+    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
+      <Sparkles className="h-5 w-5 text-violet-400" />
+    </div>
 
-              <div className="flex-1">
+    <h3 className="text-sm font-bold text-white">
+      AI Chat
+    </h3>
 
-                <h3 className="text-xl font-black text-white">
-                  JS Image Studio
-                </h3>
+    <p className="mt-1 text-xs text-zinc-400">
+      Coming Soon
+    </p>
+  </button>
 
-                <p className="mt-1 text-sm text-violet-100">
-                  Face Enhance • 4X Upscale • AI Denoise • AI Sharpen
-                </p>
+  {/* Image AI */}
+  <button
+    onClick={() => vm.showToast("Image AI - Coming Soon")}
+    className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-left transition hover:border-violet-500/50"
+  >
+    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
+      <ImageIcon className="h-5 w-5 text-violet-400" />
+    </div>
 
-              </div>
+    <h3 className="text-sm font-bold text-white">
+      Image AI
+    </h3>
 
-              <ChevronRight className="h-6 w-6 text-white" />
+    <p className="mt-1 text-xs text-zinc-400">
+      Coming Soon
+    </p>
+  </button>
 
-            </div>
-
-          </button>
+</div>
           <div className="grid grid-cols-2 gap-3">
 
             <button
