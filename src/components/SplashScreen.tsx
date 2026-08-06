@@ -256,7 +256,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           }}
           className="mt-3 text-lg font-semibold tracking-[0.35em] uppercase text-violet-300"
         >
-          AI IMAGE STUDIO
+          MADE IN I
         </motion.h2>
 
         <motion.p
