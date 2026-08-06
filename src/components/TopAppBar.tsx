@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { AppViewModel } from '../viewmodel/useAppViewModel';
 import { JSLogo } from './JSLogo';
 
@@ -26,6 +26,95 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({ vm }) => {
         return 'JS AI Assistant';
     }
   };
+// ================= SEARCH =================
+
+const [search, setSearch] = useState("");
+
+const searchItems = [
+  {
+    title: "Image Studio",
+    keywords: ["image", "photo", "studio", "enhance"],
+    action: () => vm.setActiveTab("studio"),
+  },
+  {
+    title: "Gallery",
+    keywords: ["gallery", "photos", "images"],
+    action: () => vm.setActiveTab("gallery"),
+  },
+  {
+    title: "Settings",
+    keywords: ["settings", "config", "preferences"],
+    action: () => vm.setActiveTab("settings"),
+  },
+  {
+    title: "Home",
+    keywords: ["home", "main"],
+    action: () => vm.setActiveTab("home"),
+  },
+  {
+    title: "AI Chat",
+    keywords: ["chat", "assistant", "gemini"],
+    action: () => vm.showToast("AI Chat - Coming Soon"),
+  },
+  {
+    title: "AI Writer",
+    keywords: ["writer", "write", "text"],
+    action: () => vm.showToast("JS AI Writer - Coming Soon"),
+  },
+  
+  {
+    title: "AI Video",
+    keywords: ["video", "movie"],
+    action: () => vm.showToast("JS AI Video - Coming Soon"),
+  },
+  {
+    title: "AI Music",
+    keywords: ["music", "audio", "song"],
+    action: () => vm.showToast("JS AI Music - Coming Soon"),
+  },
+{
+  title: "JS AI App Builder",
+  keywords: ["app", "app making", "android", "apk", "application"],
+  action: () => vm.showToast("JS AI App Builder - Coming Soon"),
+},
+{
+  title: "JS AI Song Maker",
+  keywords: ["song", "music", "audio", "lyrics"],
+  action: () => vm.showToast("JS AI Song Maker - Coming Soon"),
+},
+{
+  title: "JS AI Image Generator",
+  keywords: ["image", "photo", "art", "generate"],
+  action: () => vm.showToast("JS AI Image Generator - Coming Soon"),
+},
+{
+  title: "JS AI Video Generator",
+  keywords: ["video", "movie", "clip"],
+  action: () => vm.showToast("JS AI Video Generator - Coming Soon"),
+},
+{
+  title: "JS AI Code",
+  keywords: ["code", "coding", "programming", "developer"],
+  action: () => vm.showToast("JS AI Code - Coming Soon"),
+},
+{
+  title: "JS AI Translator",
+  keywords: ["translator", "translate", "language"],
+  action: () => vm.showToast("JS AI Translator - Coming Soon"),
+},
+];
+
+const filteredItems = useMemo(() => {
+  if (!search.trim()) return [];
+
+  const q = search.toLowerCase();
+
+  return searchItems.filter(
+    (item) =>
+      item.title.toLowerCase().includes(q) ||
+      item.keywords.some((k) => k.includes(q))
+  );
+}, [search]);
 
   return (
     <header className="sticky top-0 z-30 bg-gradient-to-r from-[#13051F] via-[#1B0830] to-[#2A0A45] backdrop-blur-xl border-b border-violet-700/40 text-white px-4 py-3 shadow-lg shadow-violet-950/40">
@@ -68,6 +157,37 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({ vm }) => {
           </div>
 
         </div>
+        {/* ================= SEARCH BOX ================= */}
+<div className="relative hidden md:flex flex-1 justify-end">
+
+  <input
+    type="text"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    placeholder="Search AI tools..."
+    className="w-full max-w-sm rounded-xl border border-violet-500/30 bg-zinc-900/80 px-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+  />
+
+  {filteredItems.length > 0 && (
+    <div className="absolute right-0 top-12 z-50 w-full max-w-sm overflow-hidden rounded-xl border border-violet-500/30 bg-zinc-900 shadow-2xl">
+
+      {filteredItems.map((item) => (
+        <button
+          key={item.title}
+          onClick={() => {
+            item.action();
+            setSearch("");
+          }}
+          className="block w-full border-b border-zinc-800 px-4 py-3 text-left text-sm text-white transition hover:bg-violet-600/20 last:border-b-0"
+        >
+          {item.title}
+        </button>
+      ))}
+
+    </div>
+  )}
+
+</div>
 
       </div>
     </header>

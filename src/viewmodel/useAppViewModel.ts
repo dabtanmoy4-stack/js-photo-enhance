@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { PhotoItem, PhotoAdjustments, NavigationTab, PresetFilter, DisplayMode, DEFAULT_ADJUSTMENTS, ProjectHistoryItem } from '../types';
 import { INITIAL_SAMPLE_PHOTOS } from '../data/samplePhotos';
 
+
 const STORAGE_KEY = 'js_photo_enhance_gallery_v1';
 const HISTORY_STORAGE_KEY = 'js_photo_enhance_history_v1';
 const SETTINGS_KEY = 'js_photo_enhance_settings_v1';
