@@ -67,11 +67,7 @@ const searchItems = [
     keywords: ["video", "movie"],
     action: () => vm.showToast("JS AI Video - Coming Soon"),
   },
-  {
-    title: "AI Music",
-    keywords: ["music", "audio", "song"],
-    action: () => vm.showToast("JS AI Music - Coming Soon"),
-  },
+  
 {
   title: "JS AI App Builder",
   keywords: ["app", "app making", "android", "apk", "application"],
