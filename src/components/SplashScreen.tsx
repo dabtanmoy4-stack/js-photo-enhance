@@ -32,15 +32,14 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
 
   useEffect(() => {
         const startAnimation = async () => {
-      await robotControls.start({
-        opacity: [0, 1],
-        scale: [0.65, 1.08, 1],
-        rotate: [-8, 3, 0],
-        transition: {
-          duration: 1.3,
-          ease: "easeOut",
-        },
-      });
+     await titleControls.start({
+  opacity: [0, 1],
+  y: [30, 0],
+  transition: {
+    duration: 0.6,
+    ease: "easeOut",
+  },
+});
 
       await logoControls.start({
         opacity: [0, 1],
@@ -617,78 +616,12 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
 
       </motion.div>
   
-            {/* ================= FOOTER ================= */}
-
-      <motion.footer
-        initial={{
-          opacity: 0,
-          y: 25,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          delay: 1,
-          duration: 0.7,
-        }}
-        className="relative z-20 mt-10 flex flex-col items-center gap-4 pb-4"
-      >
-
-        {/* AI Ready Badge */}
-
-        <div className="flex flex-wrap items-center justify-center gap-3">
-
-          <div className="flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-4 py-2 backdrop-blur-xl">
-            <ShieldCheck className="h-4 w-4 text-green-400" />
-
-            <span className="text-xs font-medium uppercase tracking-wider text-green-300">
-              AI READY
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-2 backdrop-blur-xl">
-            <Cpu className="h-4 w-4 text-violet-400" />
-
-            <span className="text-xs font-medium uppercase tracking-wider text-violet-300">
-              Neural Engine
-            </span>
-          </div>
-
-        </div>
-
-        {/* Divider */}
-
-        <div className="h-px w-72 bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
-
-        {/* Footer Text */}
-
-        <div className="space-y-2 text-center">
-
-          <motion.p
-            animate={{
-              opacity: [0.5, 1, 0.5],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 2.5,
-            }}
-            className="text-sm font-semibold tracking-[0.3em] uppercase text-violet-300"
-          >
-            MADE WITH ❤️ IN INDIA
-          </motion.p>
-
-          <p className="text-xs text-zinc-500">
-            Powered by Advanced Artificial Intelligence
-          </p>
-
-          <p className="text-[11px] font-mono tracking-wider text-zinc-600">
-            JS AI HUB • AI STUDIO • VERSION 3.0.0
-          </p>
-
-        </div>
-
-      </motion.footer>
-          </motion.div>
-  );
-};
+ <motion.p
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ delay: 1.8 }}
+  className="text-sm tracking-[0.4em] text-zinc-400"
+>
+  MADE IN INDIA
+</motion.p>
+  
