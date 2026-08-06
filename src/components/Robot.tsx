@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "motion/react";
-import robot from "./robot.png";
+import robot from "./robbot.png";
 
 const Robot: React.FC = () => {
   return (
