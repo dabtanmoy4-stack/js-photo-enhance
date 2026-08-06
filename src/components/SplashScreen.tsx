@@ -256,7 +256,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           }}
           className="mt-3 text-lg font-semibold tracking-[0.35em] uppercase text-violet-300"
         >
-          MADE IN I
+          MADE IN INDIA
         </motion.h2>
 
         <motion.p
