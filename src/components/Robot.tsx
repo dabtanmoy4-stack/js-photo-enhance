@@ -1,38 +1,58 @@
 import React from "react";
 import { motion } from "motion/react";
 
-interface RobotProps {
-  className?: string;
-}
-
-export const Robot: React.FC<RobotProps> = ({ className = "" }) => {
+const Robot: React.FC = () => {
   return (
     <motion.div
-      className={`relative w-72 h-72 ${className}`}
-      initial={{ x: -450, opacity: 0, scale: 0.7 }}
+      className="relative flex items-center justify-center"
       animate={{
-        x: 0,
-        opacity: 1,
-        scale: 1,
-        y: [0, -8, 0],
+        y: [0, -10, 0],
+        scale: [1, 1.02, 1],
       }}
       transition={{
-        x: { duration: 1.2, ease: "easeOut" },
-        opacity: { duration: 0.6 },
-        scale: { duration: 0.8 },
-        y: {
-          duration: 2.5,
-          repeat: Infinity,
-          ease: "easeInOut",
-        },
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut",
       }}
     >
-      {/* Glow */}
+      {/* Purple Aura */}
       <motion.div
-        className="absolute inset-0 rounded-full blur-3xl bg-violet-500/25"
+        className="absolute h-[330px] w-[330px] rounded-full bg-violet-500/25 blur-[90px]"
         animate={{
           scale: [1, 1.15, 1],
-          opacity: [0.4, 0.8, 0.4],
+          opacity: [0.35, 0.7, 0.35],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+        }}
+      />
+
+      {/* Outer Glow */}
+      <motion.div
+        className="absolute h-[280px] w-[280px] rounded-full border border-violet-400/20"
+        animate={{
+          rotate: 360,
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      />
+
+      {/* Robot Image */}
+      <motion.img
+        src="/robot.png"
+        alt="JS AI Robot"
+        draggable={false}
+        className="relative z-20 w-[290px] select-none drop-shadow-[0_0_45px_rgba(139,92,246,.55)]"
+        animate={{
+          filter: [
+            "brightness(1)",
+            "brightness(1.12)",
+            "brightness(1)",
+          ],
         }}
         transition={{
           duration: 2,
@@ -40,241 +60,61 @@ export const Robot: React.FC<RobotProps> = ({ className = "" }) => {
         }}
       />
 
-      {/* Head */}
-      <motion.svg
-        viewBox="0 0 300 300"
-        className="absolute inset-0"
-      >
-        <defs>
-          <linearGradient id="robotBody" x1="0" x2="1">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="100%" stopColor="#d8b4fe" />
-          </linearGradient>
+      {/* Left Eye Glow */}
+      <motion.div
+        className="absolute z-30 h-3 w-3 rounded-full bg-cyan-300 blur-[1px]"
+        style={{
+          top: "95px",
+          left: "128px",
+        }}
+        animate={{
+          opacity: [0.3, 1, 0.3],
+          scale: [1, 1.8, 1],
+        }}
+        transition={{
+          duration: 1.2,
+          repeat: Infinity,
+        }}
+      />
 
-          <linearGradient id="robotAccent" x1="0" x2="1">
-            <stop offset="0%" stopColor="#7c3aed" />
-            <stop offset="100%" stopColor="#c084fc" />
-          </linearGradient>
+      {/* Right Eye Glow */}
+      <motion.div
+        className="absolute z-30 h-3 w-3 rounded-full bg-cyan-300 blur-[1px]"
+        style={{
+          top: "95px",
+          right: "128px",
+        }}
+        animate={{
+          opacity: [1, 0.3, 1],
+          scale: [1.8, 1, 1.8],
+        }}
+        transition={{
+          duration: 1.2,
+          repeat: Infinity,
+        }}
+      />
 
-          <filter id="eyeGlow">
-            <feGaussianBlur stdDeviation="3" />
-          </filter>
-        </defs>
-
-        {/* Antenna */}
-        <line
-          x1="150"
-          y1="35"
-          x2="150"
-          y2="15"
-          stroke="#c084fc"
-          strokeWidth="4"
-        />
-
-        <circle
-          cx="150"
-          cy="10"
-          r="6"
-          fill="#c084fc"
-        />
-
-        {/* Head */}
-        <rect
-          x="90"
-          y="40"
-          width="120"
-          height="90"
-          rx="28"
-          fill="url(#robotBody)"
-        />
-
-        {/* Eyes Glow */}
-        <circle
-          cx="122"
-          cy="82"
-          r="12"
-          fill="#8b5cf6"
-          filter="url(#eyeGlow)"
-        />
-
-        <circle
-          cx="178"
-          cy="82"
-          r="12"
-          fill="#8b5cf6"
-          filter="url(#eyeGlow)"
-        />
-
-        {/* Eyes */}
-        <circle
-          cx="122"
-          cy="82"
-          r="7"
-          fill="#ffffff"
-        />
-
-        <circle
-          cx="178"
-          cy="82"
-          r="7"
-          fill="#ffffff"
-        />
-
-        {/* Smile */}
-        <path
-          d="M125 108 Q150 122 175 108"
-          stroke="#8b5cf6"
-          strokeWidth="4"
-          fill="none"
-          strokeLinecap="round"
-        />
-
-        {/* Neck */}
-        <rect
-          x="140"
-          y="130"
-          width="20"
-          height="20"
-          rx="5"
-          fill="url(#robotAccent)"
-        />
-
-        {/* Body */}
-        <rect
-          x="95"
-          y="150"
-          width="110"
-          height="90"
-          rx="24"
-          fill="url(#robotBody)"
-        />
-                {/* Chest Core */}
-        <circle
-          cx="150"
-          cy="185"
-          r="18"
-          fill="url(#robotAccent)"
-        />
-
-        <circle
-          cx="150"
-          cy="185"
-          r="8"
-          fill="#ffffff"
-        />
-
-        {/* Left Arm */}
-        <motion.g
+      {/* Floating Particles */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute h-2 w-2 rounded-full bg-violet-400"
+          style={{
+            left: `${20 + i * 8}%`,
+            top: `${25 + (i % 3) * 18}%`,
+          }}
           animate={{
-            rotate: [-8, 15, -8],
+            y: [0, -20, 0],
+            opacity: [0.2, 1, 0.2],
+            scale: [1, 1.5, 1],
           }}
           transition={{
-            duration: 2,
+            duration: 2 + i * 0.2,
+            delay: i * 0.15,
             repeat: Infinity,
-            ease: "easeInOut",
           }}
-          style={{ originX: "95px", originY: "165px" }}
-        >
-          <rect
-            x="58"
-            y="160"
-            width="38"
-            height="16"
-            rx="8"
-            fill="url(#robotBody)"
-          />
-
-          <circle
-            cx="54"
-            cy="168"
-            r="9"
-            fill="url(#robotAccent)"
-          />
-        </motion.g>
-
-        {/* Right Arm */}
-        <motion.g
-          animate={{
-            rotate: [0, -28, 0],
-          }}
-          transition={{
-            duration: 1.8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ originX: "205px", originY: "165px" }}
-        >
-          <rect
-            x="205"
-            y="160"
-            width="38"
-            height="16"
-            rx="8"
-            fill="url(#robotBody)"
-          />
-
-          <circle
-            cx="248"
-            cy="168"
-            r="9"
-            fill="#8b5cf6"
-          />
-
-          {/* Magic Orb */}
-          <motion.circle
-            cx="262"
-            cy="168"
-            r="10"
-            fill="#c084fc"
-            animate={{
-              scale: [1, 1.5, 1],
-              opacity: [0.4, 1, 0.4],
-            }}
-            transition={{
-              duration: 1.2,
-              repeat: Infinity,
-            }}
-          />
-        </motion.g>
-
-        {/* Left Leg */}
-        <rect
-          x="118"
-          y="240"
-          width="18"
-          height="42"
-          rx="8"
-          fill="url(#robotBody)"
         />
-
-        {/* Right Leg */}
-        <rect
-          x="164"
-          y="240"
-          width="18"
-          height="42"
-          rx="8"
-          fill="url(#robotBody)"
-        />
-
-        {/* Left Foot */}
-        <ellipse
-          cx="127"
-          cy="286"
-          rx="16"
-          ry="8"
-          fill="#8b5cf6"
-        />
-
-        {/* Right Foot */}
-        <ellipse
-          cx="173"
-          cy="286"
-          rx="16"
-          ry="8"
-          fill="#8b5cf6"
-        />
-      </motion.svg>
+      ))}
     </motion.div>
   );
 };
