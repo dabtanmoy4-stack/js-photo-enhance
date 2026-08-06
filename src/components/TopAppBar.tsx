@@ -153,63 +153,89 @@ const filteredItems = useMemo(() => {
           </div>
 
         </div>
-        {/* ================= SEARCH BOX ================= */}
+ {/* ================= SEARCH BOX ================= */}
+
 <div className="relative hidden md:flex flex-1 justify-end">
 
- <input
-  type="text"
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-  placeholder="Search AI tools..."
-  className="
-  w-full max-w-sm
-  rounded-xl
-  border border-violet-500/30
-  bg-zinc-900/80
-  px-4 py-2
-  text-sm text-white
-  placeholder:text-zinc-500
-  focus:outline-none
-  focus:ring-2
-  focus:ring-violet-500/30
-  "
-/>
+  <div className="relative w-full max-w-sm">
 
-
-{/* Animated Search Bottom Border */}
-
-<div
-  className="
-  absolute
-  bottom-0
-  left-0
-  h-[4px]
-  w-full
-  overflow-hidden
-  rounded-full
-  "
->
-  <div className="search-glow-border"></div>
-</div>
-
-  {filteredItems.length > 0 && (
-    <div className="absolute right-0 top-12 z-50 w-full max-w-sm overflow-hidden rounded-xl border border-violet-500/30 bg-zinc-900 shadow-2xl">
-
-      {filteredItems.map((item) => (
-        <button
-          key={item.title}
-          onClick={() => {
-            item.action();
-            setSearch("");
-          }}
-          className="block w-full border-b border-zinc-800 px-4 py-3 text-left text-sm text-white transition hover:bg-violet-600/20 last:border-b-0"
-        >
-          {item.title}
-        </button>
-      ))}
-
+    {/* Animated Border */}
+    <div className="absolute -inset-[2px] rounded-xl overflow-hidden">
+      <div className="ai-search-border"></div>
     </div>
-  )}
+
+
+    {/* Input */}
+    <input
+      type="text"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      placeholder="Search AI tools..."
+      className="
+      relative
+      z-10
+      w-full
+      rounded-xl
+      bg-zinc-950/90
+      px-4
+      py-2
+      text-sm
+      text-white
+      placeholder:text-zinc-500
+      outline-none
+      "
+    />
+
+
+    {/* Search Result */}
+
+    {filteredItems.length > 0 && (
+      <div
+        className="
+        absolute
+        right-0
+        top-14
+        z-50
+        w-full
+        overflow-hidden
+        rounded-xl
+        border
+        border-violet-500/30
+        bg-zinc-950
+        shadow-2xl
+        "
+      >
+
+        {filteredItems.map((item) => (
+          <button
+            key={item.title}
+            onClick={() => {
+              item.action();
+              setSearch("");
+            }}
+            className="
+            block
+            w-full
+            border-b
+            border-zinc-800
+            px-4
+            py-3
+            text-left
+            text-sm
+            text-white
+            hover:bg-violet-600/20
+            transition
+            last:border-none
+            "
+          >
+            {item.title}
+          </button>
+        ))}
+
+      </div>
+    )}
+
+  </div>
 
 </div>
 
