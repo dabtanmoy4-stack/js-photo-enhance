@@ -1,13 +1,8 @@
-import React, { useEffect } from "react";
-import { motion, useAnimation } from "motion/react";
-import { JSLogo } from "./JSLogo";
-import {
-  Sparkles,
-  Cpu,
-  ShieldCheck,
-  Zap,
-} from "lucide-react";
-
+import React from 'react';
+import { motion } from 'motion/react';
+import { JSLogo } from './JSLogo';
+import Robot from './Robot';
+import { Sparkles, Cpu, ShieldCheck } from 'lucide-react';
 interface SplashScreenProps {
   onFinish?: () => void;
 }
@@ -200,22 +195,19 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
             }}
             className="absolute -inset-6 rounded-full bg-violet-500/20 blur-2xl"
           />
+{/* AI Robot */}
 
-          {/* Logo */}
+<motion.div
+  animate={logoControls}
+  className="relative flex justify-center"
+>
+  <div className="rounded-full bg-black/40 p-5 backdrop-blur-2xl border border-violet-500/20 shadow-[0_0_60px_rgba(139,92,246,.35)]">
 
-          <motion.div animate={logoControls}>
+    <Robot />
 
-            <div className="rounded-full bg-black/40 p-5 backdrop-blur-2xl border border-violet-500/20 shadow-[0_0_60px_rgba(139,92,246,.35)]">
+  </div>
 
-              <JSLogo
-                size="xl"
-                showText={false}
-                animated
-              />
-
-            </div>
-
-          </motion.div>
+</motion.div>
 
         </div>
       </div>
@@ -399,7 +391,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         </div>
 
         <p className="text-[11px] font-mono text-zinc-500">
-          JS PHOTO AI STUDIO • Version 2.0.0
+          JS AI Hub AI STUDIO • Version 2.0.0
         </p>
 
       </motion.div>
