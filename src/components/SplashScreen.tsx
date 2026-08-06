@@ -42,7 +42,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         },
       });
 
-    
+      setTimeout(() => {
+        onFinish?.();
+      }, 2500);
+    };
 
     startAnimation();
   }, []);
