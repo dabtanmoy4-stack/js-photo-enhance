@@ -156,13 +156,41 @@ const filteredItems = useMemo(() => {
         {/* ================= SEARCH BOX ================= */}
 <div className="relative hidden md:flex flex-1 justify-end">
 
-  <input
-    type="text"
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    placeholder="Search AI tools..."
-    className="w-full max-w-sm rounded-xl border border-violet-500/30 bg-zinc-900/80 px-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30"
-  />
+ <input
+  type="text"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  placeholder="Search AI tools..."
+  className="
+  w-full max-w-sm
+  rounded-xl
+  border border-violet-500/30
+  bg-zinc-900/80
+  px-4 py-2
+  text-sm text-white
+  placeholder:text-zinc-500
+  focus:outline-none
+  focus:ring-2
+  focus:ring-violet-500/30
+  "
+/>
+
+
+{/* Animated Search Bottom Border */}
+
+<div
+  className="
+  absolute
+  bottom-0
+  left-0
+  h-[4px]
+  w-full
+  overflow-hidden
+  rounded-full
+  "
+>
+  <div className="search-glow-border"></div>
+</div>
 
   {filteredItems.length > 0 && (
     <div className="absolute right-0 top-12 z-50 w-full max-w-sm overflow-hidden rounded-xl border border-violet-500/30 bg-zinc-900 shadow-2xl">

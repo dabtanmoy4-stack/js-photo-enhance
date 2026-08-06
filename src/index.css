@@ -149,3 +149,43 @@
     box-shadow:0 0 45px #a855f7;
   }
 }
+@keyframes searchBorderMove {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+
+.search-glow-border {
+
+  height: 100%;
+  width: 100%;
+
+  background: linear-gradient(
+    90deg,
+    #22c55e,
+    #f97316,
+    #3b82f6,
+    #ffffff,
+    #22c55e
+  );
+
+  background-size: 300% 100%;
+
+  animation:
+    searchBorderMove 3s linear infinite;
+
+  box-shadow:
+    0 0 12px #22c55e,
+    0 0 18px #3b82f6,
+    0 0 25px #ffffff;
+
+}
