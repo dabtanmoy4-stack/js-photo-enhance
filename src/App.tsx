@@ -98,7 +98,8 @@ export default function App() {
       </AnimatePresence>
 
       {/* Android Device Frame / Fullscreen Shell */}
-      <AndroidFrame displayMode={vm.displayMode}>
+      {!vm.showSplash && (
+  <AndroidFrame displayMode={vm.displayMode}>
         <div className="flex flex-col min-h-full">
           {/* Material 3 Top App Bar */}
           <TopAppBar vm={vm} />
@@ -187,6 +188,7 @@ export default function App() {
           
         </div>
       </AndroidFrame>
-    </div>
+)}
+</div>
   );
 }

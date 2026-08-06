@@ -147,13 +147,7 @@ const toggleSideMenu = useCallback(() => {
     reader.readAsDataURL(file);
   }, [showToast]);
 
-  // Auto-hide Splash screen after 2.2 seconds on initial launch
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2200);
-    return () => clearTimeout(timer);
-  }, []);
+ 
 
   // Global paste handler for Ctrl+V
   useEffect(() => {
@@ -414,11 +408,8 @@ const toggleSideMenu = useCallback(() => {
   }, [photos, selectedPhoto, showToast]);
 
   const handleReplaySplash = useCallback(() => {
-    setShowSplash(true);
-    setTimeout(() => {
-      setShowSplash(false);
-    }, 2200);
-  }, []);
+  setShowSplash(true);
+}, []);
 
   // AI Enhancement Functions
   const handleOpenAIEnhanceModal = useCallback((mode = 'ai_enhance') => {

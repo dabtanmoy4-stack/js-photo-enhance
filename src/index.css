@@ -87,3 +87,65 @@
       0 0 25px rgba(139,92,246,.45),
       0 0 60px rgba(250,204,21,.25);
 }
+/* ================= JS AI HUB SPLASH ================= */
+
+@keyframes robotRun {
+  0% {
+    transform: translateX(-180px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes magicGlow {
+  0% {
+    transform: scale(.2);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes titleReveal {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatRobot {
+  0%,100%{
+    transform: translateY(0px);
+  }
+
+  50%{
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,100%{
+    box-shadow:0 0 20px #8b5cf6;
+  }
+
+  50%{
+    box-shadow:0 0 45px #a855f7;
+  }
+}
