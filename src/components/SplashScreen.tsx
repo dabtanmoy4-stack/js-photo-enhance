@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useEffect } from 'react';
+import { motion, useAnimation } from 'motion/react';
 import { JSLogo } from './JSLogo';
 import Robot from './Robot';
-import { Sparkles, Cpu, ShieldCheck } from 'lucide-react';
+import { Sparkles, Cpu, ShieldCheck, Zap } from 'lucide-react';
 interface SplashScreenProps {
   onFinish?: () => void;
 }
@@ -42,10 +42,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         },
       });
 
-      setTimeout(() => {
-        onFinish?.();
-      }, 2500);
-    };
+    
 
     startAnimation();
   }, []);
@@ -236,12 +233,12 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           className="text-5xl font-black tracking-tight"
         >
           <span className="text-white">
-            JS
-          </span>{" "}
+  JS
+</span>{" "}
 
-          <span className="bg-gradient-to-r from-violet-300 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-            PHOTO
-          </span>
+<span className="bg-gradient-to-r from-violet-300 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+  AI Hub
+</span>
         </motion.h1>
 
         <motion.h2
