@@ -155,7 +155,7 @@ const filteredItems = useMemo(() => {
         </div>
  {/* ================= SEARCH BOX ================= */}
 
-<div className="w-full max-w-md">
+<divclassName="relative flex flex-1 justify-end"
 
   <div className="relative w-full max-w-sm">
 
