@@ -289,15 +289,12 @@ vm.uploadPhoto(e.target.files[0]);
 
 
 <div
-className="
-grid
-grid-cols-1
-sm:grid-cols-2
-lg:grid-cols-3
-gap-4
-"
+  className="
+    grid
+    gap-5
+    [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]
+  "
 >
-
 
 
 {/* IMAGE AI */}
@@ -349,15 +346,12 @@ vm.showToast(`${tool.name} - Coming Soon`)
 }
 
 className="
-relative
-overflow-hidden
-rounded-2xl
-border
-border-violet-500/30
-bg-zinc-900
+ai-tool-card
 p-5
-transition
+transition-all
+duration-300
 hover:scale-[1.03]
+hover:shadow-[0_0_30px_rgba(168,85,247,0.35)]
 "
 
 >
