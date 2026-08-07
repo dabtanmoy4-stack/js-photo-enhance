@@ -14,8 +14,8 @@ import {
   Code2,
   Smartphone,
   Languages,
+  ShieldCheck,
 } from "lucide-react";
-
 interface HomeScreenProps {
   vm: AppViewModel;
 }
