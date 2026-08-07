@@ -136,7 +136,7 @@ export default function AIChat() {
               text-gray-600
               "
             >
-              Powered by JS AI
+              Powered by JS AI Hub
             </p>
 
           </div>
