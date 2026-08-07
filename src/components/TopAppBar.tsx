@@ -288,20 +288,30 @@ const filteredItems = useMemo(() => {
       📜 History
     </button>
 
-   <button
+<button
   onClick={() => {
     vm.setActiveTab("settings");
     vm.toggleSideMenu();
   }}
+  className="
+  w-full
+  px-5
+  py-4
+  text-left
+  hover:bg-violet-500/20
+  transition
+  text-white
+  "
 >
   ⚙️ Settings
 </button>
 
     </div>   {/* Side Menu */}
-  </>         {/* <-- Eta add korte hobe */}
-)}
 
-</div>
+  </>        {/* Fragment close */}
+
+)}          {/* vm.sideMenuOpen close */}
+
 </header>
 
 );
