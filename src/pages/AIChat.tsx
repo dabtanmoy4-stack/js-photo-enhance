@@ -38,19 +38,19 @@ export default function AIChat() {
 
   return (
 
-    <div
-      className="
-      min-h-screen
-      flex
-      flex-col
-      bg-gradient-to-br
-      from-orange-200
-      via-white
-      to-green-200
-      text-gray-900
-      "
-    >
-
+   <div
+  className="
+  h-screen
+  flex
+  flex-col
+  bg-gradient-to-br
+  from-orange-200
+  via-white
+  to-green-200
+  text-gray-900
+  overflow-hidden
+"
+>
 
       {/* Header */}
 
@@ -117,14 +117,15 @@ export default function AIChat() {
 
       {/* Chat Area */}
 
-      <div
-        className="
-        flex-1
-        overflow-y-auto
-        p-5
-        space-y-5
-        "
-      >
+<div
+  className="
+  flex-1
+  overflow-y-auto
+  p-5
+  pb-32
+  space-y-5
+  "
+>
 
         {
           messages.map((msg,index)=>(
@@ -211,18 +212,22 @@ export default function AIChat() {
       {/* Input Area */}
 
 
-      <div
-        className="
-        p-4
-        bg-white/70
-        backdrop-blur-xl
-        border-t
-        border-green-200
-        flex
-        gap-3
-        "
-      >
-
+     <div
+  className="
+  fixed
+  bottom-0
+  left-0
+  right-0
+  p-4
+  bg-white/80
+  backdrop-blur-xl
+  border-t
+  border-green-200
+  flex
+  gap-3
+  z-50
+  "
+>
 
         <input
 
