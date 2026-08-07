@@ -72,42 +72,40 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ vm }) => {
 
           </div>
 
-          <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+         <div className="mt-6 flex flex-col gap-2 sm:flex-row">
 
-            <button
-  onClick={() => vm.setActiveTab("chat")}
-  className="flex-1 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-3 text-sm font-bold text-white transition hover:scale-[1.02]"
->
-  <span className="flex items-center justify-center gap-2">
-    <Sparkles className="h-4 w-4" />
-    AI Chat
-  </span>
-</button>
+  <button
+    onClick={() => vm.setActiveTab("chat")}
+    className="flex-1 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-3 text-sm font-bold text-white transition hover:scale-[1.02]"
+  >
+    <span className="flex items-center justify-center gap-2">
+      <Bot className="h-4 w-4" />
+      AI Chat
+    </span>
+  </button>
 
-            <label className="cursor-pointer rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm font-bold text-white hover:bg-zinc-800">
 
-              <span className="flex items-center justify-center gap-2">
-                <Upload className="h-4 w-4 text-violet-400" />
-                Import Photo
-              </span>
+  <label className="cursor-pointer rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm font-bold text-white hover:bg-zinc-800">
 
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-              
-                  }
-                }}
-              />
-            </label>
+    <span className="flex items-center justify-center gap-2">
+      <Upload className="h-4 w-4 text-violet-400" />
+      Import Photo
+    </span>
 
-          </div>
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={(e) => {
+        if (e.target.files?.[0]) {
 
-        </div>
+        }
+      }}
+    />
 
-      </motion.div>
+  </label>
+
+</div>
 
     
 
