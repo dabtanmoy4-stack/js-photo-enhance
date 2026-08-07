@@ -39,53 +39,75 @@
   position: relative;
   z-index: 1;
 }
-/* ================= PREMIUM AI CARD ================= */
+/* ================= PREMIUM AI BORDER ================= */
 
-@keyframes premiumBorder {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.ai-card {
+.ai-tool-card {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
-  padding: 2px;
+  border-radius: 20px;
+  background: #09090b;
 }
 
-.ai-card::before {
+.ai-tool-card::before {
   content: "";
   position: absolute;
-  inset: -200%;
-  background: conic-gradient(
-    #FFD700,
-    #8B5CF6,
-    #FFD700,
-    #A855F7,
-    #FFD700
+  inset: -2px;
+  border-radius: inherit;
+
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    #a855f7,
+    #ffffff,
+    #18181b,
+    #a855f7,
+    #ffffff
   );
 
-  animation: premiumBorder 4s linear infinite;
+  background-size: 400% 400%;
+  animation: premiumBorder 5s linear infinite;
 }
 
-.ai-card-content {
+.ai-tool-card::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    #0a0a0a,
+    #111111,
+    #0a0a0a
+  );
+}
+
+.ai-tool-card > * {
   position: relative;
   z-index: 2;
-  border-radius: 22px;
-  background: #09090b;
-  transition: .35s;
 }
 
-.ai-card:hover .ai-card-content{
-  transform: scale(.98);
+.ai-tool-card:hover::before {
+  filter: blur(1px);
+}
+
+.ai-tool-card:hover {
+  transform: translateY(-4px);
+  transition: .3s ease;
   box-shadow:
-      0 0 25px rgba(139,92,246,.45),
-      0 0 60px rgba(250,204,21,.25);
+    0 0 25px rgba(168,85,247,.30),
+    0 0 50px rgba(255,255,255,.08);
+}
+
+@keyframes premiumBorder {
+
+  0%{
+    background-position:0% 50%;
+  }
+
+  100%{
+    background-position:400% 50%;
+  }
+
 }
 /* ================= JS AI HUB SPLASH ================= */
 
