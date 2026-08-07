@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "motion/react";
 
 import { AppViewModel } from "../viewmodel/useAppViewModel";
+import { JSLogo } from "./JSLogo";
 
 import {
   Upload,
@@ -14,7 +15,6 @@ import {
   Smartphone,
   Languages,
 } from "lucide-react";
-
 
 interface HomeScreenProps {
   vm: AppViewModel;
