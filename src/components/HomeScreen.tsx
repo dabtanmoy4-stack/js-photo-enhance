@@ -1,19 +1,18 @@
-import {
-Upload,
-Bot,
-Zap,
-Sparkles,
-Video,
-Music4,
-Code2,
-Smartphone,
-Languages,
-} from "lucide-react";
+import React from "react";
+import { motion } from "motion/react";
+
+import { AppViewModel } from "../viewmodel/useAppViewModel";
 
 import {
   Upload,
   Bot,
   Zap,
+  Sparkles,
+  Video,
+  Music4,
+  Code2,
+  Smartphone,
+  Languages,
 } from "lucide-react";
 
 
