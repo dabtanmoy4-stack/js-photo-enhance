@@ -1,318 +1,399 @@
-import React, { useMemo, useState } from 'react';
-import { AppViewModel } from '../viewmodel/useAppViewModel';
-import { JSLogo } from './JSLogo';
+import React, { useMemo, useState } from "react";
+import { Menu, Search, X } from "lucide-react";
+import { AppViewModel } from "../viewmodel/useAppViewModel";
+import { JSLogo } from "./JSLogo";
 
 interface TopAppBarProps {
   vm: AppViewModel;
-  onOpenUploadModal?: () => void;
 }
 
 export const TopAppBar: React.FC<TopAppBarProps> = ({ vm }) => {
+  const [search, setSearch] = useState("");
+
   const getTitle = () => {
     switch (vm.activeTab) {
-      case 'home':
-        return 'JS AI Assistant';
-
-      case 'studio':
-        return 'AI Image Studio';
-
-      case 'gallery':
-        return 'AI Gallery';
-
-      case 'settings':
-        return 'AI Settings';
-
+      case "home":
+        return "JS AI Assistant";
+      case "studio":
+        return "AI Image Studio";
+      case "gallery":
+        return "AI Gallery";
+      case "settings":
+        return "AI Settings";
+      case "chat":
+        return "AI Chat";
       default:
-        return 'JS AI Assistant';
+        return "JS AI Assistant";
     }
   };
-// ================= SEARCH =================
 
-const [search, setSearch] = useState("");
+  const searchItems = [
+    {
+      title: "Home",
+      keywords: ["home"],
+      action: () => vm.setActiveTab("home"),
+    },
+    {
+      title: "AI Chat",
+      keywords: ["chat", "assistant", "gemini"],
+      action: () => vm.setActiveTab("chat"),
+    },
+    {
+      title: "Image Studio",
+      keywords: ["studio", "photo", "image"],
+      action: () => vm.setActiveTab("studio"),
+    },
+    {
+      title: "Gallery",
+      keywords: ["gallery", "photos"],
+      action: () => vm.setActiveTab("gallery"),
+    },
+    {
+      title: "Settings",
+      keywords: ["settings"],
+      action: () => vm.setActiveTab("settings"),
+    },
+    {
+      title: "AI Video",
+      keywords: ["video"],
+      action: () => vm.showToast("Coming Soon"),
+    },
+    {
+      title: "AI Music",
+      keywords: ["music"],
+      action: () => vm.showToast("Coming Soon"),
+    },
+    {
+      title: "AI Translator",
+      keywords: ["translator"],
+      action: () => vm.showToast("Coming Soon"),
+    },
+  ];
 
-const searchItems = [
-  {
-    title: "Image Studio",
-    keywords: ["image", "photo", "studio", "enhance"],
-    action: () => vm.setActiveTab("studio"),
-  },
-  {
-    title: "Gallery",
-    keywords: ["gallery", "photos", "images"],
-    action: () => vm.setActiveTab("gallery"),
-  },
-  {
-    title: "Settings",
-    keywords: ["settings", "config", "preferences"],
-    action: () => vm.setActiveTab("settings"),
-  },
-  {
-    title: "Home",
-    keywords: ["home", "main"],
-    action: () => vm.setActiveTab("home"),
-  },
-  {
-  title: "AI Chat",
-  keywords: ["chat", "assistant", "gemini"],
-  action: () => vm.setActiveTab("chat"),
-},
-  {
-    title: "AI Writer",
-    keywords: ["writer", "write", "text"],
-    action: () => vm.showToast("JS AI Writer - Coming Soon"),
-  },
-  
-  {
-    title: "AI Video",
-    keywords: ["video", "movie"],
-    action: () => vm.showToast("JS AI Video - Coming Soon"),
-  },
-  
-{
-  title: "JS AI App Builder",
-  keywords: ["app", "app making", "android", "apk", "application"],
-  action: () => vm.showToast("JS AI App Builder - Coming Soon"),
-},
-{
-  title: "JS AI Song Maker",
-  keywords: ["song", "music", "audio", "lyrics"],
-  action: () => vm.showToast("JS AI Song Maker - Coming Soon"),
-},
-{
-  title: "JS AI Image Generator",
-  keywords: ["image", "photo", "art", "generate"],
-  action: () => vm.showToast("JS AI Image Generator - Coming Soon"),
-},
-{
-  title: "JS AI Video Generator",
-  keywords: ["video", "movie", "clip"],
-  action: () => vm.showToast("JS AI Video Generator - Coming Soon"),
-},
-{
-  title: "JS AI Code",
-  keywords: ["code", "coding", "programming", "developer"],
-  action: () => vm.showToast("JS AI Code - Coming Soon"),
-},
-{
-  title: "JS AI Translator",
-  keywords: ["translator", "translate", "language"],
-  action: () => vm.showToast("JS AI Translator - Coming Soon"),
-},
-];
+  const filteredItems = useMemo(() => {
+    if (!search.trim()) return [];
 
-const filteredItems = useMemo(() => {
-  if (!search.trim()) return [];
+    const q = search.toLowerCase();
 
-  const q = search.toLowerCase();
-
-  return searchItems.filter(
-    (item) =>
-      item.title.toLowerCase().includes(q) ||
-      item.keywords.some((k) => k.includes(q))
-  );
-}, [search]);
+    return searchItems.filter(
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.keywords.some((k) => k.includes(q))
+    );
+  }, [search]);
 
   return (
-    <header className="sticky top-0 z-30 bg-gradient-to-r from-[#13051F] via-[#1B0830] to-[#2A0A45] backdrop-blur-xl border-b border-violet-700/40 text-white px-4 py-3 shadow-lg shadow-violet-950/40">
-      <div className="flex items-center justify-between gap-2 max-w-6xl mx-auto">
-
-        {/* Left Side */}
+    <>
+      <header
+        className="
+        sticky
+        top-0
+        z-30
+        bg-gradient-to-r
+        from-[#13051F]
+        via-[#1B0830]
+        to-[#2A0A45]
+        backdrop-blur-xl
+        border-b
+        border-violet-700/40
+        px-4
+        py-3
+        shadow-xl
+        "
+      >
         <div className="flex items-center gap-3">
 
-          {/* Hamburger Menu */}
           <button
             onClick={vm.toggleSideMenu}
-            className="p-2 rounded-xl hover:bg-violet-500/10 transition"
+            className="
+            p-2
+            rounded-xl
+            hover:bg-white/10
+            transition
+            "
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <Menu className="w-6 h-6 text-white" />
           </button>
 
-          <JSLogo size="sm" showText={false} />
+          <JSLogo
+            size="sm"
+            showText={false}
+          />
 
           <div>
+
             <h1 className="text-sm font-black text-white">
               {getTitle()}
             </h1>
 
-            <span className="text-[10px] text-violet-300 hidden sm:block">
+            <p className="text-[10px] text-violet-300">
               Powered by JS AI
-            </span>
+            </p>
+
           </div>
 
+          <div className="flex-1" />
+
+          <div className="relative w-full max-w-sm hidden md:block">
+
+            <Search
+              className="
+              absolute
+              left-3
+              top-1/2
+              -translate-y-1/2
+              w-4
+              h-4
+              text-zinc-500
+              "
+            />
+
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search AI..."
+              className="
+              w-full
+              rounded-xl
+              border
+              border-violet-500/30
+              bg-zinc-950/80
+              pl-10
+              pr-4
+              py-2
+              text-sm
+              text-white
+              outline-none
+              "
+            />
+
+            {filteredItems.length > 0 && (
+              <div
+                className="
+                absolute
+                top-12
+                left-0
+                w-full
+                rounded-xl
+                overflow-hidden
+                bg-zinc-950
+                border
+                border-violet-500/30
+                shadow-2xl
+                z-50
+                "
+              >
+                {filteredItems.map((item) => (
+                  <button
+                    key={item.title}
+                    onClick={() => {
+                      item.action();
+                      setSearch("");
+                    }}
+                    className="
+                    block
+                    w-full
+                    text-left
+                    px-4
+                    py-3
+                    hover:bg-violet-500/20
+                    text-white
+                    "
+                  >
+                    {item.title}
+                  </button>
+                ))}
+              </div>
+            )}
+
+          </div>
         </div>
- {/* ================= SEARCH BOX ================= */}
-
-<div className="relative flex flex-1 justify-end">
-
-  <div className="relative w-full max-w-sm">
-
-    {/* Animated Border */}
-    <div className="absolute -inset-[2px] rounded-xl overflow-hidden">
-      <div className="ai-search-border"></div>
-    </div>
-
-
-    {/* Input */}
-    <input
-      type="text"
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      placeholder="Search AI tools..."
-      className="
-      relative
-      z-10
-      w-full
-      rounded-xl
-      bg-zinc-950/90
-      px-4
-      py-2
-      text-sm
-      text-white
-      placeholder:text-zinc-500
-      outline-none
-      "
-    />
-
-
-    {/* Search Result */}
-
-    {filteredItems.length > 0 && (
-      <div
-        className="
-        absolute
-        right-0
-        top-14
-        z-50
-        w-full
-        overflow-hidden
-        rounded-xl
-        border
-        border-violet-500/30
-        bg-zinc-950
-        shadow-2xl
-        "
-      >
-
-        {filteredItems.map((item) => (
-          <button
-            key={item.title}
-            onClick={() => {
-              item.action();
-              setSearch("");
-            }}
+      </header>
+            {vm.sideMenuOpen && (
+        <>
+          {/* Background Overlay */}
+          <div
+            onClick={vm.toggleSideMenu}
             className="
-            block
-            w-full
-            border-b
-            border-zinc-800
-            px-4
-            py-3
-            text-left
-            text-sm
-            text-white
-            hover:bg-violet-600/20
-            transition
-            last:border-none
+            fixed
+            inset-0
+            bg-black/50
+            backdrop-blur-sm
+            z-40
+            "
+          />
+
+          {/* ChatGPT Style Sidebar */}
+          <aside
+            className="
+            fixed
+            top-0
+            left-0
+            h-full
+            w-72
+            bg-[#0f0f12]
+            border-r
+            border-violet-500/20
+            shadow-2xl
+            z-50
+            flex
+            flex-col
             "
           >
-            {item.title}
-          </button>
-        ))}
+            {/* Header */}
+            <div
+              className="
+              flex
+              items-center
+              justify-between
+              px-5
+              py-5
+              border-b
+              border-violet-500/20
+              "
+            >
+              <div className="flex items-center gap-3">
+                <JSLogo size="sm" showText={false} />
 
-      </div>
-    )}
-{/* ================= SIDE MENU ================= */}
+                <div>
+                  <h2 className="font-bold text-white">
+                    JS AI Hub
+                  </h2>
 
-{vm.sideMenuOpen && (
-  <>
+                  <p className="text-xs text-violet-300">
+                    Premium Workspace
+                  </p>
+                </div>
+              </div>
 
-    {/* Background Overlay */}
-    <div
-      onClick={vm.toggleSideMenu}
-      className="
-      fixed
-      inset-0
-      bg-black/40
-      backdrop-blur-sm
-      z-[998]
-      "
-    />
+              <button
+                onClick={vm.toggleSideMenu}
+                className="
+                p-2
+                rounded-lg
+                hover:bg-white/10
+                transition
+                "
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
 
-    {/* Side Menu */}
-    <div
-      className="
-      fixed
-      top-0
-      left-0
-      h-full
-      w-72
-      z-[999]
-      bg-zinc-950/95
-      backdrop-blur-2xl
-      border-r
-      border-violet-500/20
-      shadow-2xl
-      "
-    >
+            {/* Menu */}
+            <div className="flex-1 py-3">
 
-    <button
-      onClick={() => {
-        vm.setActiveTab("home");
-        vm.toggleSideMenu();
-      }}
-      className="w-full px-5 py-4 text-left hover:bg-violet-500/20 transition text-white"
-    >
-      🏠 Home
-    </button>
+              <button
+                onClick={() => {
+                  vm.setActiveTab("home");
+                  vm.toggleSideMenu();
+                }}
+                className="
+                w-full
+                px-6
+                py-4
+                text-left
+                text-white
+                hover:bg-violet-500/20
+                transition
+                "
+              >
+                🏠 Home
+              </button>
 
-    <button
-      onClick={() => {
-        vm.openRecentProjectsModal();
-        vm.toggleSideMenu();
-      }}
-      className="w-full px-5 py-4 text-left hover:bg-violet-500/20 transition text-white"
-    >
-      📜 History
-    </button>
+              <button
+                onClick={() => {
+                  vm.setActiveTab("chat");
+                  vm.toggleSideMenu();
+                }}
+                className="
+                w-full
+                px-6
+                py-4
+                text-left
+                text-white
+                hover:bg-violet-500/20
+                transition
+                "
+              >
+                🤖 AI Chat
+              </button>
 
-<button
-  onClick={() => {
-    vm.setActiveTab("settings");
-    vm.toggleSideMenu();
-  }}
-  className="
-  w-full
-  px-5
-  py-4
-  text-left
-  hover:bg-violet-500/20
-  transition
-  text-white
-  "
->
-  ⚙️ Settings
-</button>
+              <button
+                onClick={() => {
+                  vm.setActiveTab("studio");
+                  vm.toggleSideMenu();
+                }}
+                className="
+                w-full
+                px-6
+                py-4
+                text-left
+                text-white
+                hover:bg-violet-500/20
+                transition
+                "
+              >
+                🖼 Image Studio
+              </button>
 
-</div>   {/* Side Menu */}
+              <button
+                onClick={() => {
+                  vm.openRecentProjectsModal();
+                  vm.toggleSideMenu();
+                }}
+                className="
+                w-full
+                px-6
+                py-4
+                text-left
+                text-white
+                hover:bg-violet-500/20
+                transition
+                "
+              >
+                📜 History
+              </button>
 
-</>
+              <button
+                onClick={() => {
+                  vm.setActiveTab("settings");
+                  vm.toggleSideMenu();
+                }}
+                className="
+                w-full
+                px-6
+                py-4
+                text-left
+                text-white
+                hover:bg-violet-500/20
+                transition
+                "
+              >
+                ⚙️ Settings
+              </button>
 
-)}
+            </div>
 
-</header>
+            {/* Bottom */}
+            <div
+              className="
+              border-t
+              border-violet-500/20
+              p-5
+              "
+            >
+              <div className="text-xs text-zinc-400">
+                JS AI Assistant v1.0
+              </div>
 
-);
+              <div className="text-[11px] text-violet-300 mt-1">
+                Powered by JS AI Hub
+              </div>
+            </div>
+
+          </aside>
+        </>
+      )}
+    </>
+  );
 };
