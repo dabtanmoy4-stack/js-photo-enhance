@@ -306,11 +306,11 @@ const filteredItems = useMemo(() => {
   ⚙️ Settings
 </button>
 
-    </div>   {/* Side Menu */}
+</div>   {/* Side Menu */}
 
-  </>        {/* Fragment close */}
+</>
 
-)}          {/* vm.sideMenuOpen close */}
+)}
 
 </header>
 
