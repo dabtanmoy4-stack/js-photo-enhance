@@ -200,56 +200,137 @@
   background:#09090b;
 
 }
-.aurora{
-position:absolute;
-width:550px;
-height:550px;
-border-radius:9999px;
-filter:blur(130px);
-opacity:.35;
-animation:auroraMove 18s ease-in-out infinite alternate;
+/* =======================================================
+   JS AI Assistant - Animated Indian Aurora Background
+======================================================= */
+
+.aurora {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  border-radius: 9999px;
+  filter: blur(140px);
+  opacity: 0.38;
+  animation: auroraFloat 22s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
-.aurora-orange{
-background:#ff7b00;
-top:-120px;
-left:-120px;
+.aurora-orange {
+  background: #ff7a00;
+  top: -180px;
+  left: -180px;
 }
 
-.aurora-green{
-background:#00d26a;
-bottom:-150px;
-right:-100px;
-animation-duration:22s;
+.aurora-green {
+  background: #00c853;
+  bottom: -180px;
+  right: -160px;
+  animation-duration: 26s;
 }
 
-.aurora-blue{
-background:#2563eb;
-top:35%;
-left:45%;
-animation-duration:28s;
+.aurora-blue {
+  background: #2563eb;
+  top: 30%;
+  left: 45%;
+  animation-duration: 30s;
 }
 
-@keyframes auroraMove{
+/* Extra Glow */
 
-0%{
-transform:translate(0,0) scale(1);
+.aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  filter: blur(80px);
+  opacity: .65;
+  background: inherit;
 }
 
-25%{
-transform:translate(120px,-80px) scale(1.15);
+/* Animation */
+
+@keyframes auroraFloat {
+
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  20% {
+    transform: translate(120px, -90px) scale(1.18);
+  }
+
+  40% {
+    transform: translate(-110px, 80px) scale(.95);
+  }
+
+  60% {
+    transform: translate(160px, 100px) scale(1.10);
+  }
+
+  80% {
+    transform: translate(-80px, -130px) scale(1.22);
+  }
+
+  100% {
+    transform: translate(40px, -60px) scale(1);
+  }
+
 }
 
-50%{
-transform:translate(-100px,90px) scale(.95);
+/* =======================================================
+   Animated Background Overlay
+======================================================= */
+
+.ai-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
 }
 
-75%{
-transform:translate(90px,120px) scale(1.1);
+/* =======================================================
+   Premium Glass Effect
+======================================================= */
+
+.ai-glass {
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,.18);
 }
 
-100%{
-transform:translate(-80px,-60px) scale(1);
+/* =======================================================
+   Smooth Scrolling
+======================================================= */
+
+html {
+  scroll-behavior: smooth;
 }
 
+/* =======================================================
+   Beautiful Scrollbar
+======================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,.08);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #ff7a00,
+    #ffffff,
+    #00c853,
+    #2563eb
+  );
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  opacity: .8;
 }
