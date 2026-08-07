@@ -234,7 +234,58 @@ const filteredItems = useMemo(() => {
 
       </div>
     )}
+{/* ================= SIDE MENU ================= */}
 
+{vm.sideMenuOpen && (
+  <div
+    className="
+    absolute
+    top-16
+    left-0
+    z-50
+    w-64
+    rounded-2xl
+    border
+    border-violet-500/30
+    bg-zinc-950/95
+    backdrop-blur-xl
+    shadow-2xl
+    overflow-hidden
+    "
+  >
+
+    <button
+      onClick={() => {
+        vm.setActiveTab("home");
+        vm.toggleSideMenu();
+      }}
+      className="w-full px-5 py-4 text-left hover:bg-violet-500/20 transition text-white"
+    >
+      🏠 Home
+    </button>
+
+    <button
+      onClick={() => {
+        vm.openRecentProjectsModal();
+        vm.toggleSideMenu();
+      }}
+      className="w-full px-5 py-4 text-left hover:bg-violet-500/20 transition text-white"
+    >
+      📜 History
+    </button>
+
+    <button
+      onClick={() => {
+        vm.setActiveTab("settings");
+        vm.toggleSideMenu();
+      }}
+      className="w-full px-5 py-4 text-left hover:bg-violet-500/20 transition text-white"
+    >
+      ⚙️ Settings
+    </button>
+
+  </div>
+)}
   </div>
 
 </div>
