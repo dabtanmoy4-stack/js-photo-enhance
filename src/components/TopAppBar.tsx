@@ -52,10 +52,10 @@ const searchItems = [
     action: () => vm.setActiveTab("home"),
   },
   {
-    title: "AI Chat",
-    keywords: ["chat", "assistant", "gemini"],
-    action: () => vm.showToast("AI Chat - Coming Soon"),
-  },
+  title: "AI Chat",
+  keywords: ["chat", "assistant", "gemini"],
+  action: () => vm.setActiveTab("chat"),
+},
   {
     title: "AI Writer",
     keywords: ["writer", "write", "text"],
