@@ -200,3 +200,56 @@
   background:#09090b;
 
 }
+.aurora{
+position:absolute;
+width:550px;
+height:550px;
+border-radius:9999px;
+filter:blur(130px);
+opacity:.35;
+animation:auroraMove 18s ease-in-out infinite alternate;
+}
+
+.aurora-orange{
+background:#ff7b00;
+top:-120px;
+left:-120px;
+}
+
+.aurora-green{
+background:#00d26a;
+bottom:-150px;
+right:-100px;
+animation-duration:22s;
+}
+
+.aurora-blue{
+background:#2563eb;
+top:35%;
+left:45%;
+animation-duration:28s;
+}
+
+@keyframes auroraMove{
+
+0%{
+transform:translate(0,0) scale(1);
+}
+
+25%{
+transform:translate(120px,-80px) scale(1.15);
+}
+
+50%{
+transform:translate(-100px,90px) scale(.95);
+}
+
+75%{
+transform:translate(90px,120px) scale(1.1);
+}
+
+100%{
+transform:translate(-80px,-60px) scale(1);
+}
+
+}

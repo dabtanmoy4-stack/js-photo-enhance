@@ -43,21 +43,37 @@ export default function AIChat() {
 
     setMessage("");
   };
+return (
+  <div
+    className="
+    relative
+    h-screen
+    overflow-hidden
+    flex
+    flex-col
+    bg-gradient-to-br
+    from-orange-200
+    via-white
+    to-green-200
+    text-gray-900
+    "
+  >
 
-  return (
-    <div
-      className="
-      h-screen
-      overflow-hidden
-      flex
-      flex-col
-      bg-gradient-to-br
-      from-orange-200
-      via-white
-      to-green-200
-      text-gray-900
-      "
-    >
+    {/* ================= ANIMATED AURORA ================= */}
+
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+
+      <div className="aurora aurora-orange"></div>
+
+      <div className="aurora aurora-green"></div>
+
+      <div className="aurora aurora-blue"></div>
+
+    </div>
+
+    {/* ================= CONTENT ================= */}
+
+    <div className="relative z-10 flex flex-col h-full">
 
       {/* ================= HEADER ================= */}
 
@@ -317,6 +333,8 @@ export default function AIChat() {
 
       </div>
 
-    </div>
+      </div>
+
+</div>
   );
 }
