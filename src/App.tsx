@@ -130,6 +130,22 @@ export default function App() {
           {/* Main Tab View Canvas */}
           <main className="flex-1 flex flex-col">
             <AnimatePresence mode="wait">
+
+
+              {vm.activeTab === 'home' && (
+  <motion.div
+    key="home"
+    initial={{ opacity: 0, x: -10 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: 10 }}
+    transition={{ duration: 0.2 }}
+    className="flex-1 flex flex-col"
+  >
+    <HomeScreen vm={vm} />
+  </motion.div>
+)}
+
+
              {vm.activeTab === 'chat' && (
   <motion.div
     key="chat"
