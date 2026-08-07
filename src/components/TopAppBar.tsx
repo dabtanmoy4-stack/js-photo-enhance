@@ -237,22 +237,36 @@ const filteredItems = useMemo(() => {
 {/* ================= SIDE MENU ================= */}
 
 {vm.sideMenuOpen && (
-  <div
-    className="
-    absolute
-    top-16
-    left-0
-    z-50
-    w-64
-    rounded-2xl
-    border
-    border-violet-500/30
-    bg-zinc-950/95
-    backdrop-blur-xl
-    shadow-2xl
-    overflow-hidden
-    "
-  >
+  <>
+
+    {/* Background Overlay */}
+    <div
+      onClick={vm.toggleSideMenu}
+      className="
+      fixed
+      inset-0
+      bg-black/40
+      backdrop-blur-sm
+      z-[998]
+      "
+    />
+
+    {/* Side Menu */}
+    <div
+      className="
+      fixed
+      top-0
+      left-0
+      h-full
+      w-72
+      z-[999]
+      bg-zinc-950/95
+      backdrop-blur-2xl
+      border-r
+      border-violet-500/20
+      shadow-2xl
+      "
+    >
 
     <button
       onClick={() => {
@@ -274,23 +288,21 @@ const filteredItems = useMemo(() => {
       📜 History
     </button>
 
-    <button
-      onClick={() => {
-        vm.setActiveTab("settings");
-        vm.toggleSideMenu();
-      }}
-      className="w-full px-5 py-4 text-left hover:bg-violet-500/20 transition text-white"
-    >
-      ⚙️ Settings
-    </button>
+   <button
+  onClick={() => {
+    vm.setActiveTab("settings");
+    vm.toggleSideMenu();
+  }}
+>
+  ⚙️ Settings
+</button>
 
-  </div>
+    </div>   {/* Side Menu */}
+  </>         {/* <-- Eta add korte hobe */}
 )}
-  </div>
 
 </div>
+</header>
 
-      </div>
-    </header>
-  );
+);
 };
