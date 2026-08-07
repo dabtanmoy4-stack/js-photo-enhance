@@ -262,11 +262,11 @@ onClose={vm.closeRecentProjectsModal}
 {/* TOP BAR */}
 
 
-<TopAppBar
-
-vm={vm}
-
-/>
+{vm.activeTab !== "chat" && (
+  <TopAppBar
+    vm={vm}
+  />
+)}
 
 
 
@@ -547,11 +547,12 @@ flex-col
 {/* ================= BOTTOM NAVIGATION ================= */}
 
 
-<BottomNavigation
+{vm.activeTab !== "chat" && (
+  <BottomNavigation
+    vm={vm}
+  />
+)}
 
-vm={vm}
-
-/>
 
 
 </AndroidFrame>
