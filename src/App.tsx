@@ -6,6 +6,7 @@
 import React from "react";
 
 import { AnimatePresence, motion } from "motion/react";
+import { Sparkles } from "lucide-react";
 
 import { useAppViewModel } from "./viewmodel/useAppViewModel";
 
@@ -19,7 +20,6 @@ import { StudioScreen } from "./components/StudioScreen";
 import { GalleryScreen } from "./components/GalleryScreen";
 import { SettingsScreen } from "./components/SettingsScreen";
 import AIChat from "./pages/AIChat";
-
 
 import { AILoadingOverlay } from "./components/AILoadingOverlay";
 import { AIEnhanceModal } from "./components/AIEnhanceModal";
