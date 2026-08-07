@@ -46,16 +46,16 @@ export default function AIChat() {
 return (
   <div
     className="
-    relative
-    h-screen
-    overflow-hidden
-    flex
-    flex-col
-    bg-gradient-to-br
-    from-orange-200
-    via-white
-    to-green-200
-    text-gray-900
+      relative
+      h-dvh
+      overflow-hidden
+      flex
+      flex-col
+      bg-gradient-to-br
+      from-orange-200
+      via-white
+      to-green-200
+      text-gray-900
     "
   >
 
@@ -255,15 +255,19 @@ return (
             {/* ================= FIXED INPUT AREA ================= */}
 
       <div
-        className="
-        shrink-0
-        bg-white/80
-        backdrop-blur-xl
-        border-t
-        border-green-200
-        px-4
-        py-4
-        "
+       className="
+sticky
+bottom-0
+z-50
+shrink-0
+bg-white/80
+backdrop-blur-xl
+border-t
+border-green-200
+px-4
+py-4
+pb-[max(env(safe-area-inset-bottom),16px)]
+"
       >
 
         <div
