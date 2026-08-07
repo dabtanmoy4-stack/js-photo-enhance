@@ -380,7 +380,9 @@ flex-col
 
 >
 
-<AIChat />
+<AIChat
+  onBack={() => vm.setActiveTab("home")}
+/>
 
 </motion.div>
 

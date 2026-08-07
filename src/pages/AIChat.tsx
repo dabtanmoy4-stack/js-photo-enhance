@@ -6,12 +6,18 @@ import {
   User,
 } from "lucide-react";
 
+
+interface AIChatProps {
+  onBack?: () => void;
+}
+
+
 interface Message {
   role: "user" | "ai";
   text: string;
 }
 
-export default function AIChat() {
+export default function AIChat({ onBack }: AIChatProps) {
   const [message, setMessage] = useState("");
 
   const [messages, setMessages] = useState<Message[]>([
@@ -94,17 +100,18 @@ return (
       >
 
         <button
-          className="
-          w-10
-          h-10
-          rounded-full
-          hover:bg-blue-100
-          transition
-          flex
-          items-center
-          justify-center
-          "
-        >
+  onClick={onBack}
+  className="
+  w-10
+  h-10
+  rounded-full
+  hover:bg-blue-100
+  transition
+  flex
+  items-center
+  justify-center
+  "
+>
           <ArrowLeft
             size={22}
             className="text-blue-700"
