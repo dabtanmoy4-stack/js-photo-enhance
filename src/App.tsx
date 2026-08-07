@@ -18,7 +18,7 @@ import { HomeScreen } from "./components/HomeScreen";
 import { StudioScreen } from "./components/StudioScreen";
 import { GalleryScreen } from "./components/GalleryScreen";
 import { SettingsScreen } from "./components/SettingsScreen";
-import AIChat from "./components/AIChat";
+import AIChat from "./pages/AIChat";
 
 
 import { AILoadingOverlay } from "./components/AILoadingOverlay";
