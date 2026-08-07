@@ -1,7 +1,14 @@
-import React from "react";
-import { motion } from "motion/react";
-import { AppViewModel } from "../viewmodel/useAppViewModel";
-import { JSLogo } from "./JSLogo";
+import {
+Upload,
+Bot,
+Zap,
+Sparkles,
+Video,
+Music4,
+Code2,
+Smartphone,
+Languages,
+} from "lucide-react";
 
 import {
   Upload,
