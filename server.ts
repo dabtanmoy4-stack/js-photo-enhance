@@ -2,11 +2,11 @@ import "dotenv/config";
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
 
 
-const gemini = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 async function startServer() {
@@ -113,75 +113,82 @@ async function startServer() {
     });
   });
 
-  // ================= AI CHAT =================
+ // ================= AI CHAT =================
 
-  app.post("/api/chat", async (req, res) => {
-    try {
-      const { message, history = [] } = req.body;
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message, history = [] } = req.body;
 
-      if (!message || typeof message !== "string") {
-        return res.status(400).json({
-          error: "Message is required.",
-        });
-      }
+    if (!message || typeof message !== "string") {
+      return res.status(400).json({
+        error: "Message is required.",
+      });
+    }
 
-      const contents = [
-  {
-    role: "user",
-    parts: [
+    const messages = [
       {
-        text: `
+        role: "system" as const,
+        content: `
 You are JS AI Assistant, the official AI assistant of JS AI Hub.
 
 Your name is JS AI Assistant.
-Never identify yourself as Gemini, Google Gemini, or another AI model.
-If the user asks your name, say that your name is JS AI Assistant.
 
-You are friendly, helpful, intelligent, and can communicate naturally in English and Bengali.
+Never identify yourself as Gemini, Google Gemini, Groq, Llama, or another AI model.
+
+If the user asks your name, say:
+"My name is JS AI Assistant."
+
+You are friendly, helpful, intelligent, and conversational.
+
+You can communicate naturally in English and Bengali.
+
 If the user speaks Bengali, respond in Bengali.
 If the user speaks English, respond in English.
 
+Keep responses natural and useful.
+
 Now answer the user's message naturally.
-`,
+        `.trim(),
       },
-    ],
-  },
 
-  ...history.map(
-    (item: { role: string; text: string }) => ({
-      role: item.role === "ai" ? "model" : "user",
-      parts: [{ text: item.text }],
-    })
-  ),
+      ...history.map(
+        (item: { role: string; text: string }) => ({
+          role: item.role === "ai" ? "assistant" as const : "user" as const,
+          content: item.text,
+        })
+      ),
 
-  {
-    role: "user",
-    parts: [{ text: message }],
-  },
-];
+      {
+        role: "user" as const,
+        content: message,
+      },
+    ];
 
-    const response = await gemini.models.generateContent({
-  model: "gemini-3.6-flash",
-  contents,
+    const response = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
+      messages,
+      temperature: 0.7,
+      max_completion_tokens: 2048,
+    });
+
+    const reply =
+      response.choices?.[0]?.message?.content ||
+      "Sorry, I could not generate a response.";
+
+    return res.json({
+      reply,
+    });
+
+  } catch (error: any) {
+    console.error("[Groq Chat Error]:", error);
+
+    return res.status(500).json({
+      error:
+        error?.message ||
+        "Failed to generate AI response.",
+    });
+  }
 });
-
-      const reply =
-        response.text ||
-        "Sorry, I could not generate a response.";
-
-      return res.json({
-        reply,
-      });
-    } catch (error: any) {
-      console.error("[AI Chat Error]:", error);
-
-      return res.status(500).json({
-        error:
-          error?.message ||
-          "Failed to generate AI response.",
-      });
-    }
-  });
 
   // ================= AI ENHANCEMENT =================
 

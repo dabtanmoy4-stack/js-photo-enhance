@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
+
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 export default async function handler(
   req: VercelRequest,
@@ -15,17 +19,17 @@ export default async function handler(
 
   try {
     // Check API key
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
 
     if (!apiKey) {
       return res.status(500).json({
         success: false,
-        error: "GEMINI_API_KEY is not configured.",
+        error: "GROQ_API_KEY is not configured.",
       });
     }
 
     // Read request body
-    const { message, history } = req.body || {};
+    const { message, history = [] } = req.body || {};
 
     if (!message || typeof message !== "string") {
       return res.status(400).json({
@@ -34,56 +38,87 @@ export default async function handler(
       });
     }
 
-    // Create Gemini client
-    const ai = new GoogleGenAI({
-      apiKey,
+    // Build conversation messages
+    const messages = [
+      {
+        role: "system" as const,
+        content: `
+You are JS AI Assistant, the official AI assistant of JS AI Hub.
+
+Your name is JS AI Assistant.
+
+Never identify yourself as Gemini, Google Gemini, Groq, Llama,
+GPT, or any other AI model.
+
+If the user asks your name, say:
+"My name is JS AI Assistant."
+
+You are friendly, helpful, intelligent, and conversational.
+
+You can communicate naturally in English and Bengali.
+
+If the user speaks Bengali, respond in Bengali.
+If the user speaks English, respond in English.
+
+Give clear, useful and natural answers.
+
+Now answer the user's message naturally.
+        `.trim(),
+      },
+
+      // Previous conversation
+      ...(Array.isArray(history)
+        ? history
+            .filter((item: any) => item)
+            .map((item: any) => {
+              const role =
+                item.role === "assistant" ||
+                item.role === "ai" ||
+                item.role === "model"
+                  ? "assistant"
+                  : "user";
+
+              const text =
+                typeof item.content === "string"
+                  ? item.content
+                  : typeof item.text === "string"
+                  ? item.text
+                  : "";
+
+              return {
+                role: role as "user" | "assistant",
+                content: text,
+              };
+            })
+            .filter((item: any) => item.content),
+        : []),
+
+      // Current message
+      {
+        role: "user" as const,
+        content: message,
+      },
+    ];
+
+    // ================= GROQ REQUEST =================
+
+    const response = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
+      messages,
+      temperature: 0.7,
+      max_completion_tokens: 2048,
     });
 
-    // Build conversation context
-    let prompt = "";
-
-    if (Array.isArray(history) && history.length > 0) {
-      prompt += `Previous conversation:\n\n`;
-
-      for (const item of history) {
-        if (!item) continue;
-
-        const role =
-          item.role === "assistant" || item.role === "model"
-            ? "Assistant"
-            : "User";
-
-        const text =
-          typeof item.content === "string"
-            ? item.content
-            : typeof item.text === "string"
-            ? item.text
-            : "";
-
-        if (text) {
-          prompt += `${role}: ${text}\n`;
-        }
-      }
-
-      prompt += `\n`;
-    }
-
-    prompt += `User: ${message}\n\nAssistant:`;
-
-    // Gemini request
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-    });
-
-    const reply = response.text || "Sorry, I couldn't generate a response.";
+    const reply =
+      response.choices?.[0]?.message?.content ||
+      "Sorry, I couldn't generate a response.";
 
     return res.status(200).json({
       success: true,
       reply,
     });
   } catch (error) {
-    console.error("AI Chat Error:", error);
+    console.error("Groq AI Chat Error:", error);
 
     return res.status(500).json({
       success: false,
