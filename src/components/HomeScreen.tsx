@@ -215,66 +215,6 @@ AI Chat
 
 
 
-{/* IMPORT BUTTON */}
-
-
-<label
-
-className="
-cursor-pointer
-rounded-xl
-border
-border-zinc-700
-bg-zinc-900
-px-4
-py-3
-text-sm
-font-bold
-text-white
-hover:bg-zinc-800
-"
-
->
-
-
-<span
-className="
-flex
-items-center
-justify-center
-gap-2
-"
->
-
-<Upload className="h-4 w-4 text-violet-400"/>
-
-Import Photo
-
-</span>
-
-
-<input
-
-type="file"
-
-accept="image/*"
-
-className="hidden"
-
-onChange={(e)=>{
-
-if(e.target.files?.[0]){
-
-vm.uploadPhoto(e.target.files[0]);
-
-}
-
-}}
-
-/>
-
-
-</label>
 
 
 </div>
