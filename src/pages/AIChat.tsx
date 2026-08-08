@@ -1,442 +1,1185 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  Send,
   ArrowLeft,
   Bot,
   User,
+  Send,
+  MoreVertical,
+  MessageSquarePlus,
+  History,
+  Settings,
+  UserCircle,
+  LogOut,
+  UserPlus,
+  Moon,
+  Sun,
+  X,
+  ChevronRight,
+  Check,
+  ShieldCheck,
 } from "lucide-react";
-
 
 interface AIChatProps {
   onBack?: () => void;
 }
-
 
 interface Message {
   role: "user" | "ai";
   text: string;
 }
 
-export default function AIChat({ onBack }: AIChatProps) {
-const [isTyping, setIsTyping] = useState(false);
+interface UserAccount {
+  name: string;
+  email: string;
+  photo?: string;
+}
 
-  const [messages, setMessages] = useState<Message[]>([
+interface RecentChat {
+  id: number;
+  title: string;
+  preview: string;
+}
+
+export default function AIChat({ onBack }: AIChatProps) {
+  /* =========================================================
+     USER / AUTH
+  ========================================================= */
+
+  const [user, setUser] = useState<UserAccount | null>(null);
+
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
+  /* =========================================================
+     CHAT
+  ========================================================= */
+
+  const [message, setMessage] = useState("");
+
+  const [isTyping, setIsTyping] = useState(false);
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  /* =========================================================
+     UI
+  ========================================================= */
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const [accountOpen, setAccountOpen] = useState(false);
+
+  const [recentOpen, setRecentOpen] = useState(false);
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  /* =========================================================
+     RECENT CHATS
+  ========================================================= */
+
+  const [recentChats, setRecentChats] = useState<RecentChat[]>([
     {
-      role: "ai",
-      text:
-        "Namaste Tanmoy 👋 I am JS AI Assistant. How can I help you today?",
+      id: 1,
+      title: "Welcome Chat",
+      preview: "Namaste! Welcome to JS AI Assistant.",
     },
   ]);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  /* =========================================================
+     AUTO SCROLL
+  ========================================================= */
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth",
     });
-  }, [messages]);
+  }, [messages, isTyping]);
 
- const sendMessage = async () => {
-  if (!message.trim()) return;
+  /* =========================================================
+     LOAD SAVED ACCOUNT
+  ========================================================= */
 
-  const userMessage = message.trim();
+  useEffect(() => {
+    try {
+      const savedUser = localStorage.getItem("js-ai-user");
 
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "user",
-      text: userMessage,
-    },
-  ]);
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
 
-  setMessage("");
+        setUser(parsedUser);
 
-setIsTyping(true);
+        setMessages([
+          {
+            role: "ai",
+            text: `Namaste ${parsedUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error("Failed to load user:", error);
+    }
+  }, []);
 
-  try {
-    const response = await fetch("/api/ai-chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+  /* =========================================================
+     GOOGLE SIGN IN
+     
+     IMPORTANT:
+     Replace this function with your real Google OAuth /
+     Firebase Google authentication.
+  ========================================================= */
+
+  const handleGoogleSignIn = async () => {
+    setIsSigningIn(true);
+
+    try {
+      /*
+        ------------------------------------------------------
+        CONNECT YOUR REAL GOOGLE AUTH HERE
+        ------------------------------------------------------
+
+        Example expected result:
+
+        {
+          name: "Rahul",
+          email: "rahul@gmail.com",
+          photo: "https://..."
+        }
+
+        ------------------------------------------------------
+      */
+
+      // TEMPORARY DEMO USER
+      // Remove this when real Google authentication is added.
+
+      await new Promise((resolve) => setTimeout(resolve, 900));
+
+      const demoUser: UserAccount = {
+        name: "User",
+        email: "user@gmail.com",
+      };
+
+      setUser(demoUser);
+
+      localStorage.setItem(
+        "js-ai-user",
+        JSON.stringify(demoUser)
+      );
+
+      setMessages([
+        {
+          role: "ai",
+          text: `Namaste ${demoUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+        },
+      ]);
+    } catch (error) {
+      console.error("Google sign in failed:", error);
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
+
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
+
+  const handleLogout = () => {
+    localStorage.removeItem("js-ai-user");
+
+    setUser(null);
+    setMenuOpen(false);
+    setSettingsOpen(false);
+    setAccountOpen(false);
+    setMessages([]);
+  };
+
+  /* =========================================================
+     NEW CHAT
+  ========================================================= */
+
+  const createNewChat = () => {
+    setMessages([
+      {
+        role: "ai",
+        text: `Namaste ${user?.name || "there"} 👋 What would you like to talk about?`,
       },
-      body: JSON.stringify({
-        message: userMessage,
-        history: messages,
-      }),
-    });
+    ]);
 
-   const data = await response.json();
+    setMessage("");
+    setIsTyping(false);
+    setMenuOpen(false);
+  };
 
-if (!response.ok) {
-  throw new Error(data.error || "Failed to get AI response");
-}
+  /* =========================================================
+     SEND MESSAGE
+  ========================================================= */
 
-setIsTyping(false);
+  const sendMessage = async () => {
+    if (!message.trim() || isTyping) return;
 
-setMessages((prev) => [
-  ...prev,
-  {
-    role: "ai",
-    text: data.reply,
-  },
-]);
+    const userMessage = message.trim();
 
- } catch (error) {
-  console.error("Chat error:", error);
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "user",
+        text: userMessage,
+      },
+    ]);
 
-  setIsTyping(false);
+    setMessage("");
 
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "ai",
-      text: "Sorry, something went wrong. Please try again.",
-    },
-  ]);
-}
-};
-return (
-  <div
-    className="
-      relative
-      h-dvh
-      overflow-hidden
-      flex
-      flex-col
-      bg-gradient-to-br
-      from-orange-200
-      via-white
-      to-green-200
-      text-gray-900
-    "
-  >
+    setIsTyping(true);
 
-    {/* ================= ANIMATED AURORA ================= */}
+    try {
+      const response = await fetch("/api/ai-chat", {
+        method: "POST",
 
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-      <div className="aurora aurora-orange"></div>
+        body: JSON.stringify({
+          message: userMessage,
 
-      <div className="aurora aurora-green"></div>
+          history: messages,
 
-      <div className="aurora aurora-blue"></div>
+          user: {
+            name: user?.name,
+            email: user?.email,
+          },
+        }),
+      });
 
-    </div>
+      const data = await response.json();
 
-    {/* ================= CONTENT ================= */}
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Failed to get AI response"
+        );
+      }
 
-    <div className="relative z-10 flex flex-col h-full">
+      setIsTyping(false);
 
-      {/* ================= HEADER ================= */}
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          text: data.reply,
+        },
+      ]);
 
-      <div
-        className="
-        shrink-0
-        flex
-        items-center
-        gap-3
-        px-5
-        py-4
-        bg-white/70
-        backdrop-blur-xl
-        border-b
-        border-orange-200
-        shadow-sm
-        "
-      >
+      /* Save recent chat */
+
+      setRecentChats((prev) => [
+        {
+          id: Date.now(),
+          title:
+            userMessage.length > 28
+              ? userMessage.slice(0, 28) + "..."
+              : userMessage,
+          preview:
+            data.reply.length > 55
+              ? data.reply.slice(0, 55) + "..."
+              : data.reply,
+        },
+        ...prev.slice(0, 9),
+      ]);
+    } catch (error) {
+      console.error("Chat error:", error);
+
+      setIsTyping(false);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          text: "Sorry, something went wrong. Please try again.",
+        },
+      ]);
+    }
+  };
+
+  /* =========================================================
+     SIGN IN SCREEN
+  ========================================================= */
+
+  if (!user) {
+    return (
+      <div className="relative flex h-full min-h-screen items-center justify-center overflow-hidden bg-white px-5">
+
+        {/* Indian Flag Aurora */}
+
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+
+          <div className="absolute -top-40 -left-32 h-96 w-96 rounded-full bg-orange-400/20 blur-3xl" />
+
+          <div className="absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-green-500/20 blur-3xl" />
+
+          <div className="absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
+
+        </div>
+
+        {/* Back */}
 
         <button
-  onClick={onBack}
-  className="
-  w-10
-  h-10
-  rounded-full
-  hover:bg-blue-100
-  transition
-  flex
-  items-center
-  justify-center
-  "
->
+          onClick={onBack}
+          className="
+            absolute
+            left-5
+            top-5
+            z-20
+            flex
+            h-11
+            w-11
+            items-center
+            justify-center
+            rounded-full
+            bg-white/80
+            shadow-lg
+            backdrop-blur-xl
+            transition
+            hover:bg-white
+          "
+        >
           <ArrowLeft
             size={22}
             className="text-blue-700"
           />
         </button>
 
+        {/* Sign In Card */}
+
+        <div
+          className="
+            relative
+            z-10
+            w-full
+            max-w-md
+            overflow-hidden
+            rounded-[32px]
+            border
+            border-gray-200
+            bg-white/90
+            shadow-2xl
+            backdrop-blur-xl
+          "
+        >
+
+          {/* Flag stripe */}
+
+          <div className="h-2 bg-gradient-to-r from-orange-500 via-white to-green-500" />
+
+          <div className="px-7 py-10 text-center">
+
+            {/* Logo */}
+
+            <div
+              className="
+                mx-auto
+                mb-6
+                flex
+                h-20
+                w-20
+                items-center
+                justify-center
+                rounded-full
+                border-4
+                border-blue-600/20
+                bg-gradient-to-br
+                from-orange-400
+                via-white
+                to-green-400
+                shadow-xl
+              "
+            >
+              <Bot
+                size={36}
+                className="text-blue-700"
+              />
+            </div>
+
+            <h1 className="text-2xl font-black text-black">
+              JS AI Assistant
+            </h1>
+
+            <p className="mt-2 text-sm text-gray-600">
+              Your personal AI companion 🇮🇳
+            </p>
+
+            <p className="mx-auto mt-5 max-w-sm text-sm leading-6 text-gray-500">
+              Sign in with your Google account to start
+              chatting with JS AI Assistant.
+            </p>
+
+            {/* Google button */}
+
+            <button
+              onClick={handleGoogleSignIn}
+              disabled={isSigningIn}
+              className="
+                mt-8
+                flex
+                w-full
+                items-center
+                justify-center
+                gap-3
+                rounded-2xl
+                border
+                border-gray-300
+                bg-white
+                px-5
+                py-4
+                font-semibold
+                text-black
+                shadow-md
+                transition
+                hover:shadow-xl
+                active:scale-[0.98]
+                disabled:opacity-60
+              "
+            >
+
+              {isSigningIn ? (
+                <>
+                  <div
+                    className="
+                      h-5
+                      w-5
+                      animate-spin
+                      rounded-full
+                      border-2
+                      border-gray-300
+                      border-t-blue-600
+                    "
+                  />
+
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <div
+                    className="
+                      flex
+                      h-7
+                      w-7
+                      items-center
+                      justify-center
+                      rounded-full
+                      border
+                      border-gray-200
+                      text-sm
+                      font-bold
+                    "
+                  >
+                    G
+                  </div>
+
+                  Continue with Google
+                </>
+              )}
+
+            </button>
+
+            <div className="mt-7 flex items-center justify-center gap-2 text-xs text-gray-500">
+              <ShieldCheck
+                size={15}
+                className="text-green-600"
+              />
+
+              Your account stays protected
+            </div>
+
+          </div>
+
+          {/* Flag stripe */}
+
+          <div className="h-2 bg-gradient-to-r from-orange-500 via-white to-green-500" />
+
+        </div>
+
+      </div>
+    );
+  }
+
+  /* =========================================================
+     MAIN CHAT
+  ========================================================= */
+
+  return (
+    <div
+      className={`
+        relative
+        flex
+        h-full
+        min-h-screen
+        flex-col
+        overflow-hidden
+        ${
+          darkMode
+            ? "bg-gray-950 text-white"
+            : "bg-white text-black"
+        }
+      `}
+    >
+
+      {/* =====================================================
+          INDIAN FLAG BACKGROUND
+      ===================================================== */}
+
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+
+        <div
+          className={`
+            absolute
+            -left-40
+            -top-40
+            h-[420px]
+            w-[420px]
+            rounded-full
+            blur-3xl
+            ${
+              darkMode
+                ? "bg-orange-600/10"
+                : "bg-orange-400/20"
+            }
+          `}
+        />
+
+        <div
+          className={`
+            absolute
+            -right-40
+            top-1/3
+            h-[420px]
+            w-[420px]
+            rounded-full
+            blur-3xl
+            ${
+              darkMode
+                ? "bg-green-600/10"
+                : "bg-green-400/20"
+            }
+          `}
+        />
+
+        <div
+          className={`
+            absolute
+            bottom-[-220px]
+            left-1/3
+            h-[420px]
+            w-[420px]
+            rounded-full
+            blur-3xl
+            ${
+              darkMode
+                ? "bg-blue-700/10"
+                : "bg-blue-400/10"
+            }
+          `}
+        />
+
+      </div>
+
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
+
+      <header
+        className={`
+          relative
+          z-50
+          flex
+          shrink-0
+          items-center
+          justify-between
+          border-b
+          px-4
+          py-3
+          backdrop-blur-xl
+          ${
+            darkMode
+              ? "border-gray-800 bg-gray-950/85"
+              : "border-orange-100 bg-white/85"
+          }
+        `}
+      >
+
+        {/* Left */}
+
         <div className="flex items-center gap-3">
 
-          <div
-            className="
-            w-11
-            h-11
-            rounded-full
-            bg-gradient-to-br
-            from-orange-500
-            via-white
-            to-green-500
-            flex
-            items-center
-            justify-center
-            shadow-lg
-            "
+          <button
+            onClick={onBack}
+            className={`
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-full
+              transition
+              ${
+                darkMode
+                  ? "hover:bg-gray-800"
+                  : "hover:bg-blue-50"
+              }
+            `}
           >
-            <Bot
+            <ArrowLeft
               size={22}
               className="text-blue-700"
             />
+          </button>
+
+          {/* Avatar */}
+
+          <div
+            className="
+              flex
+              h-11
+              w-11
+              items-center
+              justify-center
+              overflow-hidden
+              rounded-full
+              bg-gradient-to-br
+              from-orange-500
+              via-white
+              to-green-500
+              shadow-md
+            "
+          >
+            {user.photo ? (
+              <img
+                src={user.photo}
+                alt={user.name}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <Bot
+                size={22}
+                className="text-blue-700"
+              />
+            )}
           </div>
 
           <div>
 
             <h1
-              className="
-              text-lg
-              font-bold
-              text-blue-800
-              "
+              className={`
+                text-base
+                font-black
+                ${
+                  darkMode
+                    ? "text-white"
+                    : "text-black"
+                }
+              `}
             >
-              JS AI Assistant 
+              JS AI Assistant 🇮🇳
             </h1>
 
             <p
-              className="
-              text-xs
-              text-gray-600
-              "
+              className={`
+                text-xs
+                ${
+                  darkMode
+                    ? "text-gray-400"
+                    : "text-gray-500"
+                }
+              `}
             >
-              Powered by JS AI Hub
+              Online • Ready to help {user.name}
             </p>
 
           </div>
 
         </div>
 
-      </div>
+        {/* Three dot */}
 
-      {/* ================= CHAT AREA ================= */}
-
-      <div
-        className="
-        flex-1
-        overflow-y-auto
-        px-4
-        py-6
-        pb-40
-        space-y-5
-        "
-      >
-
-        {messages.map((msg, index) => (
-
-          <div
-            key={index}
-            className={
-              msg.role === "user"
-                ? "flex justify-end"
-                : "flex justify-start"
+        <button
+          onClick={() => setMenuOpen((prev) => !prev)}
+          className={`
+            flex
+            h-10
+            w-10
+            items-center
+            justify-center
+            rounded-full
+            transition
+            ${
+              darkMode
+                ? "hover:bg-gray-800"
+                : "hover:bg-blue-50"
             }
-          >
+          `}
+        >
+          <MoreVertical
+            size={23}
+            className={
+              darkMode
+                ? "text-white"
+                : "text-black"
+            }
+          />
+        </button>
+
+        {/* =================================================
+            THREE DOT MENU
+        ================================================= */}
+
+        {menuOpen && (
+          <>
 
             <div
-  className={
-    msg.role === "user"
-      ? `
-        max-w-[80%]
-        rounded-3xl
-        rounded-br-lg
-        px-5
-        py-3
-        bg-gradient-to-r
-        from-orange-500
-        to-orange-400
-        text-black
-        shadow-xl
-        flex
-        gap-3
-        items-start
-      `
-      : `
-        max-w-[80%]
-        rounded-3xl
-        rounded-bl-lg
-        px-5
-        py-3
-        bg-gradient-to-r
-        from-green-500
-        to-green-400
-        text-black
-        shadow-xl
-        flex
-        gap-3
-        items-start
-      `
-  }
->
-  {msg.role === "ai" ? (
-    <Bot
-      size={20}
-      className="mt-1 shrink-0 text-black"
-    />
-  ) : (
-    <User
-      size={20}
-      className="mt-1 shrink-0 text-black"
-    />
-  )}
+              className="fixed inset-0 z-40"
+              onClick={() => setMenuOpen(false)}
+            />
 
-  <span
-    className="
-      whitespace-pre-wrap
-      break-words
-      leading-7
-      text-black
-    "
-  >
-    {msg.text}
-  </span>
-</div>
+            <div
+              className={`
+                absolute
+                right-4
+                top-[65px]
+                z-50
+                w-64
+                overflow-hidden
+                rounded-2xl
+                border
+                shadow-2xl
+                ${
+                  darkMode
+                    ? "border-gray-700 bg-gray-900"
+                    : "border-gray-200 bg-white"
+                }
+              `}
+            >
 
-          </div>
+              {/* New Chat */}
 
-        ))}
+              <button
+                onClick={createNewChat}
+                className="
+                  flex
+                  w-full
+                  items-center
+                  gap-3
+                  px-4
+                  py-3
+                  text-left
+                  transition
+                  hover:bg-orange-50
+                "
+              >
+                <MessageSquarePlus
+                  size={19}
+                  className="text-orange-600"
+                />
 
-       {isTyping && (
-  <div className="flex justify-start">
-    <div
-      className="
-        rounded-3xl
-        rounded-bl-lg
-        px-5
-        py-4
-        bg-gradient-to-r
-        from-green-500
-        to-green-400
-        shadow-xl
-        flex
-        items-center
-        gap-1
-      "
-    >
-      <Bot
-        size={20}
-        className="mr-2 text-black"
-      />
+                <span
+                  className={`
+                    flex-1
+                    text-sm
+                    font-semibold
+                    ${
+                      darkMode
+                        ? "text-white"
+                        : "text-black"
+                    }
+                  `}
+                >
+                  New Chat
+                </span>
 
-      <span
+                <ChevronRight size={16} />
+              </button>
+
+              {/* Recent */}
+
+              <button
+                onClick={() => {
+                  setRecentOpen(true);
+                  setMenuOpen(false);
+                }}
+                className="
+                  flex
+                  w-full
+                  items-center
+                  gap-3
+                  px-4
+                  py-3
+                  text-left
+                  transition
+                  hover:bg-green-50
+                "
+              >
+                <History
+                  size={19}
+                  className="text-green-600"
+                />
+
+                <span
+                  className={`
+                    flex-1
+                    text-sm
+                    font-semibold
+                    ${
+                      darkMode
+                        ? "text-white"
+                        : "text-black"
+                    }
+                  `}
+                >
+                  Recent Chats
+                </span>
+
+                <ChevronRight size={16} />
+              </button>
+
+              {/* Account */}
+
+              <button
+                onClick={() => {
+                  setAccountOpen(true);
+                  setMenuOpen(false);
+                }}
+                className="
+                  flex
+                  w-full
+                  items-center
+                  gap-3
+                  px-4
+                  py-3
+                  text-left
+                  transition
+                  hover:bg-blue-50
+                "
+              >
+                <UserCircle
+                  size={19}
+                  className="text-blue-700"
+                />
+
+                <span
+                  className={`
+                    flex-1
+                    text-sm
+                    font-semibold
+                    ${
+                      darkMode
+                        ? "text-white"
+                        : "text-black"
+                    }
+                  `}
+                >
+                  Account
+                </span>
+
+                <ChevronRight size={16} />
+              </button>
+
+              {/* Settings */}
+
+              <button
+                onClick={() => {
+                  setSettingsOpen(true);
+                  setMenuOpen(false);
+                }}
+                className="
+                  flex
+                  w-full
+                  items-center
+                  gap-3
+                  px-4
+                  py-3
+                  text-left
+                  transition
+                  hover:bg-blue-50
+                "
+              >
+                <Settings
+                  size={19}
+                  className="text-blue-700"
+                />
+
+                <span
+                  className={`
+                    flex-1
+                    text-sm
+                    font-semibold
+                    ${
+                      darkMode
+                        ? "text-white"
+                        : "text-black"
+                    }
+                  `}
+                >
+                  Settings
+                </span>
+
+                <ChevronRight size={16} />
+              </button>
+
+            </div>
+          </>
+        )}
+
+      </header>
+
+      {/* =====================================================
+          CHAT AREA
+      ===================================================== */}
+
+      <main
         className="
-          w-2
-          h-2
-          bg-black
-          rounded-full
-          animate-bounce
+          relative
+          z-10
+          flex-1
+          overflow-y-auto
+          px-4
+          pb-32
+          pt-6
         "
-      />
-
-      <span
-        className="
-          w-2
-          h-2
-          bg-black
-          rounded-full
-          animate-bounce
-          [animation-delay:150ms]
-        "
-      />
-
-      <span
-        className="
-          w-2
-          h-2
-          bg-black
-          rounded-full
-          animate-bounce
-          [animation-delay:300ms]
-        "
-      />
-    </div>
-  </div>
-)}
-
-<div ref={messagesEndRef} />
-
-      </div>
-            {/* ================= FIXED INPUT AREA ================= */}
-
-      <div
-       className="
-sticky
-bottom-0
-z-50
-shrink-0
-bg-white/80
-backdrop-blur-xl
-border-t
-border-green-200
-px-4
-py-4
-pb-[max(env(safe-area-inset-bottom),16px)]
-"
       >
 
-        <div
-          className="
-          max-w-5xl
-          mx-auto
-          flex
-          items-end
-          gap-3
-          "
-        >
+        <div className="mx-auto max-w-4xl space-y-5">
+
+          {messages.map((msg, index) => (
+
+            <div
+              key={index}
+              className={
+                msg.role === "user"
+                  ? "flex justify-end"
+                  : "flex justify-start"
+              }
+            >
+
+              <div
+                className={`
+                  flex
+                  max-w-[82%]
+                  items-start
+                  gap-3
+                  rounded-3xl
+                  px-5
+                  py-3
+                  shadow-lg
+                  ${
+                    msg.role === "user"
+                      ? `
+                        rounded-br-lg
+                        bg-gradient-to-r
+                        from-orange-400
+                        to-orange-500
+                      `
+                      : `
+                        rounded-bl-lg
+                        bg-gradient-to-r
+                        from-green-400
+                        to-green-500
+                      `
+                  }
+                `}
+              >
+
+                {msg.role === "ai" ? (
+                  <Bot
+                    size={20}
+                    className="mt-1 shrink-0 text-black"
+                  />
+                ) : (
+                  <User
+                    size={20}
+                    className="mt-1 shrink-0 text-black"
+                  />
+                )}
+
+                <span
+                  className="
+                    whitespace-pre-wrap
+                    break-words
+                    leading-7
+                    text-black
+                  "
+                >
+                  {msg.text}
+                </span>
+
+              </div>
+
+            </div>
+
+          ))}
+
+          {/* =================================================
+              TYPING INDICATOR
+          ================================================= */}
+
+          {isTyping && (
+            <div className="flex justify-start">
+
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-1
+                  rounded-3xl
+                  rounded-bl-lg
+                  bg-gradient-to-r
+                  from-green-400
+                  to-green-500
+                  px-5
+                  py-4
+                  shadow-lg
+                "
+              >
+
+                <Bot
+                  size={20}
+                  className="mr-2 text-black"
+                />
+
+                <span
+                  className="
+                    h-2
+                    w-2
+                    animate-bounce
+                    rounded-full
+                    bg-black
+                  "
+                />
+
+                <span
+                  className="
+                    h-2
+                    w-2
+                    animate-bounce
+                    rounded-full
+                    bg-black
+                    [animation-delay:150ms]
+                  "
+                />
+
+                <span
+                  className="
+                    h-2
+                    w-2
+                    animate-bounce
+                    rounded-full
+                    bg-black
+                    [animation-delay:300ms]
+                  "
+                />
+
+              </div>
+
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+
+        </div>
+
+      </main>
+
+      {/* =====================================================
+          FIXED INPUT
+      ===================================================== */}
+
+      <div
+        className={`
+          absolute
+          bottom-0
+          left-0
+          right-0
+          z-40
+          border-t
+          px-4
+          py-3
+          pb-[max(env(safe-area-inset-bottom),12px)]
+          backdrop-blur-xl
+          ${
+            darkMode
+              ? "border-gray-800 bg-gray-950/90"
+              : "border-green-100 bg-white/90"
+          }
+        `}
+      >
+
+        <div className="mx-auto flex max-w-5xl items-end gap-3">
 
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
+              if (
+                e.key === "Enter" &&
+                !e.shiftKey
+              ) {
                 e.preventDefault();
                 sendMessage();
               }
             }}
             rows={1}
-            placeholder="Ask anything..."
-            className="
-            flex-1
-            resize-none
-            rounded-3xl
-            px-5
-            py-4
-            bg-white
-            border
-            border-blue-200
-            outline-none
-            focus:ring-2
-            focus:ring-blue-500
-            shadow-md
-            text-gray-800
-            placeholder:text-gray-400
-            max-h-40
-            overflow-y-auto
-            "
+            placeholder={`Ask anything, ${user.name}...`}
+            disabled={isTyping}
+            className={`
+              max-h-40
+              flex-1
+              resize-none
+              overflow-y-auto
+              rounded-3xl
+              border
+              px-5
+              py-4
+              outline-none
+              shadow-md
+              ${
+                darkMode
+                  ? `
+                    border-gray-700
+                    bg-gray-900
+                    text-white
+                    placeholder:text-gray-500
+                    focus:ring-blue-500
+                  `
+                  : `
+                    border-blue-200
+                    bg-white
+                    text-black
+                    placeholder:text-gray-400
+                    focus:ring-blue-500
+                  `
+              }
+              focus:ring-2
+            `}
           />
 
           <button
             onClick={sendMessage}
+            disabled={!message.trim() || isTyping}
             className="
-            w-14
-            h-14
-            rounded-full
-            bg-blue-700
-            hover:bg-blue-800
-            text-white
-            flex
-            items-center
-            justify-center
-            shadow-xl
-            transition-all
-            duration-200
-            hover:scale-105
-            active:scale-95
+              flex
+              h-14
+              w-14
+              shrink-0
+              items-center
+              justify-center
+              rounded-full
+              bg-blue-700
+              text-white
+              shadow-xl
+              transition
+              hover:bg-blue-800
+              hover:scale-105
+              active:scale-95
+              disabled:cursor-not-allowed
+              disabled:opacity-40
             "
           >
             <Send size={22} />
@@ -446,8 +1189,419 @@ pb-[max(env(safe-area-inset-bottom),16px)]
 
       </div>
 
-      </div>
+      {/* =====================================================
+          SETTINGS PANEL
+      ===================================================== */}
 
-</div>
+      {settingsOpen && (
+        <div className="absolute inset-0 z-[100]">
+
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setSettingsOpen(false)}
+          />
+
+          <div
+            className={`
+              absolute
+              bottom-0
+              left-0
+              right-0
+              mx-auto
+              max-w-lg
+              rounded-t-[30px]
+              p-6
+              shadow-2xl
+              ${
+                darkMode
+                  ? "bg-gray-900 text-white"
+                  : "bg-white text-black"
+              }
+            `}
+          >
+
+            <div className="mb-5 flex items-center justify-between">
+
+              <h2 className="text-xl font-black">
+                Settings
+              </h2>
+
+              <button
+                onClick={() => setSettingsOpen(false)}
+                className="rounded-full p-2 hover:bg-gray-100"
+              >
+                <X size={20} />
+              </button>
+
+            </div>
+
+            {/* Theme */}
+
+            <button
+              onClick={() => setDarkMode((prev) => !prev)}
+              className="
+                flex
+                w-full
+                items-center
+                gap-4
+                rounded-2xl
+                border
+                border-gray-200
+                p-4
+                text-left
+              "
+            >
+
+              {darkMode ? (
+                <Moon className="text-blue-500" />
+              ) : (
+                <Sun className="text-orange-500" />
+              )}
+
+              <div className="flex-1">
+
+                <p className="font-bold">
+                  Dark Theme
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  {darkMode
+                    ? "Dark mode is active"
+                    : "Switch to dark mode"}
+                </p>
+
+              </div>
+
+              <div
+                className={`
+                  h-6
+                  w-11
+                  rounded-full
+                  p-1
+                  transition
+                  ${
+                    darkMode
+                      ? "bg-blue-600"
+                      : "bg-gray-300"
+                  }
+                `}
+              >
+                <div
+                  className={`
+                    h-4
+                    w-4
+                    rounded-full
+                    bg-white
+                    transition
+                    ${
+                      darkMode
+                        ? "translate-x-5"
+                        : "translate-x-0"
+                    }
+                  `}
+                />
+              </div>
+
+            </button>
+
+            {/* Add account */}
+
+            <button
+              onClick={handleGoogleSignIn}
+              className="
+                mt-3
+                flex
+                w-full
+                items-center
+                gap-4
+                rounded-2xl
+                border
+                border-gray-200
+                p-4
+                text-left
+              "
+            >
+
+              <UserPlus className="text-green-600" />
+
+              <div className="flex-1">
+
+                <p className="font-bold">
+                  Add Account
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  Sign in with another Google account
+                </p>
+
+              </div>
+
+              <ChevronRight size={18} />
+
+            </button>
+
+            {/* Logout */}
+
+            <button
+              onClick={handleLogout}
+              className="
+                mt-3
+                flex
+                w-full
+                items-center
+                gap-4
+                rounded-2xl
+                border
+                border-red-100
+                p-4
+                text-left
+                text-red-600
+              "
+            >
+
+              <LogOut size={20} />
+
+              <div className="flex-1">
+
+                <p className="font-bold">
+                  Log Out
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  Sign out of this account
+                </p>
+
+              </div>
+
+              <ChevronRight size={18} />
+
+            </button>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* =====================================================
+          ACCOUNT PANEL
+      ===================================================== */}
+
+      {accountOpen && (
+        <div className="absolute inset-0 z-[100]">
+
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setAccountOpen(false)}
+          />
+
+          <div
+            className={`
+              absolute
+              bottom-0
+              left-0
+              right-0
+              mx-auto
+              max-w-lg
+              rounded-t-[30px]
+              p-6
+              shadow-2xl
+              ${
+                darkMode
+                  ? "bg-gray-900 text-white"
+                  : "bg-white text-black"
+              }
+            `}
+          >
+
+            <div className="mb-6 flex items-center justify-between">
+
+              <h2 className="text-xl font-black">
+                Account
+              </h2>
+
+              <button
+                onClick={() => setAccountOpen(false)}
+                className="rounded-full p-2"
+              >
+                <X size={20} />
+              </button>
+
+            </div>
+
+            <div className="flex items-center gap-4">
+
+              <div
+                className="
+                  flex
+                  h-16
+                  w-16
+                  shrink-0
+                  items-center
+                  justify-center
+                  overflow-hidden
+                  rounded-full
+                  bg-gradient-to-br
+                  from-orange-400
+                  via-white
+                  to-green-400
+                "
+              >
+
+                {user.photo ? (
+                  <img
+                    src={user.photo}
+                    alt={user.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <User
+                    size={28}
+                    className="text-blue-700"
+                  />
+                )}
+
+              </div>
+
+              <div>
+
+                <p className="text-lg font-black">
+                  {user.name}
+                </p>
+
+                <p className="text-sm text-gray-500">
+                  {user.email}
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="mt-6 rounded-2xl bg-gray-50 p-4">
+
+              <div className="flex items-center gap-2">
+
+                <Check
+                  size={17}
+                  className="text-green-600"
+                />
+
+                <span className="text-sm font-semibold">
+                  Google account connected
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* =====================================================
+          RECENT CHATS
+      ===================================================== */}
+
+      {recentOpen && (
+        <div className="absolute inset-0 z-[100]">
+
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setRecentOpen(false)}
+          />
+
+          <div
+            className={`
+              absolute
+              bottom-0
+              left-0
+              right-0
+              mx-auto
+              max-h-[75vh]
+              max-w-lg
+              overflow-y-auto
+              rounded-t-[30px]
+              p-6
+              shadow-2xl
+              ${
+                darkMode
+                  ? "bg-gray-900 text-white"
+                  : "bg-white text-black"
+              }
+            `}
+          >
+
+            <div className="mb-5 flex items-center justify-between">
+
+              <h2 className="text-xl font-black">
+                Recent Chats
+              </h2>
+
+              <button
+                onClick={() => setRecentOpen(false)}
+                className="rounded-full p-2"
+              >
+                <X size={20} />
+              </button>
+
+            </div>
+
+            {recentChats.length === 0 ? (
+              <div className="py-10 text-center text-gray-500">
+                No recent chats yet.
+              </div>
+            ) : (
+              <div className="space-y-2">
+
+                {recentChats.map((chat) => (
+
+                  <button
+                    key={chat.id}
+                    onClick={() => setRecentOpen(false)}
+                    className="
+                      flex
+                      w-full
+                      items-start
+                      gap-3
+                      rounded-2xl
+                      border
+                      border-gray-200
+                      p-4
+                      text-left
+                      transition
+                      hover:bg-gray-50
+                    "
+                  >
+
+                    <History
+                      size={19}
+                      className="mt-1 shrink-0 text-blue-600"
+                    />
+
+                    <div className="min-w-0">
+
+                      <p className="truncate font-bold">
+                        {chat.title}
+                      </p>
+
+                      <p className="mt-1 truncate text-xs text-gray-500">
+                        {chat.preview}
+                      </p>
+
+                    </div>
+
+                  </button>
+
+                ))}
+
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      )}
+
+    </div>
   );
 }
