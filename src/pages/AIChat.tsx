@@ -189,7 +189,7 @@ return (
               text-blue-800
               "
             >
-              JS AI Assistant 🇮🇳
+              JS AI Assistant 
             </h1>
 
             <p
