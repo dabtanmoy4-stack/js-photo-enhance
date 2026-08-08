@@ -1,138 +1,252 @@
-import express from 'express';
-import path from 'path';
-import { createServer as createViteServer } from 'vite';
-import { aiEnhanceManager, AIEnhanceRequest } from './api/aiEnhancer';
+import "dotenv/config";
+import express from "express";
+import path from "path";
+import { createServer as createViteServer } from "vite";
+import { GoogleGenAI } from "@google/genai";
+
+
+const gemini = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  // Middleware for JSON parsing with large limits for base64 images
-  app.use(express.json({ limit: '50mb' }));
-  app.use(express.urlencoded({ limit: '50mb', extended: true }));
+  // ================= MIDDLEWARE =================
 
-  // API Health Check
-  app.get('/api/health', (req, res) => {
+  app.use(express.json({ limit: "50mb" }));
+  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  // ================= HEALTH CHECK =================
+
+  app.get("/api/health", (req, res) => {
     res.json({
-      status: 'ok',
-      service: 'JS Ai Hub Enhance AI Server',
-      timestamp: new Date().toISOString()
+      status: "ok",
+      service: "JS AI Hub Enhance AI Server",
+      timestamp: new Date().toISOString(),
     });
   });
 
-  // Available AI Enhancement Models & Capabilities
-  app.get('/api/ai-models', (req, res) => {
+  // ================= AI MODELS =================
+
+  app.get("/api/ai-models", (req, res) => {
     res.json({
       models: [
         {
-          id: 'ai_enhance',
-          name: 'AI Master Enhance',
-          description: 'Auto detail extraction, contrast dynamics balance & clarity boost.',
-          category: 'enhancement'
+          id: "ai_enhance",
+          name: "AI Master Enhance",
+          description:
+            "Auto detail extraction, contrast dynamics balance & clarity boost.",
+          category: "enhancement",
         },
         {
-          id: 'face_enhance',
-          name: 'GFPGAN Face Enhancement',
-          description: 'Facial landmark restoration, eye clarity & skin texture recovery.',
-          category: 'portrait'
+          id: "face_enhance",
+          name: "GFPGAN Face Enhancement",
+          description:
+            "Facial landmark restoration, eye clarity & skin texture recovery.",
+          category: "portrait",
         },
         {
-          id: 'portrait_enhance',
-          name: 'Portrait AI Pro',
-          description: 'Subject isolation, skin warmth & subtle depth glow.',
-          category: 'portrait'
+          id: "portrait_enhance",
+          name: "Portrait AI Pro",
+          description:
+            "Subject isolation, skin warmth & subtle depth glow.",
+          category: "portrait",
         },
         {
-          id: 'sharpen',
-          name: 'AI High-Pass Sharpen',
-          description: 'High-frequency unsharp masking & sub-pixel edge reconstruction.',
-          category: 'sharpening'
+          id: "sharpen",
+          name: "AI High-Pass Sharpen",
+          description:
+            "High-frequency unsharp masking & sub-pixel edge reconstruction.",
+          category: "sharpening",
         },
         {
-          id: 'denoise',
-          name: 'Bilateral AI Denoise',
-          description: 'Spatial bilateral noise reduction & ISO grain removal.',
-          category: 'restoration'
+          id: "denoise",
+          name: "Bilateral AI Denoise",
+          description:
+            "Spatial bilateral noise reduction & ISO grain removal.",
+          category: "restoration",
         },
         {
-          id: 'color_enhance',
-          name: 'Neural Color Expander',
-          description: 'Auto white-balance & RGB color gamut expansion.',
-          category: 'color'
+          id: "color_enhance",
+          name: "Neural Color Expander",
+          description:
+            "Auto white-balance & RGB color gamut expansion.",
+          category: "color",
         },
         {
-          id: 'remove_artifacts',
-          name: 'JPEG Deblock & Artifact Removal',
-          description: 'Removes 8x8 DCT block boundaries & compression ringing.',
-          category: 'restoration'
+          id: "remove_artifacts",
+          name: "JPEG Deblock & Artifact Removal",
+          description:
+            "Removes 8x8 DCT block boundaries & compression ringing.",
+          category: "restoration",
         },
         {
-          id: 'upscale_2x',
-          name: 'Real-ESRGAN 2x Upscale',
-          description: '200% Neural Super-Resolution pixel expansion.',
-          category: 'upscale'
+          id: "upscale_2x",
+          name: "Real-ESRGAN 2x Upscale",
+          description:
+            "200% Neural Super-Resolution pixel expansion.",
+          category: "upscale",
         },
         {
-          id: 'upscale_4x',
-          name: 'Real-ESRGAN 4x Upscale',
-          description: '400% Neural Super-Resolution pixel expansion.',
-          category: 'upscale'
+          id: "upscale_4x",
+          name: "Real-ESRGAN 4x Upscale",
+          description:
+            "400% Neural Super-Resolution pixel expansion.",
+          category: "upscale",
         },
         {
-          id: 'upscale_8x',
-          name: 'Real-ESRGAN 8x Ultra Upscale',
-          description: '800% Neural Super-Resolution ultra high-res expansion.',
-          category: 'upscale'
-        }
+          id: "upscale_8x",
+          name: "Real-ESRGAN 8x Ultra Upscale",
+          description:
+            "800% Neural Super-Resolution ultra high-res expansion.",
+          category: "upscale",
+        },
       ],
+
       architecture: {
-        provider: 'Real-ESRGAN + GFPGAN + Gemini 3.1 Flash Image Engine',
-        pluggableRemoteEndpointSupported: true
-      }
+        provider:
+          "Real-ESRGAN + GFPGAN + Gemini 3.1 Flash Image Engine",
+        pluggableRemoteEndpointSupported: true,
+      },
     });
   });
 
-  // Main AI Enhancement API Route
-  app.post('/api/ai-enhance', async (req, res) => {
-    try {
-      const requestData: AIEnhanceRequest = req.body;
+  // ================= AI CHAT =================
 
-      if (!requestData || !requestData.imageData || !requestData.mode) {
+  app.post("/api/chat", async (req, res) => {
+    try {
+      const { message, history = [] } = req.body;
+
+      if (!message || typeof message !== "string") {
         return res.status(400).json({
-          error: 'Missing required fields: imageData and mode are required.'
+          error: "Message is required.",
         });
       }
 
-      console.log(`[AI Server] Processing request mode: ${requestData.mode}`);
-      const result = await aiEnhanceManager.processRequest(requestData);
+      const contents = [
+  {
+    role: "user",
+    parts: [
+      {
+        text: `
+You are JS AI Assistant, the official AI assistant of JS AI Hub.
 
-      return res.json(result);
+Your name is JS AI Assistant.
+Never identify yourself as Gemini, Google Gemini, or another AI model.
+If the user asks your name, say that your name is JS AI Assistant.
+
+You are friendly, helpful, intelligent, and can communicate naturally in English and Bengali.
+If the user speaks Bengali, respond in Bengali.
+If the user speaks English, respond in English.
+
+Now answer the user's message naturally.
+`,
+      },
+    ],
+  },
+
+  ...history.map(
+    (item: { role: string; text: string }) => ({
+      role: item.role === "ai" ? "model" : "user",
+      parts: [{ text: item.text }],
+    })
+  ),
+
+  {
+    role: "user",
+    parts: [{ text: message }],
+  },
+];
+
+    const response = await gemini.models.generateContent({
+  model: "gemini-3.6-flash",
+  contents,
+});
+
+      const reply =
+        response.text ||
+        "Sorry, I could not generate a response.";
+
+      return res.json({
+        reply,
+      });
     } catch (error: any) {
-      console.error('[AI Server Error]:', error);
+      console.error("[AI Chat Error]:", error);
+
       return res.status(500).json({
-        error: error?.message || 'Failed to execute AI enhancement pipeline.',
-        success: false
+        error:
+          error?.message ||
+          "Failed to generate AI response.",
       });
     }
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== 'production') {
+  // ================= AI ENHANCEMENT =================
+
+  app.post("/api/ai-enhance", async (req, res) => {
+    try {
+      const requestData: AIEnhanceRequest = req.body;
+
+      if (
+        !requestData ||
+        !requestData.imageData ||
+        !requestData.mode
+      ) {
+        return res.status(400).json({
+          error:
+            "Missing required fields: imageData and mode are required.",
+        });
+      }
+
+      console.log(
+        `[AI Server] Processing request mode: ${requestData.mode}`
+      );
+
+      const result =
+        await aiEnhanceManager.processRequest(requestData);
+
+      return res.json(result);
+    } catch (error: any) {
+      console.error("[AI Server Error]:", error);
+
+      return res.status(500).json({
+        error:
+          error?.message ||
+          "Failed to execute AI enhancement pipeline.",
+        success: false,
+      });
+    }
+  });
+
+  // ================= VITE =================
+
+  if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa'
+      server: {
+        middlewareMode: true,
+      },
+      appType: "spa",
     });
+
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    const distPath = path.join(process.cwd(), "dist");
+
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+  // ================= START SERVER =================
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(
+      `Server running on http://0.0.0.0:${PORT}`
+    );
   });
 }
 

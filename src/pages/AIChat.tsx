@@ -36,19 +36,58 @@ export default function AIChat({ onBack }: AIChatProps) {
     });
   }, [messages]);
 
-  const sendMessage = () => {
-    if (!message.trim()) return;
+ const sendMessage = async () => {
+  if (!message.trim()) return;
+
+  const userMessage = message.trim();
+
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "user",
+      text: userMessage,
+    },
+  ]);
+
+  setMessage("");
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: userMessage,
+        history: messages,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to get AI response");
+    }
 
     setMessages((prev) => [
       ...prev,
       {
-        role: "user",
-        text: message,
+        role: "ai",
+        text: data.reply,
       },
     ]);
+  } catch (error) {
+    console.error("Chat error:", error);
 
-    setMessage("");
-  };
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "ai",
+        text: "Sorry, something went wrong. Please try again.",
+      },
+    ]);
+  }
+};
 return (
   <div
     className="
