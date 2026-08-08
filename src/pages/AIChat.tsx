@@ -232,64 +232,63 @@ return (
           >
 
             <div
-              className={
-                msg.role === "user"
-                  ? `
-                    max-w-[80%]
-                    rounded-3xl
-                    rounded-br-lg
-                    px-5
-                    py-3
-                    bg-gradient-to-r
-                    from-orange-500
-                    to-orange-400
-                    text-white
-                    shadow-xl
-                    flex
-                    gap-3
-                    items-start
-                  `
-                  : `
-                    max-w-[80%]
-                    rounded-3xl
-                    rounded-bl-lg
-                    px-5
-                    py-3
-                    bg-gradient-to-r
-                    from-green-500
-                    to-green-400
-                    text-white
-                    shadow-xl
-                    flex
-                    gap-3
-                    items-start
-                  `
-              }
-            >
+  className={
+    msg.role === "user"
+      ? `
+        max-w-[80%]
+        rounded-3xl
+        rounded-br-lg
+        px-5
+        py-3
+        bg-gradient-to-r
+        from-orange-500
+        to-orange-400
+        text-black
+        shadow-xl
+        flex
+        gap-3
+        items-start
+      `
+      : `
+        max-w-[80%]
+        rounded-3xl
+        rounded-bl-lg
+        px-5
+        py-3
+        bg-gradient-to-r
+        from-green-500
+        to-green-400
+        text-black
+        shadow-xl
+        flex
+        gap-3
+        items-start
+      `
+  }
+>
+  {msg.role === "ai" ? (
+    <Bot
+      size={20}
+      className="mt-1 shrink-0 text-black"
+    />
+  ) : (
+    <User
+      size={20}
+      className="mt-1 shrink-0 text-black"
+    />
+  )}
 
-              {msg.role === "ai" ? (
-                <Bot
-                  size={20}
-                  className="mt-1 shrink-0"
-                />
-              ) : (
-                <User
-                  size={20}
-                  className="mt-1 shrink-0"
-                />
-              )}
-
-              <span
-                className="
-                whitespace-pre-wrap
-                break-words
-                leading-7
-                "
-              >
-                {msg.text}
-              </span>
-
-            </div>
+  <span
+    className="
+      whitespace-pre-wrap
+      break-words
+      leading-7
+      text-black
+    "
+  >
+    {msg.text}
+  </span>
+</div>
 
           </div>
 
