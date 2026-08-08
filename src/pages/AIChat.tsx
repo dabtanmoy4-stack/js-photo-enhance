@@ -18,7 +18,7 @@ interface Message {
 }
 
 export default function AIChat({ onBack }: AIChatProps) {
-  const [message, setMessage] = useState("");
+const [isTyping, setIsTyping] = useState(false);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -51,6 +51,8 @@ export default function AIChat({ onBack }: AIChatProps) {
 
   setMessage("");
 
+setIsTyping(true);
+
   try {
     const response = await fetch("/api/ai-chat", {
       method: "POST",
@@ -63,30 +65,35 @@ export default function AIChat({ onBack }: AIChatProps) {
       }),
     });
 
-    const data = await response.json();
+   const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error || "Failed to get AI response");
-    }
+if (!response.ok) {
+  throw new Error(data.error || "Failed to get AI response");
+}
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "ai",
-        text: data.reply,
-      },
-    ]);
-  } catch (error) {
-    console.error("Chat error:", error);
+setIsTyping(false);
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "ai",
-        text: "Sorry, something went wrong. Please try again.",
-      },
-    ]);
-  }
+setMessages((prev) => [
+  ...prev,
+  {
+    role: "ai",
+    text: data.reply,
+  },
+]);
+
+ } catch (error) {
+  console.error("Chat error:", error);
+
+  setIsTyping(false);
+
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "ai",
+      text: "Sorry, something went wrong. Please try again.",
+    },
+  ]);
+}
 };
 return (
   <div
@@ -294,7 +301,64 @@ return (
 
         ))}
 
-        <div ref={messagesEndRef} />
+       {isTyping && (
+  <div className="flex justify-start">
+    <div
+      className="
+        rounded-3xl
+        rounded-bl-lg
+        px-5
+        py-4
+        bg-gradient-to-r
+        from-green-500
+        to-green-400
+        shadow-xl
+        flex
+        items-center
+        gap-1
+      "
+    >
+      <Bot
+        size={20}
+        className="mr-2 text-black"
+      />
+
+      <span
+        className="
+          w-2
+          h-2
+          bg-black
+          rounded-full
+          animate-bounce
+        "
+      />
+
+      <span
+        className="
+          w-2
+          h-2
+          bg-black
+          rounded-full
+          animate-bounce
+          [animation-delay:150ms]
+        "
+      />
+
+      <span
+        className="
+          w-2
+          h-2
+          bg-black
+          rounded-full
+          animate-bounce
+          [animation-delay:300ms]
+        "
+      />
+    </div>
+  </div>
+)}
+
+<div ref={messagesEndRef} />
 
       </div>
             {/* ================= FIXED INPUT AREA ================= */}
