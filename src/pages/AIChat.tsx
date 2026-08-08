@@ -52,7 +52,7 @@ export default function AIChat({ onBack }: AIChatProps) {
   setMessage("");
 
   try {
-    const response = await fetch("/api/chat", {
+    const response = await fetch("/api/ai-chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
