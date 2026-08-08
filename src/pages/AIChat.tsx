@@ -394,10 +394,7 @@ export default function AIChat({ onBack }: AIChatProps) {
                 shadow-xl
               "
             >
-              <Bot
-                size={36}
-                className="text-blue-700"
-              />
+            
             </div>
 
             <h1 className="text-2xl font-black text-black">
@@ -987,18 +984,7 @@ export default function AIChat({ onBack }: AIChatProps) {
                 `}
               >
 
-                {msg.role === "ai" ? (
-                  <Bot
-                    size={20}
-                    className="mt-1 shrink-0 text-black"
-                  />
-                ) : (
-                  <User
-                    size={20}
-                    className="mt-1 shrink-0 text-black"
-                  />
-                )}
-
+             
                 <span
                   className="
                     whitespace-pre-wrap
@@ -1038,11 +1024,6 @@ export default function AIChat({ onBack }: AIChatProps) {
                   shadow-lg
                 "
               >
-
-                <Bot
-                  size={20}
-                  className="mr-2 text-black"
-                />
 
                 <span
                   className="
