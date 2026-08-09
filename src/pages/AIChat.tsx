@@ -32,6 +32,7 @@ import {
   addDoc,
   getDocs,
   getDoc,
+  setDoc,
   query,
   orderBy,
   limit,
@@ -374,6 +375,8 @@ const handleGoogleSignIn = () => {
     setIsTyping(false);
     setMenuOpen(false);
   };
+
+
 /* =========================================================
    SEND MESSAGE
 ========================================================= */
@@ -420,6 +423,10 @@ const sendMessage = async () => {
       );
     }
 
+    /* =====================================================
+       SHOW AI RESPONSE
+    ===================================================== */
+
     setMessages((prev) => [
       ...prev,
       {
@@ -429,7 +436,7 @@ const sendMessage = async () => {
     ]);
 
     /* =====================================================
-       SAVE RECENT CHAT TO FIRESTORE
+       SAVE / UPDATE CHAT IN FIRESTORE
     ===================================================== */
 
     if (user?.uid) {
@@ -451,116 +458,110 @@ const sendMessage = async () => {
           "recentChats"
         );
 
-/* =====================================================
-   SAVE / UPDATE CHAT IN FIRESTORE
-===================================================== */
+        let chatId = activeChatId;
 
-if (user?.uid) {
-  try {
-    const title =
-      userMessage.length > 28
-        ? userMessage.slice(0, 28) + "..."
-        : userMessage;
+        /* =================================================
+           FIRST MESSAGE → CREATE NEW CHAT
+        ================================================= */
 
-    const preview =
-      data.reply.length > 55
-        ? data.reply.slice(0, 55) + "..."
-        : data.reply;
+        if (!chatId) {
+          const newChatDoc = await addDoc(chatsRef, {
+            title,
+            preview,
 
-    const chatsRef = collection(
-      db,
-      "users",
-      user.uid,
-      "recentChats"
-    );
+            messages: [
+              {
+                role: "user",
+                text: userMessage,
+              },
+              {
+                role: "ai",
+                text: data.reply,
+              },
+            ],
 
-    let chatId = activeChatId;
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
 
-    /* ================================================
-       FIRST MESSAGE → CREATE NEW CHAT
-    ================================================ */
+          chatId = newChatDoc.id;
 
-    if (!chatId) {
-      const newChatDoc = await addDoc(chatsRef, {
-        title,
-        preview,
+          setActiveChatId(chatId);
 
-        messages: [
-          {
-            role: "user",
-            text: userMessage,
-          },
-          {
-            role: "ai",
-            text: data.reply,
-          },
-        ],
+          setRecentChats((prev) => [
+            {
+              id: chatId!,
+              title,
+              preview,
+            },
+            ...prev.slice(0, 19),
+          ]);
+        }
 
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+        /* =================================================
+           EXISTING CHAT → ADD NEW MESSAGES
+        ================================================= */
 
-      chatId = newChatDoc.id;
+        else {
+          const chatRef = doc(
+            db,
+            "users",
+            user.uid,
+            "recentChats",
+            chatId
+          );
 
-      setActiveChatId(chatId);
-
-      setRecentChats((prev) => [
-        {
-          id: chatId!,
-          title,
-          preview,
-        },
-        ...prev.slice(0, 19),
-      ]);
-    }
-
-    /* ================================================
-       EXISTING CHAT → ADD MESSAGES
-    ================================================ */
-
-    else {
-      const chatRef = doc(
-        db,
-        "users",
-        user.uid,
-        "recentChats",
-        chatId
-      );
-
-      await updateDoc(chatRef, {
-        messages: arrayUnion(
-          {
-            role: "user",
-            text: userMessage,
-          },
-          {
-            role: "ai",
-            text: data.reply,
-          }
-        ),
-
-        preview,
-        updatedAt: serverTimestamp(),
-      });
-
-      setRecentChats((prev) =>
-        prev.map((chat) =>
-          chat.id === chatId
-            ? {
-                ...chat,
-                preview,
+          await updateDoc(chatRef, {
+            messages: arrayUnion(
+              {
+                role: "user",
+                text: userMessage,
+              },
+              {
+                role: "ai",
+                text: data.reply,
               }
-            : chat
-        )
-      );
+            ),
+
+            preview,
+            updatedAt: serverTimestamp(),
+          });
+
+          setRecentChats((prev) =>
+            prev.map((chat) =>
+              chat.id === chatId
+                ? {
+                    ...chat,
+                    preview,
+                  }
+                : chat
+            )
+          );
+        }
+      } catch (firestoreError) {
+        console.error(
+          "Failed to save chat:",
+          firestoreError
+        );
+      }
     }
-  } catch (firestoreError) {
-    console.error(
-      "Failed to save chat:",
-      firestoreError
-    );
+  } catch (error) {
+    console.error("Chat error:", error);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "ai",
+        text: "Sorry, something went wrong. Please try again.",
+      },
+    ]);
+  } finally {
+    setIsTyping(false);
   }
-}
+};
+
+
+
   /* =========================================================
      SIGN IN SCREEN
   ========================================================= */
