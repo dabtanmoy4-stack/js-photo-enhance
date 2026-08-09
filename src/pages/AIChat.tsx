@@ -1792,26 +1792,24 @@ return (
             onClick={() => setRecentOpen(false)}
           />
 
-          <div
-            className={`
-              absolute
-              bottom-0
-              left-0
-              right-0
-              mx-auto
-              max-h-[75vh]
-              max-w-lg
-              overflow-y-auto
-              rounded-t-[30px]
-              p-6
-              shadow-2xl
-              ${
-                darkMode
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-black"
-              }
-            `}
-          >
+        <div
+  className={`
+    absolute
+    right-0
+    top-0
+    bottom-0
+    w-full
+    max-w-md
+    overflow-y-auto
+    p-6
+    shadow-2xl
+    ${
+      darkMode
+        ? "bg-gray-900 text-white"
+        : "bg-white text-black"
+    }
+  `}
+>
 
             <div className="mb-5 flex items-center justify-between">
 
