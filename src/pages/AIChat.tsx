@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useGoogleLogin } from "@react-oauth/google";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 
 import { auth, db } from "../firebase";
 
@@ -200,106 +203,74 @@ GOOGLE SIGN IN
 ========================================================= */
      
     
-const googleLogin = useGoogleLogin({
-  onSuccess: async (tokenResponse) => {
-    setIsSigningIn(true);
+const googleLogin = async () => {
+  setIsSigningIn(true);
 
-    try {
-      // 1. Get Google profile
-      const response = await fetch(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
-        {
-          headers: {
-            Authorization: `Bearer ${tokenResponse.access_token}`,
-          },
-        }
-      );
+  try {
+    const provider = new GoogleAuthProvider();
 
-      if (!response.ok) {
-        throw new Error("Failed to get Google profile");
-      }
+    const result = await signInWithPopup(
+      auth,
+      provider
+    );
 
-      const profile = await response.json();
+    const firebaseUser = result.user;
 
-      // 2. Create Firebase Google credential
-      const credential =
-        GoogleAuthProvider.credential(
-          null,
-          tokenResponse.access_token
-        );
+    const googleUser: UserAccount = {
+      name:
+        firebaseUser.displayName ||
+        "Google User",
 
-      // 3. Sign in to Firebase Authentication
-      const firebaseResult =
-        await signInWithCredential(
-          auth,
-          credential
-        );
+      email:
+        firebaseUser.email ||
+        "",
 
-      const firebaseUser = firebaseResult.user;
+      photo:
+        firebaseUser.photoURL ||
+        undefined,
+    };
 
-      // 4. Create app user
-      const googleUser: UserAccount = {
-        name:
-          firebaseUser.displayName ||
-          profile.name ||
-          "Google User",
+    setUser(googleUser);
 
-        email:
-          firebaseUser.email ||
-          profile.email ||
-          "",
+    // Save / update user in Firestore
+    await saveUserToFirestore(
+      googleUser,
+      firebaseUser.uid
+    );
 
-        photo:
-          firebaseUser.photoURL ||
-          profile.picture ||
-          undefined,
-      };
+    // Save local session
+    localStorage.setItem(
+      "js-ai-user",
+      JSON.stringify(googleUser)
+    );
 
-      // 5. Update UI
-      setUser(googleUser);
+    // Welcome message
+    setMessages([
+      {
+        role: "ai",
+        text: `Namaste ${googleUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+      },
+    ]);
 
-      // 6. Save / update user in Firestore
-      await saveUserToFirestore(
-  googleUser,
-  firebaseUser.uid
-);
+    console.log(
+      "Firebase Google login successful"
+    );
 
-      // 7. Save local session
-      localStorage.setItem(
-        "js-ai-user",
-        JSON.stringify(googleUser)
-      );
-
-      // 8. Welcome message
-      setMessages([
-        {
-          role: "ai",
-          text: `Namaste ${googleUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
-        },
-      ]);
-
-      console.log(
-        "Firebase user signed in:",
-        firebaseUser.uid
-      );
-    } catch (error) {
-      console.error(
-        "Google/Firebase sign in error:",
-        error
-      );
-    } finally {
-      setIsSigningIn(false);
-    }
-  },
-
-  onError: () => {
-    console.error("Google sign in failed");
+    console.log(
+      "Firebase UID:",
+      firebaseUser.uid
+    );
+  } catch (error) {
+    console.error(
+      "Firebase Google sign in error:",
+      error
+    );
+  } finally {
     setIsSigningIn(false);
-  },
-});
+  }
+};
 
 const handleGoogleSignIn = () => {
-  setIsSigningIn(true);
   googleLogin();
 };
 
