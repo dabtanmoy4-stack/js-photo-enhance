@@ -804,15 +804,15 @@ const sendMessage = async () => {
      MAIN CHAT
   ========================================================= */
 
-  return (
-    <div
-      className={`
-        relative
-        flex
-        h-full
-        min-h-screen
-        flex-col
-        overflow-hidden
+return (
+  <div
+    className={`relative
+      flex
+      h-screen
+      min-h-0
+      flex-col
+      overflow-hidden
+
         ${
           darkMode
             ? "bg-gray-950 text-white"
@@ -1232,16 +1232,17 @@ const sendMessage = async () => {
       ===================================================== */}
 
       <main
-        className="
-          relative
-          z-10
-          flex-1
-          overflow-y-auto
-          px-4
-          pb-32
-          pt-6
-        "
-      >
+  className="
+    relative
+    z-10
+    min-h-0
+    flex-1
+    overflow-y-auto
+    px-4
+    pb-32
+    pt-6
+  "
+>
 
         <div className="mx-auto max-w-4xl space-y-5">
 
