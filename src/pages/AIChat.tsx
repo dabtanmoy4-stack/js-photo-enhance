@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useGoogleLogin } from "@react-oauth/google";
+
 import {
   ArrowLeft,
   Bot,
@@ -129,56 +131,61 @@ export default function AIChat({ onBack }: AIChatProps) {
      Replace this function with your real Google OAuth /
      Firebase Google authentication.
   ========================================================= */
-
-  const handleGoogleSignIn = async () => {
+const googleLogin = useGoogleLogin({
+  onSuccess: async (tokenResponse) => {
     setIsSigningIn(true);
 
     try {
-      /*
-        ------------------------------------------------------
-        CONNECT YOUR REAL GOOGLE AUTH HERE
-        ------------------------------------------------------
-
-        Example expected result:
-
+      const response = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
         {
-          name: "Rahul",
-          email: "rahul@gmail.com",
-          photo: "https://..."
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`,
+          },
         }
+      );
 
-        ------------------------------------------------------
-      */
+      if (!response.ok) {
+        throw new Error("Failed to get Google profile");
+      }
 
-      // TEMPORARY DEMO USER
-      // Remove this when real Google authentication is added.
+      const profile = await response.json();
 
-      await new Promise((resolve) => setTimeout(resolve, 900));
-
-      const demoUser: UserAccount = {
-        name: "User",
-        email: "user@gmail.com",
+      const googleUser: UserAccount = {
+        name: profile.name || "Google User",
+        email: profile.email || "",
+        photo: profile.picture || undefined,
       };
 
-      setUser(demoUser);
+      setUser(googleUser);
 
       localStorage.setItem(
         "js-ai-user",
-        JSON.stringify(demoUser)
+        JSON.stringify(googleUser)
       );
 
       setMessages([
         {
           role: "ai",
-          text: `Namaste ${demoUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+          text: `Namaste ${googleUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
         },
       ]);
     } catch (error) {
-      console.error("Google sign in failed:", error);
+      console.error("Google profile error:", error);
     } finally {
       setIsSigningIn(false);
     }
-  };
+  },
+
+  onError: () => {
+    console.error("Google sign in failed");
+    setIsSigningIn(false);
+  },
+});
+ const handleGoogleSignIn = () => {
+  setIsSigningIn(true);
+  googleLogin();
+};
 
   /* =========================================================
      LOGOUT

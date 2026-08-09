@@ -4,9 +4,9 @@
  */
 
 import React from "react";
-
 import { AnimatePresence, motion } from "motion/react";
 import { Sparkles } from "lucide-react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import { useAppViewModel } from "./viewmodel/useAppViewModel";
 
@@ -36,9 +36,8 @@ const vm = useAppViewModel();
 
 
 return (
-
-<>
-
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <>
 
 {/* ================= SPLASH ================= */}
 
@@ -564,8 +563,8 @@ flex-col
 }
 
 
-</>
-
+    </>
+  </GoogleOAuthProvider>
 );
 
 }
