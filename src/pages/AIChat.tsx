@@ -538,28 +538,27 @@ const sendMessage = async () => {
             )
           );
         }
-      } catch (firestoreError) {
-        console.error(
-          "Failed to save chat:",
-          firestoreError
-        );
-      }
+    } catch (firestoreError) {
+      console.error(
+        "Failed to save chat:",
+        firestoreError
+      );
     }
-  } catch (error) {
-    console.error("Chat error:", error);
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "ai",
-        text: "Sorry, something went wrong. Please try again.",
-      },
-    ]);
-  } finally {
-    setIsTyping(false);
   }
-};
+} catch (error) {
+  console.error("Chat error:", error);
 
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "ai",
+      text: "Sorry, something went wrong. Please try again.",
+    },
+  ]);
+} finally {
+  setIsTyping(false);
+}
+};
 
 
   /* =========================================================
