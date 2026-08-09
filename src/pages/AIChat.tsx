@@ -1,15 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
 
 import { auth, db } from "../firebase";
-
-import {
-  GoogleAuthProvider,
-  signInWithCredential,
-} from "firebase/auth";
 
 import {
   ArrowLeft,
@@ -31,6 +27,19 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  serverTimestamp,
+  doc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
+
 interface AIChatProps {
   onBack?: () => void;
 }
@@ -41,13 +50,14 @@ interface Message {
 }
 
 interface UserAccount {
+  uid: string;
   name: string;
   email: string;
   photo?: string;
 }
 
 interface RecentChat {
-  id: number;
+  id: string;
   title: string;
   preview: string;
 }
@@ -61,21 +71,65 @@ export default function AIChat({ onBack }: AIChatProps) {
 
   const [isSigningIn, setIsSigningIn] = useState(false);
 
-  /* =========================================================
-     CHAT
-  ========================================================= */
 
-  const [message, setMessage] = useState("");
+  const loadRecentChats = async (uid: string) => {
+  try {
+    const chatsRef = collection(
+      db,
+      "users",
+      uid,
+      "recentChats"
+    );
 
-  const [isTyping, setIsTyping] = useState(false);
+    const chatsQuery = query(
+      chatsRef,
+      orderBy("createdAt", "desc"),
+      limit(20)
+    );
 
-  const [messages, setMessages] = useState<Message[]>([]);
+    const snapshot = await getDocs(chatsQuery);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const chats: RecentChat[] = snapshot.docs.map(
+      (doc) => ({
+        id: doc.id,
+        title: doc.data().title || "New Chat",
+        preview: doc.data().preview || "",
+      })
+    );
 
-  /* =========================================================
-     UI
-  ========================================================= */
+    setRecentChats(chats);
+
+  } catch (error) {
+    console.error(
+      "Failed to load recent chats:",
+      error
+    );
+
+    setRecentChats([]);
+  }
+};
+
+
+ /* =========================================================
+   CHAT
+========================================================= */
+
+const [message, setMessage] = useState("");
+
+const [isTyping, setIsTyping] = useState(false);
+
+const [messages, setMessages] = useState<Message[]>([]);
+
+const [activeChatId, setActiveChatId] =
+  useState<string | null>(null);
+
+const messagesEndRef =
+  useRef<HTMLDivElement | null>(null);
+
+
+/* =========================================================
+   UI
+========================================================= */
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -86,18 +140,12 @@ export default function AIChat({ onBack }: AIChatProps) {
   const [recentOpen, setRecentOpen] = useState(false);
 
   const [darkMode, setDarkMode] = useState(false);
+/* =========================================================
+   RECENT CHATS
+========================================================= */
 
-  /* =========================================================
-     RECENT CHATS
-  ========================================================= */
-
-  const [recentChats, setRecentChats] = useState<RecentChat[]>([
-  {
-    id: 1,
-    title: "Welcome Chat",
-    preview: "Namaste! Welcome to JS AI Assistant.",
-  },
-]);
+const [recentChats, setRecentChats] =
+  useState<RecentChat[]>([]);
 
 /* =========================================================
 AUTO SCROLL
@@ -110,15 +158,19 @@ useEffect(() => {
 }, [messages, isTyping]);
 
 /* =========================================================
-LOAD SAVED ACCOUNT
+   LOAD SAVED ACCOUNT
 ========================================================= */
 
 useEffect(() => {
-  try {
-    const savedUser = localStorage.getItem("js-ai-user");
+  const loadSavedAccount = async () => {
+    try {
+      const savedUser =
+        localStorage.getItem("js-ai-user");
 
-    if (savedUser) {
-      const parsedUser = JSON.parse(savedUser);
+      if (!savedUser) return;
+
+      const parsedUser =
+        JSON.parse(savedUser);
 
       setUser(parsedUser);
 
@@ -128,10 +180,23 @@ useEffect(() => {
           text: `Namaste ${parsedUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
         },
       ]);
+
+      // Load this account's recent chats
+      if (parsedUser.uid) {
+        await loadRecentChats(
+          parsedUser.uid
+        );
+      }
+
+    } catch (error) {
+      console.error(
+        "Failed to load saved account:",
+        error
+      );
     }
-  } catch (error) {
-    console.error("Failed to load user:", error);
-  }
+  };
+
+  loadSavedAccount();
 }, []);
 
 
@@ -230,13 +295,15 @@ const googleLogin = async () => {
         undefined,
     };
 
-    setUser(googleUser);
+   setUser(googleUser);
 
-    // Save / update user in Firestore
-    await saveUserToFirestore(
-      googleUser,
-      firebaseUser.uid
-    );
+await loadRecentChats(firebaseUser.uid);
+
+// Save / update user in Firestore
+await saveUserToFirestore(
+  googleUser,
+  firebaseUser.uid
+);
 
     // Save local session
     localStorage.setItem(
@@ -304,96 +371,224 @@ const handleGoogleSignIn = () => {
     setIsTyping(false);
     setMenuOpen(false);
   };
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
 
-  /* =========================================================
-     SEND MESSAGE
-  ========================================================= */
+const sendMessage = async () => {
+  if (!message.trim() || isTyping) return;
 
-  const sendMessage = async () => {
-    if (!message.trim() || isTyping) return;
+  const userMessage = message.trim();
 
-    const userMessage = message.trim();
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "user",
+      text: userMessage,
+    },
+  ]);
+
+  setMessage("");
+  setIsTyping(true);
+
+  try {
+    const response = await fetch("/api/ai-chat", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        message: userMessage,
+        history: messages,
+        user: {
+          name: user?.name,
+          email: user?.email,
+        },
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to get AI response"
+      );
+    }
 
     setMessages((prev) => [
       ...prev,
       {
-        role: "user",
-        text: userMessage,
+        role: "ai",
+        text: data.reply,
       },
     ]);
 
-    setMessage("");
+    /* =====================================================
+       SAVE RECENT CHAT TO FIRESTORE
+    ===================================================== */
 
-    setIsTyping(true);
+    if (user?.uid) {
+      try {
+        const title =
+          userMessage.length > 28
+            ? userMessage.slice(0, 28) + "..."
+            : userMessage;
 
-    try {
-      const response = await fetch("/api/ai-chat", {
-        method: "POST",
+        const preview =
+          data.reply.length > 55
+            ? data.reply.slice(0, 55) + "..."
+            : data.reply;
 
-        headers: {
-          "Content-Type": "application/json",
-        },
+        const chatsRef = collection(
+          db,
+          "users",
+          user.uid,
+          "recentChats"
+        );
 
-        body: JSON.stringify({
-          message: userMessage,
+/* =====================================================
+   SAVE / UPDATE CHAT IN FIRESTORE
+===================================================== */
 
-          history: messages,
+if (user?.uid) {
+  try {
+    const title =
+      userMessage.length > 28
+        ? userMessage.slice(0, 28) + "..."
+        : userMessage;
 
-          user: {
-            name: user?.name,
-            email: user?.email,
+    const preview =
+      data.reply.length > 55
+        ? data.reply.slice(0, 55) + "..."
+        : data.reply;
+
+    const chatsRef = collection(
+      db,
+      "users",
+      user.uid,
+      "recentChats"
+    );
+
+    let chatId = activeChatId;
+
+    /* ================================================
+       FIRST MESSAGE → CREATE NEW CHAT
+    ================================================ */
+
+    if (!chatId) {
+      const chatDoc = await addDoc(chatsRef, {
+        title,
+        preview,
+
+        messages: [
+          {
+            role: "user",
+            text: userMessage,
           },
-        }),
+          {
+            role: "ai",
+            text: data.reply,
+          },
+        ],
+
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
 
-      const data = await response.json();
+      chatId = chatDoc.id;
 
-      if (!response.ok) {
-        throw new Error(
-          data.error || "Failed to get AI response"
-        );
-      }
-
-      setIsTyping(false);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          text: data.reply,
-        },
-      ]);
-
-      /* Save recent chat */
+      setActiveChatId(chatId);
 
       setRecentChats((prev) => [
         {
-          id: Date.now(),
-          title:
-            userMessage.length > 28
-              ? userMessage.slice(0, 28) + "..."
-              : userMessage,
-          preview:
-            data.reply.length > 55
-              ? data.reply.slice(0, 55) + "..."
-              : data.reply,
+          id: chatId!,
+          title,
+          preview,
         },
-        ...prev.slice(0, 9),
-      ]);
-    } catch (error) {
-      console.error("Chat error:", error);
-
-      setIsTyping(false);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          text: "Sorry, something went wrong. Please try again.",
-        },
+        ...prev.slice(0, 19),
       ]);
     }
-  };
+
+    /* ================================================
+       EXISTING CHAT → ADD NEW MESSAGES
+    ================================================ */
+
+    else {
+      const chatRef = doc(
+        db,
+        "users",
+        user.uid,
+        "recentChats",
+        chatId
+      );
+
+      await updateDoc(chatRef, {
+        messages: arrayUnion(
+          {
+            role: "user",
+            text: userMessage,
+          },
+          {
+            role: "ai",
+            text: data.reply,
+          }
+        ),
+
+        preview,
+        updatedAt: serverTimestamp(),
+      });
+
+      setRecentChats((prev) =>
+        prev.map((chat) =>
+          chat.id === chatId
+            ? {
+                ...chat,
+                preview,
+              }
+            : chat
+        )
+      );
+    }
+  } catch (firestoreError) {
+    console.error(
+      "Failed to save chat:",
+      firestoreError
+    );
+  }
+}
+
+        setRecentChats((prev) => [
+          {
+            id: chatDoc.id,
+            title,
+            preview,
+          },
+          ...prev.slice(0, 19),
+        ]);
+      } catch (firestoreError) {
+        console.error(
+          "Failed to save recent chat:",
+          firestoreError
+        );
+      }
+    }
+
+  } catch (error) {
+    console.error("Chat error:", error);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "ai",
+        text: "Sorry, something went wrong. Please try again.",
+      },
+    ]);
+  } finally {
+    setIsTyping(false);
+  }
+};
 
   /* =========================================================
      SIGN IN SCREEN
