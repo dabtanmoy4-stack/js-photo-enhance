@@ -31,6 +31,7 @@ import {
   collection,
   addDoc,
   getDocs,
+  getDoc,
   query,
   orderBy,
   limit,
@@ -480,7 +481,7 @@ if (user?.uid) {
     ================================================ */
 
     if (!chatId) {
-      const chatDoc = await addDoc(chatsRef, {
+      const newChatDoc = await addDoc(chatsRef, {
         title,
         preview,
 
@@ -499,7 +500,7 @@ if (user?.uid) {
         updatedAt: serverTimestamp(),
       });
 
-      chatId = chatDoc.id;
+      chatId = newChatDoc.id;
 
       setActiveChatId(chatId);
 
@@ -514,7 +515,7 @@ if (user?.uid) {
     }
 
     /* ================================================
-       EXISTING CHAT → ADD NEW MESSAGES
+       EXISTING CHAT → ADD MESSAGES
     ================================================ */
 
     else {
@@ -560,38 +561,6 @@ if (user?.uid) {
     );
   }
 }
-
-        setRecentChats((prev) => [
-          {
-            id: chatDoc.id,
-            title,
-            preview,
-          },
-          ...prev.slice(0, 19),
-        ]);
-      } catch (firestoreError) {
-        console.error(
-          "Failed to save recent chat:",
-          firestoreError
-        );
-      }
-    }
-
-  } catch (error) {
-    console.error("Chat error:", error);
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "ai",
-        text: "Sorry, something went wrong. Please try again.",
-      },
-    ]);
-  } finally {
-    setIsTyping(false);
-  }
-};
-
   /* =========================================================
      SIGN IN SCREEN
   ========================================================= */
