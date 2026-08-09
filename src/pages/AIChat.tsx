@@ -281,19 +281,21 @@ const googleLogin = async () => {
 
     const firebaseUser = result.user;
 
-    const googleUser: UserAccount = {
-      name:
-        firebaseUser.displayName ||
-        "Google User",
+   const googleUser: UserAccount = {
+  uid: firebaseUser.uid,
 
-      email:
-        firebaseUser.email ||
-        "",
+  name:
+    firebaseUser.displayName ||
+    "Google User",
 
-      photo:
-        firebaseUser.photoURL ||
-        undefined,
-    };
+  email:
+    firebaseUser.email ||
+    "",
+
+  photo:
+    firebaseUser.photoURL ||
+    undefined,
+};
 
    setUser(googleUser);
 
