@@ -360,22 +360,62 @@ const handleGoogleSignIn = () => {
   };
 
   /* =========================================================
-     NEW CHAT
-  ========================================================= */
+   NEW CHAT
+========================================================= */
 
-  const createNewChat = () => {
-    setMessages([
-      {
-        role: "ai",
-        text: `Namaste ${user?.name || "there"} 👋 What would you like to talk about?`,
-      },
-    ]);
+const createNewChat = () => {
+  setActiveChatId(null);
 
-    setMessage("");
-    setIsTyping(false);
-    setMenuOpen(false);
-  };
+  setMessages([
+    {
+      role: "ai",
+      text: `Namaste ${user?.name || "there"} 👋 What would you like to talk about?`,
+    },
+  ]);
 
+  setMessage("");
+  setIsTyping(false);
+  setMenuOpen(false);
+};
+
+
+/* =========================================================
+   OPEN RECENT CHAT
+========================================================= */
+
+const openRecentChat = async (chatId: string) => {
+  if (!user?.uid) return;
+
+  try {
+    const chatRef = doc(
+      db,
+      "users",
+      user.uid,
+      "recentChats",
+      chatId
+    );
+
+    const snapshot = await getDoc(chatRef);
+
+    if (!snapshot.exists()) {
+      console.error("Chat not found");
+      return;
+    }
+
+    const data = snapshot.data();
+
+    setActiveChatId(chatId);
+
+    setMessages(data.messages || []);
+
+    setRecentOpen(false);
+  } catch (error) {
+    console.error(
+      "Failed to open recent chat:",
+      error
+    );
+  }
+};
 
 /* =========================================================
    SEND MESSAGE
@@ -1798,7 +1838,7 @@ const sendMessage = async () => {
 
                   <button
                     key={chat.id}
-                    onClick={() => setRecentOpen(false)}
+                    onClick={() => openRecentChat(chat.id)}
                     className="
                       flex
                       w-full
