@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 
+import { auth, db } from "../firebase";
+
+import {
+  GoogleAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+
 import {
   ArrowLeft,
   Bot,
@@ -82,60 +89,123 @@ export default function AIChat({ onBack }: AIChatProps) {
   ========================================================= */
 
   const [recentChats, setRecentChats] = useState<RecentChat[]>([
-    {
-      id: 1,
-      title: "Welcome Chat",
-      preview: "Namaste! Welcome to JS AI Assistant.",
-    },
-  ]);
+  {
+    id: 1,
+    title: "Welcome Chat",
+    preview: "Namaste! Welcome to JS AI Assistant.",
+  },
+]);
 
-  /* =========================================================
-     AUTO SCROLL
-  ========================================================= */
+/* =========================================================
+AUTO SCROLL
+========================================================= */
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [messages, isTyping]);
+useEffect(() => {
+  messagesEndRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+}, [messages, isTyping]);
 
-  /* =========================================================
-     LOAD SAVED ACCOUNT
-  ========================================================= */
+/* =========================================================
+LOAD SAVED ACCOUNT
+========================================================= */
 
-  useEffect(() => {
-    try {
-      const savedUser = localStorage.getItem("js-ai-user");
+useEffect(() => {
+  try {
+    const savedUser = localStorage.getItem("js-ai-user");
 
-      if (savedUser) {
-        const parsedUser = JSON.parse(savedUser);
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
 
-        setUser(parsedUser);
+      setUser(parsedUser);
 
-        setMessages([
-          {
-            role: "ai",
-            text: `Namaste ${parsedUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Failed to load user:", error);
+      setMessages([
+        {
+          role: "ai",
+          text: `Namaste ${parsedUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+        },
+      ]);
     }
-  }, []);
+  } catch (error) {
+    console.error("Failed to load user:", error);
+  }
+}, []);
 
-  /* =========================================================
-     GOOGLE SIGN IN
+
+/* =========================================================
+SAVE USER TO FIRESTORE
+========================================================= */
+
+const saveUserToFirestore = async (
+  googleUser: UserAccount,
+  uid: string
+) => {
+  try {
+    if (!googleUser.email) return;
+
+   const userRef = doc(
+  db,
+  "users",
+  uid
+);
+
+    const userSnapshot = await getDoc(userRef);
+
+    if (!userSnapshot.exists()) {
+      // New user
+      await setDoc(userRef, {
+        name: googleUser.name,
+        email: googleUser.email.toLowerCase(),
+        photo: googleUser.photo || null,
+        createdAt: serverTimestamp(),
+        lastLogin: serverTimestamp(),
+        loginCount: 1,
+      });
+
+      console.log(
+        "🎉 New user registered:",
+        googleUser.email
+      );
+    } else {
+      // Existing user
+      const oldData = userSnapshot.data();
+
+      await setDoc(
+        userRef,
+        {
+          name: googleUser.name,
+          photo: googleUser.photo || null,
+          lastLogin: serverTimestamp(),
+          loginCount: (oldData.loginCount || 0) + 1,
+        },
+        { merge: true }
+      );
+
+      console.log(
+        "👤 Existing user logged in:",
+        googleUser.email
+      );
+    }
+  } catch (error) {
+    console.error(
+      "Failed to save user:",
+      error
+    );
+  }
+};
+
+
+/* =========================================================
+GOOGLE SIGN IN
+========================================================= */
      
-     IMPORTANT:
-     Replace this function with your real Google OAuth /
-     Firebase Google authentication.
-  ========================================================= */
+    
 const googleLogin = useGoogleLogin({
   onSuccess: async (tokenResponse) => {
     setIsSigningIn(true);
 
     try {
+      // 1. Get Google profile
       const response = await fetch(
         "https://www.googleapis.com/oauth2/v3/userinfo",
         {
@@ -151,27 +221,72 @@ const googleLogin = useGoogleLogin({
 
       const profile = await response.json();
 
+      // 2. Create Firebase Google credential
+      const credential =
+        GoogleAuthProvider.credential(
+          null,
+          tokenResponse.access_token
+        );
+
+      // 3. Sign in to Firebase Authentication
+      const firebaseResult =
+        await signInWithCredential(
+          auth,
+          credential
+        );
+
+      const firebaseUser = firebaseResult.user;
+
+      // 4. Create app user
       const googleUser: UserAccount = {
-        name: profile.name || "Google User",
-        email: profile.email || "",
-        photo: profile.picture || undefined,
+        name:
+          firebaseUser.displayName ||
+          profile.name ||
+          "Google User",
+
+        email:
+          firebaseUser.email ||
+          profile.email ||
+          "",
+
+        photo:
+          firebaseUser.photoURL ||
+          profile.picture ||
+          undefined,
       };
 
+      // 5. Update UI
       setUser(googleUser);
 
+      // 6. Save / update user in Firestore
+      await saveUserToFirestore(
+  googleUser,
+  firebaseUser.uid
+);
+
+      // 7. Save local session
       localStorage.setItem(
         "js-ai-user",
         JSON.stringify(googleUser)
       );
 
+      // 8. Welcome message
       setMessages([
         {
           role: "ai",
           text: `Namaste ${googleUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
         },
       ]);
+
+      console.log(
+        "Firebase user signed in:",
+        firebaseUser.uid
+      );
     } catch (error) {
-      console.error("Google profile error:", error);
+      console.error(
+        "Google/Firebase sign in error:",
+        error
+      );
     } finally {
       setIsSigningIn(false);
     }
@@ -182,7 +297,8 @@ const googleLogin = useGoogleLogin({
     setIsSigningIn(false);
   },
 });
- const handleGoogleSignIn = () => {
+
+const handleGoogleSignIn = () => {
   setIsSigningIn(true);
   googleLogin();
 };
