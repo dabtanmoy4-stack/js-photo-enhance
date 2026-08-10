@@ -1393,80 +1393,72 @@ return (
         `}
       >
 
-        <div className="mx-auto flex max-w-5xl items-end gap-3">
+     <div className="mx-auto flex max-w-5xl items-end gap-3">
 
-  {/* Animated RGB Input Border */}
-<div
-  className="
-    relative
-    flex-1
-    rounded-3xl
-    p-[3px]
-    overflow-hidden
-  "
->
   {/* Moving light */}
- <div
-  className="
-    relative
-    flex-1
-    rounded-3xl
-    p-[3px]
-    overflow-hidden
-  "
->
-  {/* Continuous moving border */}
   <div
     className="
-      absolute
-      inset-[-100%]
-      bg-[conic-gradient(from_0deg,#8B0000,#FFD700,#8B0000,#FFD700,#8B0000)]
-      animate-[borderRun_3s_linear_infinite]
-    "
-  />
-
-  <textarea
-    value={message}
-    onChange={(e) => setMessage(e.target.value)}
-    onKeyDown={(e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    }}
-    rows={1}
-    placeholder={`Ask anything, ${user.name}...`}
-    disabled={isTyping}
-    className={`
       relative
-      z-10
-      block
-      max-h-40
-      w-full
-      resize-none
-      overflow-y-auto
-      rounded-[21px]
-      border-0
-      px-5
-      py-4
-      outline-none
-      shadow-md
-      ${
-        darkMode
-          ? `
-            bg-gray-900
-            text-white
-            placeholder:text-gray-500
-          `
-          : `
-            bg-white
-            text-black
-            placeholder:text-gray-400
-          `
-      }
-    `}
-  />
-</div>
+      flex-1
+      rounded-3xl
+      p-[3px]
+      overflow-hidden
+    "
+  >
+
+    <div
+      className="
+        absolute
+        inset-[-100%]
+        bg-[conic-gradient(from_0deg,#8B0000,#FFD700,#8B0000,#FFD700,#8B0000)]
+        animate-[borderRun_3s_linear_infinite]
+      "
+    />
+
+    <textarea
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      }}
+      rows={1}
+      placeholder={`Ask anything, ${user.name}...`}
+      disabled={isTyping}
+      className={`
+        relative
+        z-10
+        block
+        max-h-40
+        w-full
+        resize-none
+        overflow-y-auto
+        rounded-[21px]
+        border-0
+        px-5
+        py-4
+        outline-none
+        shadow-md
+        ${
+          darkMode
+            ? `
+              bg-gray-900
+              text-white
+              placeholder:text-gray-500
+            `
+            : `
+              bg-white
+              text-black
+              placeholder:text-gray-400
+            `
+        }
+      `}
+    />
+
+  </div>
+
   <button
     onClick={sendMessage}
     disabled={!message.trim() || isTyping}
@@ -1493,8 +1485,6 @@ return (
   </button>
 
 </div>
-
-      </div>
 
       {/* =====================================================
           SETTINGS PANEL
