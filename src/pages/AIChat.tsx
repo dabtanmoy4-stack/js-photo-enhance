@@ -25,6 +25,7 @@ import {
   ChevronRight,
   Check,
   ShieldCheck,
+  Trash2,
 } from "lucide-react";
 
 import {
@@ -1850,47 +1851,77 @@ return (
             ) : (
               <div className="space-y-2">
 
-                {recentChats.map((chat) => (
+  {recentChats.map((chat) => (
 
-                  <button
-                    key={chat.id}
-                    onClick={() => openRecentChat(chat.id)}
-                    className="
-                      flex
-                      w-full
-                      items-start
-                      gap-3
-                      rounded-2xl
-                      border
-                      border-gray-200
-                      p-4
-                      text-left
-                      transition
-                      hover:bg-gray-50
-                    "
-                  >
+  <div
+    key={chat.id}
+    className="
+      flex
+      w-full
+      items-start
+      gap-3
+      rounded-2xl
+      border
+      border-gray-200
+      p-4
+      transition
+      hover:bg-gray-50
+    "
+  >
 
-                    <History
-                      size={19}
-                      className="mt-1 shrink-0 text-blue-600"
-                    />
+    {/* History icon */}
 
-                    <div className="min-w-0">
+    <History
+      size={19}
+      className="mt-1 shrink-0 text-blue-600"
+    />
 
-                      <p className="truncate font-bold">
-                        {chat.title}
-                      </p>
+    {/* Chat content */}
 
-                      <p className="mt-1 truncate text-xs text-gray-500">
-                        {chat.preview}
-                      </p>
+    <button
+      type="button"
+      onClick={() => openRecentChat(chat.id)}
+      className="min-w-0 flex-1 text-left"
+    >
 
-                    </div>
+      <p className="truncate font-bold">
+        {chat.title}
+      </p>
 
-                  </button>
+      <p className="mt-1 truncate text-xs text-gray-500">
+        {chat.preview}
+      </p>
 
-                ))}
+    </button>
 
+    {/* Delete */}
+
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+
+        setRecentChats((prev) =>
+          prev.filter((item) => item.id !== chat.id)
+        );
+      }}
+      className="
+        shrink-0
+        rounded-full
+        p-2
+        text-gray-400
+        transition
+        hover:bg-red-50
+        hover:text-red-600
+      "
+      title="Delete chat"
+    >
+      <Trash2 size={18} />
+    </button>
+
+  </div>
+
+))}
               </div>
             )}
 
