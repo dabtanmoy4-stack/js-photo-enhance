@@ -550,68 +550,29 @@ const sendMessage = async () => {
           ]);
         }
 
-        /* =================================================
-           EXISTING CHAT → ADD NEW MESSAGES
-        ================================================= */
+                } // else
+      } catch (firestoreError) {
+        console.error(
+          "Failed to save chat:",
+          firestoreError
+        );
+      }
+    } 
 
-        else {
-          const chatRef = doc(
-            db,
-            "users",
-            user.uid,
-            "recentChats",
-            chatId
-          );
+  } catch (error) {
+    console.error("Chat error:", error);
 
-          await updateDoc(chatRef, {
-            messages: arrayUnion(
-              {
-                role: "user",
-                text: userMessage,
-              },
-              {
-                role: "ai",
-                text: data.reply,
-              }
-            ),
-
-            preview,
-            updatedAt: serverTimestamp(),
-          });
-
-          setRecentChats((prev) =>
-            prev.map((chat) =>
-              chat.id === chatId
-                ? {
-                    ...chat,
-                    preview,
-                  }
-                : chat
-            )
-          );
-        }
-    } catch (firestoreError) {
-      console.error(
-        "Failed to save chat:",
-        firestoreError
-      );
-    }
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "ai",
+        text: "Sorry, something went wrong. Please try again.",
+      },
+    ]);
+  } finally {
+    setIsTyping(false);
   }
-} catch (error) {
-  console.error("Chat error:", error);
-
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "ai",
-      text: "Sorry, something went wrong. Please try again.",
-    },
-  ]);
-} finally {
-  setIsTyping(false);
-}
 };
-
 
   /* =========================================================
      SIGN IN SCREEN
