@@ -1395,79 +1395,92 @@ return (
 
         <div className="mx-auto flex max-w-5xl items-end gap-3">
 
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (
-                e.key === "Enter" &&
-                !e.shiftKey
-              ) {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-            rows={1}
-            placeholder={`Ask anything, ${user.name}...`}
-            disabled={isTyping}
-            className={`
-              max-h-40
-              flex-1
-              resize-none
-              overflow-y-auto
-              rounded-3xl
-              border
-              px-5
-              py-4
-              outline-none
-              shadow-md
-              ${
-                darkMode
-                  ? `
-                    border-gray-700
-                    bg-gray-900
-                    text-white
-                    placeholder:text-gray-500
-                    focus:ring-blue-500
-                  `
-                  : `
-                    border-blue-200
-                    bg-white
-                    text-black
-                    placeholder:text-gray-400
-                    focus:ring-blue-500
-                  `
-              }
-              focus:ring-2
-            `}
-          />
+  {/* Animated RGB Input Border */}
+  <div
+    className="
+      relative
+      flex-1
+      rounded-3xl
+      p-[2px]
+      overflow-hidden
+      bg-[linear-gradient(90deg,#071a4d,#0b8f45,#b45309,#071a4d)]
+      bg-[length:300%_300%]
+      animate-[rgbBorder_5s_linear_infinite]
+    "
+  >
 
-          <button
-            onClick={sendMessage}
-            disabled={!message.trim() || isTyping}
-            className="
-              flex
-              h-14
-              w-14
-              shrink-0
-              items-center
-              justify-center
-              rounded-full
-              bg-blue-700
+    <textarea
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      onKeyDown={(e) => {
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey
+        ) {
+          e.preventDefault();
+          sendMessage();
+        }
+      }}
+      rows={1}
+      placeholder={`Ask anything, ${user.name}...`}
+      disabled={isTyping}
+      className={`
+        block
+        max-h-40
+        w-full
+        resize-none
+        overflow-y-auto
+        rounded-[22px]
+        border-0
+        px-5
+        py-4
+        outline-none
+        shadow-md
+
+        ${
+          darkMode
+            ? `
+              bg-gray-900
               text-white
-              shadow-xl
-              transition
-              hover:bg-blue-800
-              hover:scale-105
-              active:scale-95
-              disabled:cursor-not-allowed
-              disabled:opacity-40
-            "
-          >
-            <Send size={22} />
-          </button>
+              placeholder:text-gray-500
+            `
+            : `
+              bg-white
+              text-black
+              placeholder:text-gray-400
+            `
+        }
+      `}
+    />
 
-        </div>
+  </div>
+
+  <button
+    onClick={sendMessage}
+    disabled={!message.trim() || isTyping}
+    className="
+      flex
+      h-14
+      w-14
+      shrink-0
+      items-center
+      justify-center
+      rounded-full
+      bg-blue-700
+      text-white
+      shadow-xl
+      transition
+      hover:bg-blue-800
+      hover:scale-105
+      active:scale-95
+      disabled:cursor-not-allowed
+      disabled:opacity-40
+    "
+  >
+    <Send size={22} />
+  </button>
+
+</div>
 
       </div>
 
