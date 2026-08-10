@@ -1644,155 +1644,146 @@ export default function AIChat({
     z-10
     min-h-0
     flex-1
+    overflow-y-auto
+    px-4
+    pt-6
+    pb-32
   "
 >
-  {/* Scrollable chat container */}
-
   <div
     className="
-      absolute
-      inset-0
-      overflow-y-auto
-      px-4
-      pb-32
-      pt-6
+      mx-auto
+      flex
+      min-h-full
+      w-full
+      max-w-5xl
+      flex-col
+      gap-4
     "
   >
-    <div
-      className="
-        mx-auto
-        flex
-        min-h-full
-        w-full
-        max-w-4xl
-        flex-col
-        justify-end
-        gap-5
-      "
-    >
 
-      {/* =================================================
-          MESSAGES
-      ================================================= */}
+    {/* =================================================
+        MESSAGES
+    ================================================= */}
 
-      {messages.map(
-        (msg, index) => (
-          <div
-            key={`${index}-${msg.role}`}
-            className={
+    {messages.map((msg, index) => (
+      <div
+        key={`${index}-${msg.role}`}
+        className={
+          msg.role === "user"
+            ? "flex justify-end"
+            : "flex justify-start"
+        }
+      >
+        <div
+          className={`
+            flex
+            max-w-[82%]
+            items-start
+            gap-3
+            rounded-3xl
+            px-5
+            py-3
+            shadow-lg
+            transition
+            duration-200
+
+            ${
               msg.role === "user"
-                ? "flex justify-end"
-                : "flex justify-start"
+                ? `
+                  rounded-br-lg
+                  bg-gradient-to-r
+                  from-orange-400
+                  to-orange-500
+                `
+                : `
+                  rounded-bl-lg
+                  bg-gradient-to-r
+                  from-green-400
+                  to-green-500
+                `
             }
-          >
-            <div
-              className={`
-                flex
-                max-w-[82%]
-                items-start
-                gap-3
-                rounded-3xl
-                px-5
-                py-3
-                shadow-lg
-                transition
-                duration-200
-
-                ${
-                  msg.role === "user"
-                    ? `
-                      rounded-br-lg
-                      bg-gradient-to-r
-                      from-orange-400
-                      to-orange-500
-                    `
-                    : `
-                      rounded-bl-lg
-                      bg-gradient-to-r
-                      from-green-400
-                      to-green-500
-                    `
-                }
-              `}
-            >
-              <span
-                className="
-                  whitespace-pre-wrap
-                  break-words
-                  leading-7
-                  text-black
-                "
-              >
-                {msg.text}
-              </span>
-            </div>
-          </div>
-        )
-      )}
-
-      {/* =================================================
-          TYPING INDICATOR
-      ================================================= */}
-
-      {isTyping && (
-        <div className="flex justify-start">
-          <div
+          `}
+        >
+          <span
             className="
-              flex
-              items-center
-              gap-1
-              rounded-3xl
-              rounded-bl-lg
-              bg-gradient-to-r
-              from-green-400
-              to-green-500
-              px-5
-              py-4
-              shadow-lg
+              whitespace-pre-wrap
+              break-words
+              leading-7
+              text-black
             "
           >
-            <span
-              className="
-                h-2
-                w-2
-                animate-bounce
-                rounded-full
-                bg-black
-              "
-            />
-
-            <span
-              className="
-                h-2
-                w-2
-                animate-bounce
-                rounded-full
-                bg-black
-                [animation-delay:150ms]
-              "
-            />
-
-            <span
-              className="
-                h-2
-                w-2
-                animate-bounce
-                rounded-full
-                bg-black
-                [animation-delay:300ms]
-              "
-            />
-          </div>
+            {msg.text}
+          </span>
         </div>
-      )}
+      </div>
+    ))}
 
-      {/* =================================================
-          AUTO SCROLL TARGET
-      ================================================= */}
+    {/* =================================================
+        TYPING INDICATOR
+    ================================================= */}
 
-      <div ref={messagesEndRef} />
+    {isTyping && (
+      <div className="flex justify-start">
+        <div
+          className="
+            flex
+            items-center
+            gap-1
+            rounded-3xl
+            rounded-bl-lg
+            bg-gradient-to-r
+            from-green-400
+            to-green-500
+            px-5
+            py-4
+            shadow-lg
+          "
+        >
+          <span
+            className="
+              h-2
+              w-2
+              animate-bounce
+              rounded-full
+              bg-black
+            "
+          />
 
-    </div>
+          <span
+            className="
+              h-2
+              w-2
+              animate-bounce
+              rounded-full
+              bg-black
+              [animation-delay:150ms]
+            "
+          />
+
+          <span
+            className="
+              h-2
+              w-2
+              animate-bounce
+              rounded-full
+              bg-black
+              [animation-delay:300ms]
+            "
+          />
+        </div>
+      </div>
+    )}
+
+    {/* =================================================
+        AUTO SCROLL TARGET
+    ================================================= */}
+
+    <div
+      ref={messagesEndRef}
+      className="h-px w-full shrink-0"
+    />
+
   </div>
 </main>
       {/* =================================================
