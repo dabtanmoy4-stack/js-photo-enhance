@@ -1644,136 +1644,157 @@ export default function AIChat({
     z-10
     min-h-0
     flex-1
-    overflow-y-auto
-    px-4
-    pb-32
-    pt-6
   "
 >
+  {/* Scrollable chat container */}
+
   <div
     className="
-      mx-auto
-      flex
-      min-h-full
-      w-full
-      max-w-4xl
-      flex-col
-      justify-end
-      space-y-5
+      absolute
+      inset-0
+      overflow-y-auto
+      px-4
+      pb-32
+      pt-6
     "
   >
-    {messages.map(
-      (msg, index) => (
-        <div
-          key={`${index}-${msg.role}`}
-          className={
-            msg.role === "user"
-              ? "flex justify-end"
-              : "flex justify-start"
-          }
-        >
+    <div
+      className="
+        mx-auto
+        flex
+        min-h-full
+        w-full
+        max-w-4xl
+        flex-col
+        justify-end
+        gap-5
+      "
+    >
+
+      {/* =================================================
+          MESSAGES
+      ================================================= */}
+
+      {messages.map(
+        (msg, index) => (
           <div
-            className={`
+            key={`${index}-${msg.role}`}
+            className={
+              msg.role === "user"
+                ? "flex justify-end"
+                : "flex justify-start"
+            }
+          >
+            <div
+              className={`
+                flex
+                max-w-[82%]
+                items-start
+                gap-3
+                rounded-3xl
+                px-5
+                py-3
+                shadow-lg
+                transition
+                duration-200
+
+                ${
+                  msg.role === "user"
+                    ? `
+                      rounded-br-lg
+                      bg-gradient-to-r
+                      from-orange-400
+                      to-orange-500
+                    `
+                    : `
+                      rounded-bl-lg
+                      bg-gradient-to-r
+                      from-green-400
+                      to-green-500
+                    `
+                }
+              `}
+            >
+              <span
+                className="
+                  whitespace-pre-wrap
+                  break-words
+                  leading-7
+                  text-black
+                "
+              >
+                {msg.text}
+              </span>
+            </div>
+          </div>
+        )
+      )}
+
+      {/* =================================================
+          TYPING INDICATOR
+      ================================================= */}
+
+      {isTyping && (
+        <div className="flex justify-start">
+          <div
+            className="
               flex
-              max-w-[82%]
-              items-start
-              gap-3
+              items-center
+              gap-1
               rounded-3xl
+              rounded-bl-lg
+              bg-gradient-to-r
+              from-green-400
+              to-green-500
               px-5
-              py-3
+              py-4
               shadow-lg
-              transition
-              duration-200
-              ${
-                msg.role === "user"
-                  ? `
-                    rounded-br-lg
-                    bg-gradient-to-r
-                    from-orange-400
-                    to-orange-500
-                  `
-                  : `
-                    rounded-bl-lg
-                    bg-gradient-to-r
-                    from-green-400
-                    to-green-500
-                  `
-              }
-            `}
+            "
           >
             <span
               className="
-                whitespace-pre-wrap
-                break-words
-                leading-7
-                text-black
+                h-2
+                w-2
+                animate-bounce
+                rounded-full
+                bg-black
               "
-            >
-              {msg.text}
-            </span>
+            />
+
+            <span
+              className="
+                h-2
+                w-2
+                animate-bounce
+                rounded-full
+                bg-black
+                [animation-delay:150ms]
+              "
+            />
+
+            <span
+              className="
+                h-2
+                w-2
+                animate-bounce
+                rounded-full
+                bg-black
+                [animation-delay:300ms]
+              "
+            />
           </div>
         </div>
-      )
-    )}
+      )}
 
-    {/* TYPING INDICATOR */}
+      {/* =================================================
+          AUTO SCROLL TARGET
+      ================================================= */}
 
-    {isTyping && (
-      <div className="flex justify-start">
-        <div
-          className="
-            flex
-            items-center
-            gap-1
-            rounded-3xl
-            rounded-bl-lg
-            bg-gradient-to-r
-            from-green-400
-            to-green-500
-            px-5
-            py-4
-            shadow-lg
-          "
-        >
-          <span
-            className="
-              h-2
-              w-2
-              animate-bounce
-              rounded-full
-              bg-black
-            "
-          />
+      <div ref={messagesEndRef} />
 
-          <span
-            className="
-              h-2
-              w-2
-              animate-bounce
-              rounded-full
-              bg-black
-              [animation-delay:150ms]
-            "
-          />
-
-          <span
-            className="
-              h-2
-              w-2
-              animate-bounce
-              rounded-full
-              bg-black
-              [animation-delay:300ms]
-            "
-          />
-        </div>
-      </div>
-    )}
-
-    <div ref={messagesEndRef} />
+    </div>
   </div>
 </main>
-
       {/* =================================================
           FIXED INPUT
       ================================================= */}
