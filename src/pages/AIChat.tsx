@@ -1687,12 +1687,12 @@ export default function AIChat({
             }
           `}
         >
-        <span
+       <span
   className="
     whitespace-pre-wrap
     break-words
     leading-7
-    font-semibold
+    font-bold
     text-black
   "
 >
