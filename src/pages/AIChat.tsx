@@ -1635,10 +1635,10 @@ export default function AIChat({
       </header>
 
       {/* =================================================
-          CHAT AREA
-      ================================================= */}
+    CHAT AREA
+================================================= */}
 
-      <main
+<main
   className="
     relative
     z-10
@@ -1662,120 +1662,117 @@ export default function AIChat({
       space-y-5
     "
   >
-          {messages.map(
-            (msg, index) => (
-              <div
-                key={`${index}-${msg.role}`}
-                className={
-                  msg.role === "user"
-                    ? "flex justify-end"
-                    : "flex justify-start"
-                }
-              >
-                <div
-                  className={`
-                    flex
-                    max-w-[82%]
-                    items-start
-                    gap-3
-                    rounded-3xl
-                    px-5
-                    py-3
-                    shadow-lg
-                    transition
-                    duration-200
-                    ${
-                      msg.role ===
-                      "user"
-                        ? `
-                          rounded-br-lg
-                          bg-gradient-to-r
-                          from-orange-400
-                          to-orange-500
-                        `
-                        : `
-                          rounded-bl-lg
-                          bg-gradient-to-r
-                          from-green-400
-                          to-green-500
-                        `
-                    }
-                  `}
-                >
-                  <span
-                    className="
-                      whitespace-pre-wrap
-                      break-words
-                      leading-7
-                      text-black
-                    "
-                  >
-                    {msg.text}
-                  </span>
-                </div>
-              </div>
-            )
-          )}
-
-          {/* =================================================
-              TYPING INDICATOR
-          ================================================= */}
-
-          {isTyping && (
-            <div className="flex justify-start">
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-1
-                  rounded-3xl
-                  rounded-bl-lg
-                  bg-gradient-to-r
-                  from-green-400
-                  to-green-500
-                  px-5
-                  py-4
-                  shadow-lg
-                "
-              >
-                <span
-                  className="
-                    h-2
-                    w-2
-                    animate-bounce
-                    rounded-full
-                    bg-black
-                  "
-                />
-
-                <span
-                  className="
-                    h-2
-                    w-2
-                    animate-bounce
-                    rounded-full
-                    bg-black
-                    [animation-delay:150ms]
-                  "
-                />
-
-                <span
-                  className="
-                    h-2
-                    w-2
-                    animate-bounce
-                    rounded-full
-                    bg-black
-                    [animation-delay:300ms]
-                  "
-                />
-              </div>
-            </div>
-          )}
-
-          <div ref={messagesEndRef} />
+    {messages.map(
+      (msg, index) => (
+        <div
+          key={`${index}-${msg.role}`}
+          className={
+            msg.role === "user"
+              ? "flex justify-end"
+              : "flex justify-start"
+          }
+        >
+          <div
+            className={`
+              flex
+              max-w-[82%]
+              items-start
+              gap-3
+              rounded-3xl
+              px-5
+              py-3
+              shadow-lg
+              transition
+              duration-200
+              ${
+                msg.role === "user"
+                  ? `
+                    rounded-br-lg
+                    bg-gradient-to-r
+                    from-orange-400
+                    to-orange-500
+                  `
+                  : `
+                    rounded-bl-lg
+                    bg-gradient-to-r
+                    from-green-400
+                    to-green-500
+                  `
+              }
+            `}
+          >
+            <span
+              className="
+                whitespace-pre-wrap
+                break-words
+                leading-7
+                text-black
+              "
+            >
+              {msg.text}
+            </span>
+          </div>
         </div>
-      </main>
+      )
+    )}
+
+    {/* TYPING INDICATOR */}
+
+    {isTyping && (
+      <div className="flex justify-start">
+        <div
+          className="
+            flex
+            items-center
+            gap-1
+            rounded-3xl
+            rounded-bl-lg
+            bg-gradient-to-r
+            from-green-400
+            to-green-500
+            px-5
+            py-4
+            shadow-lg
+          "
+        >
+          <span
+            className="
+              h-2
+              w-2
+              animate-bounce
+              rounded-full
+              bg-black
+            "
+          />
+
+          <span
+            className="
+              h-2
+              w-2
+              animate-bounce
+              rounded-full
+              bg-black
+              [animation-delay:150ms]
+            "
+          />
+
+          <span
+            className="
+              h-2
+              w-2
+              animate-bounce
+              rounded-full
+              bg-black
+              [animation-delay:300ms]
+            "
+          />
+        </div>
+      </div>
+    )}
+
+    <div ref={messagesEndRef} />
+  </div>
+</main>
 
       {/* =================================================
           FIXED INPUT
