@@ -128,7 +128,10 @@ export default function AIChat({
   ===================================================== */
 
   const messagesEndRef =
-    useRef<HTMLDivElement | null>(null);
+  useRef<HTMLDivElement | null>(null);
+
+const inputRef =
+  useRef<HTMLTextAreaElement | null>(null);
 
   /* =====================================================
      AUTO SCROLL
@@ -139,6 +142,50 @@ export default function AIChat({
       behavior: "smooth",
     });
   }, [messages, isTyping]);
+
+  useEffect(() => {
+  const handleGlobalTyping = (e: KeyboardEvent) => {
+    
+    if (e.ctrlKey || e.altKey || e.metaKey) {
+      return;
+    }
+
+    
+    if (
+      document.activeElement instanceof
+        HTMLInputElement ||
+      document.activeElement instanceof
+        HTMLTextAreaElement ||
+      document.activeElement instanceof
+        HTMLSelectElement
+    ) {
+      return;
+    }
+
+    
+    if (e.key.length === 1) {
+      inputRef.current?.focus();
+
+    
+      setMessage((prev) => prev + e.key);
+
+      e.preventDefault();
+    }
+  };
+
+  window.addEventListener(
+    "keydown",
+    handleGlobalTyping
+  );
+
+  return () => {
+    window.removeEventListener(
+      "keydown",
+      handleGlobalTyping
+    );
+  };
+}, []);
+
 
   /* =====================================================
      LOAD RECENT CHATS
@@ -1826,7 +1873,8 @@ export default function AIChat({
         `}
       >
         <textarea
-          value={message}
+  ref={inputRef}
+  value={message}
           onChange={(e) =>
             setMessage(e.target.value)
           }
