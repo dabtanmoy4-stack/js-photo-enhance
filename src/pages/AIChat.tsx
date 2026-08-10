@@ -1883,7 +1883,6 @@ return (
       onClick={() => openRecentChat(chat.id)}
       className="min-w-0 flex-1 text-left"
     >
-
       <p className="truncate font-bold">
         {chat.title}
       </p>
@@ -1891,7 +1890,6 @@ return (
       <p className="mt-1 truncate text-xs text-gray-500">
         {chat.preview}
       </p>
-
     </button>
 
     {/* Delete */}
