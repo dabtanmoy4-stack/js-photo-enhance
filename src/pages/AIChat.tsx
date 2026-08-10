@@ -1639,24 +1639,29 @@ export default function AIChat({
       ================================================= */}
 
       <main
-        className="
-          relative
-          z-10
-          min-h-0
-          flex-1
-          overflow-y-auto
-          px-4
-          pb-32
-          pt-6
-        "
-      >
-        <div
-          className="
-            mx-auto
-            max-w-4xl
-            space-y-5
-          "
-        >
+  className="
+    relative
+    z-10
+    min-h-0
+    flex-1
+    overflow-y-auto
+    px-4
+    pb-32
+    pt-6
+  "
+>
+  <div
+    className="
+      mx-auto
+      flex
+      min-h-full
+      w-full
+      max-w-4xl
+      flex-col
+      justify-end
+      space-y-5
+    "
+  >
           {messages.map(
             (msg, index) => (
               <div
