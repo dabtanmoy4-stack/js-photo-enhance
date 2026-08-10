@@ -1406,12 +1406,22 @@ return (
   "
 >
   {/* Moving light */}
+ <div
+  className="
+    relative
+    flex-1
+    rounded-3xl
+    p-[3px]
+    overflow-hidden
+  "
+>
+  {/* Continuous moving border */}
   <div
     className="
       absolute
-      inset-[-150%]
-      bg-[conic-gradient(from_0deg,transparent_0deg,transparent_300deg,#8B0000_325deg,#FFD700_345deg,#8B0000_360deg)]
-      animate-[borderRun_2.5s_linear_infinite]
+      inset-[-100%]
+      bg-[conic-gradient(from_0deg,#8B0000,#FFD700,#8B0000,#FFD700,#8B0000)]
+      animate-[borderRun_3s_linear_infinite]
     "
   />
 
