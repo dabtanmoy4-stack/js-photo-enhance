@@ -1401,7 +1401,7 @@ return (
       relative
       flex-1
       rounded-3xl
-      p-[2px]
+      p-[3px]
       overflow-hidden
       bg-[linear-gradient(90deg,#071a4d,#0b8f45,#b45309,#071a4d)]
       bg-[length:300%_300%]
