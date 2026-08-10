@@ -1403,7 +1403,7 @@ return (
       rounded-3xl
       p-[3px]
       overflow-hidden
-      bg-[linear-gradient(90deg,#071a4d,#0b8f45,#b45309,#071a4d)]
+      bg-[linear-gradient(90deg,#8B0000,#FFD700,#B8860B,#8B0000)]
       bg-[length:300%_300%]
       animate-[rgbBorder_5s_linear_infinite]
     "
