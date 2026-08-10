@@ -75,7 +75,7 @@ export default function AIChat({ onBack }: AIChatProps) {
   const [isSigningIn, setIsSigningIn] = useState(false);
 
 
-  const loadRecentChats = async (uid: string) => {
+const loadRecentChats = async (uid: string) => {
   try {
     const chatsRef = collection(
       db,
@@ -84,13 +84,7 @@ export default function AIChat({ onBack }: AIChatProps) {
       "recentChats"
     );
 
-    const chatsQuery = query(
-      chatsRef,
-      orderBy("createdAt", "desc"),
-      limit(20)
-    );
-
-    const snapshot = await getDocs(chatsQuery);
+    const snapshot = await getDocs(chatsRef);
 
     const chats: RecentChat[] = snapshot.docs.map(
       (doc) => ({
@@ -102,6 +96,7 @@ export default function AIChat({ onBack }: AIChatProps) {
 
     setRecentChats(chats);
 
+    console.log("Recent chats loaded:", chats);
   } catch (error) {
     console.error(
       "Failed to load recent chats:",
