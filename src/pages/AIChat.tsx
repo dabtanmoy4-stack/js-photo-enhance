@@ -1168,22 +1168,22 @@ export default function AIChat({
   ===================================================== */
 
   return (
-    <div
-      className={`
-        relative
-        flex
-        h-full
-        min-h-0
-        w-full
-        flex-col
-        overflow-hidden
-        ${
-          darkMode
-            ? "bg-gray-950 text-white"
-            : "bg-white text-black"
-        }
-      `}
-    >
+  <div
+  className={`
+    relative
+    flex
+    h-[100dvh]
+    min-h-0
+    w-full
+    flex-col
+    overflow-hidden
+    ${
+      darkMode
+        ? "bg-gray-950 text-white"
+        : "bg-white text-black"
+    }
+  `}
+>
       {/* =================================================
           INDIAN FLAG AURORA BACKGROUND
       ================================================= */}
@@ -1677,10 +1677,7 @@ export default function AIChat({
       >
         <div
           className={`
-            flex
             max-w-[82%]
-            items-start
-            gap-3
             rounded-3xl
             px-5
             py-3
@@ -1776,6 +1773,18 @@ export default function AIChat({
     )}
 
     {/* =================================================
+        AUTO SCROLL
+    ================================================= */}
+
+    <div
+      ref={messagesEndRef}
+      className="h-px shrink-0"
+    />
+
+  </div>
+</main>
+
+    {/* =================================================
         AUTO SCROLL TARGET
     ================================================= */}
 
@@ -1787,151 +1796,158 @@ export default function AIChat({
   </div>
 </main>
       {/* =================================================
-          FIXED INPUT
-      ================================================= */}
+    FIXED INPUT
+================================================= */}
+
+<div
+  className={`
+    absolute
+    bottom-0
+    left-0
+    right-0
+    z-40
+    border-t
+    px-4
+    py-3
+    pb-[max(env(safe-area-inset-bottom),12px)]
+    backdrop-blur-xl
+    ${
+      darkMode
+        ? "border-gray-800 bg-gray-950/90"
+        : "border-green-100 bg-white/90"
+    }
+  `}
+>
+  <div
+    className="
+      mx-auto
+      flex
+      w-full
+      max-w-5xl
+      items-end
+      gap-3
+    "
+  >
+
+    {/* =================================================
+        INPUT
+    ================================================= */}
+
+    <div
+      className="
+        relative
+        flex-1
+        overflow-hidden
+        rounded-[23px]
+        p-[1.5px]
+      "
+    >
+
+      {/* Moving Border */}
+
+      <div
+        className="
+          absolute
+          inset-[-100%]
+          animate-[spin_3s_linear_infinite]
+          bg-[conic-gradient(from_0deg,#ff8a00,#ffffff,#00a651,#0072ce,#ff8a00)]
+        "
+      />
 
       <div
         className={`
-          absolute
-          bottom-0
-          left-0
-          right-0
-          z-40
-          border-t
-          px-4
-          py-3
-          pb-[max(env(safe-area-inset-bottom),12px)]
-          backdrop-blur-xl
+          relative
+          rounded-[21px]
           ${
             darkMode
-              ? "border-gray-800 bg-gray-950/90"
-              : "border-green-100 bg-white/90"
+              ? "bg-gray-900"
+              : "bg-white"
           }
         `}
       >
-        <div
-          className="
-            mx-auto
-            flex
-            max-w-5xl
-            items-end
-            gap-3
-          "
-        >
-          {/* Input wrapper */}
-
-          <div
-            className="
-              relative
-              flex-1
-              overflow-hidden
-              rounded-[23px]
-              p-[1.5px]
-            "
-          >
-            {/* Moving light */}
-
-            <div
-              className="
-                absolute
-                inset-[-100%]
-                animate-[spin_3s_linear_infinite]
-                bg-[conic-gradient(from_0deg,#8B0000,#FFD700,#8B0000,#FFD700,#8B0000)]
-              "
-            />
-
-            <div
-              className={`
-                relative
-                rounded-[21px]
-                ${
-                  darkMode
-                    ? "bg-gray-900"
-                    : "bg-white"
-                }
-              `}
-            >
-              <textarea
-                value={message}
-                onChange={(e) =>
-                  setMessage(
-                    e.target.value
-                  )
-                }
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "Enter" &&
-                    !e.shiftKey
-                  ) {
-                    e.preventDefault();
-                    sendMessage();
-                  }
-                }}
-                rows={1}
-                placeholder={`Ask anything, ${user.name}...`}
-                disabled={isTyping}
-                className={`
-                  block
-                  max-h-40
-                  w-full
-                  resize-none
-                  overflow-y-auto
-                  rounded-[21px]
-                  border-0
-                  bg-transparent
-                  px-5
-                  py-4
-                  outline-none
-                  shadow-md
-                  ${
-                    darkMode
-                      ? `
-                        text-white
-                        placeholder:text-gray-500
-                      `
-                      : `
-                        text-black
-                        placeholder:text-gray-400
-                      `
-                  }
-                `}
-              />
-            </div>
-          </div>
-
-          {/* Send */}
-
-          <button
-            type="button"
-            onClick={sendMessage}
-            disabled={
-              !message.trim() ||
-              isTyping
+        <textarea
+          value={message}
+          onChange={(e) =>
+            setMessage(e.target.value)
+          }
+          onKeyDown={(e) => {
+            if (
+              e.key === "Enter" &&
+              !e.shiftKey
+            ) {
+              e.preventDefault();
+              sendMessage();
             }
-            className="
-              flex
-              h-14
-              w-14
-              shrink-0
-              items-center
-              justify-center
-              rounded-full
-              bg-blue-700
-              text-white
-              shadow-xl
-              transition
-              duration-200
-              hover:scale-105
-              hover:bg-blue-800
-              active:scale-95
-              disabled:cursor-not-allowed
-              disabled:opacity-40
-            "
-          >
-            <Send size={22} />
-          </button>
-        </div>
+          }}
+          rows={1}
+          placeholder={`Ask anything, ${user.name}...`}
+          disabled={isTyping}
+          className={`
+            block
+            max-h-40
+            min-h-[54px]
+            w-full
+            resize-none
+            overflow-y-auto
+            rounded-[21px]
+            border-0
+            bg-transparent
+            px-5
+            py-4
+            outline-none
+            shadow-md
+            ${
+              darkMode
+                ? `
+                  text-white
+                  placeholder:text-gray-500
+                `
+                : `
+                  text-black
+                  placeholder:text-gray-400
+                `
+            }
+          `}
+        />
       </div>
+    </div>
+
+    {/* =================================================
+        SEND BUTTON
+    ================================================= */}
+
+    <button
+      type="button"
+      onClick={sendMessage}
+      disabled={
+        !message.trim() ||
+        isTyping
+      }
+      className="
+        flex
+        h-14
+        w-14
+        shrink-0
+        items-center
+        justify-center
+        rounded-full
+        bg-blue-700
+        text-white
+        shadow-xl
+        transition
+        duration-200
+        hover:scale-105
+        hover:bg-blue-800
+        active:scale-95
+        disabled:cursor-not-allowed
+        disabled:opacity-40
+      "
+    >
+      <Send size={22} />
+    </button>
+
+  </div>
+</div>
 
       {/* =================================================
           SETTINGS PANEL
