@@ -1687,16 +1687,17 @@ export default function AIChat({
             }
           `}
         >
-          <span
-            className="
-              whitespace-pre-wrap
-              break-words
-              leading-7
-              text-black
-            "
-          >
-            {msg.text}
-          </span>
+        <span
+  className="
+    whitespace-pre-wrap
+    break-words
+    leading-7
+    font-semibold
+    text-black
+  "
+>
+  {msg.text}
+</span>
         </div>
       </div>
     ))}
