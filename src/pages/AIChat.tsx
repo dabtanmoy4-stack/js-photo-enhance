@@ -78,15 +78,6 @@ export default function AIChat({ onBack }: AIChatProps) {
 
 const loadRecentChats = async (uid: string) => {
   try {
-    const chatsRef = collection(
-      db,
-      "users",
-      uid,
-      "recentChats"
-    );
-
-    const loadRecentChats = async (uid: string) => {
-  try {
     console.log("Loading recent chats for UID:", uid);
 
     const chatsRef = collection(
@@ -106,10 +97,8 @@ const loadRecentChats = async (uid: string) => {
     const chats: RecentChat[] = snapshot.docs.map(
       (chatDoc) => ({
         id: chatDoc.id,
-        title:
-          chatDoc.data().title || "New Chat",
-        preview:
-          chatDoc.data().preview || "",
+        title: chatDoc.data().title || "New Chat",
+        preview: chatDoc.data().preview || "",
       })
     );
 
@@ -119,7 +108,6 @@ const loadRecentChats = async (uid: string) => {
     );
 
     setRecentChats(chats);
-
   } catch (error) {
     console.error(
       "FAILED TO LOAD RECENT CHATS:",
@@ -178,8 +166,9 @@ useEffect(() => {
 }, [messages, isTyping]);
 
 /* =========================================================
-   LOAD SAVED ACCOUNT
+   RESTORE FIREBASE ACCOUNT
 ========================================================= */
+
 useEffect(() => {
   const unsubscribe = onAuthStateChanged(
     auth,
@@ -192,9 +181,14 @@ useEffect(() => {
 
       const restoredUser: UserAccount = {
         uid: firebaseUser.uid,
-        name: firebaseUser.displayName || "Google User",
-        email: firebaseUser.email || "",
-        photo: firebaseUser.photoURL || undefined,
+        name:
+          firebaseUser.displayName ||
+          "Google User",
+        email:
+          firebaseUser.email || "",
+        photo:
+          firebaseUser.photoURL ||
+          undefined,
       };
 
       setUser(restoredUser);
@@ -204,7 +198,9 @@ useEffect(() => {
         JSON.stringify(restoredUser)
       );
 
-      await loadRecentChats(firebaseUser.uid);
+      await loadRecentChats(
+        firebaseUser.uid
+      );
 
       setMessages([
         {
