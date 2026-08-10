@@ -487,92 +487,114 @@ const sendMessage = async () => {
       },
     ]);
 
-    /* =====================================================
-       SAVE / UPDATE CHAT IN FIRESTORE
-    ===================================================== */
+  /* =================================================
+   SAVE / UPDATE CHAT IN FIRESTORE
+================================================= */
 
-    if (user?.uid) {
-      try {
-        const title =
-          userMessage.length > 28
-            ? userMessage.slice(0, 28) + "..."
-            : userMessage;
+if (user?.uid) {
+  try {
+    const title =
+      userMessage.length > 28
+        ? userMessage.slice(0, 28) + "..."
+        : userMessage;
 
-        const preview =
-          data.reply.length > 55
-            ? data.reply.slice(0, 55) + "..."
-            : data.reply;
+    const preview =
+      data.reply.length > 55
+        ? data.reply.slice(0, 55) + "..."
+        : data.reply;
 
-        const chatsRef = collection(
-          db,
-          "users",
-          user.uid,
-          "recentChats"
-        );
+    const chatsRef = collection(
+      db,
+      "users",
+      user.uid,
+      "recentChats"
+    );
 
-        let chatId = activeChatId;
+    let chatId = activeChatId;
 
-        /* =================================================
-           FIRST MESSAGE → CREATE NEW CHAT
-        ================================================= */
+    /* =================================================
+       FIRST MESSAGE → CREATE NEW CHAT
+    ================================================= */
 
-        if (!chatId) {
-          const newChatDoc = await addDoc(chatsRef, {
-            title,
-            preview,
+    if (!chatId) {
+      const newChatDoc = await addDoc(chatsRef, {
+        title,
+        preview,
 
-            messages: [
-              {
-                role: "user",
-                text: userMessage,
-              },
-              {
-                role: "ai",
-                text: data.reply,
-              },
-            ],
+        messages: [
+          {
+            role: "user",
+            text: userMessage,
+          },
+          {
+            role: "ai",
+            text: data.reply,
+          },
+        ],
 
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-          });
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
 
-          chatId = newChatDoc.id;
+      chatId = newChatDoc.id;
 
-          setActiveChatId(chatId);
+      setActiveChatId(chatId);
 
-          setRecentChats((prev) => [
-            {
-              id: chatId!,
-              title,
-              preview,
-            },
-            ...prev.slice(0, 19),
-          ]);
-        }
+      setRecentChats((prev) => [
+        {
+          id: chatId!,
+          title,
+          preview,
+        },
+        ...prev.slice(0, 19),
+      ]);
+    } else {
+      /* =================================================
+         EXISTING CHAT → ADD NEW MESSAGES
+      ================================================= */
 
-                } // else
-      } catch (firestoreError) {
-        console.error(
-          "Failed to save chat:",
-          firestoreError
-        );
-      }
-    } 
+      const chatRef = doc(
+        db,
+        "users",
+        user.uid,
+        "recentChats",
+        chatId
+      );
 
-  } catch (error) {
-    console.error("Chat error:", error);
+      await updateDoc(chatRef, {
+        messages: arrayUnion(
+          {
+            role: "user",
+            text: userMessage,
+          },
+          {
+            role: "ai",
+            text: data.reply,
+          }
+        ),
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "ai",
-        text: "Sorry, something went wrong. Please try again.",
-      },
-    ]);
-  } finally {
-    setIsTyping(false);
+        preview,
+        updatedAt: serverTimestamp(),
+      });
+
+      setRecentChats((prev) =>
+        prev.map((chat) =>
+          chat.id === chatId
+            ? {
+                ...chat,
+                preview,
+              }
+            : chat
+        )
+      );
+    }
+  } catch (firestoreError) {
+    console.error(
+      "Failed to save chat:",
+      firestoreError
+    );
   }
-};
+}
 
   /* =========================================================
      SIGN IN SCREEN
