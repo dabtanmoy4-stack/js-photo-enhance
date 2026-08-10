@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 import { auth, db } from "../firebase";
@@ -84,29 +85,50 @@ const loadRecentChats = async (uid: string) => {
       "recentChats"
     );
 
+    const loadRecentChats = async (uid: string) => {
+  try {
+    console.log("Loading recent chats for UID:", uid);
+
+    const chatsRef = collection(
+      db,
+      "users",
+      uid,
+      "recentChats"
+    );
+
     const snapshot = await getDocs(chatsRef);
 
+    console.log(
+      "Firestore recent chat documents:",
+      snapshot.docs.length
+    );
+
     const chats: RecentChat[] = snapshot.docs.map(
-      (doc) => ({
-        id: doc.id,
-        title: doc.data().title || "New Chat",
-        preview: doc.data().preview || "",
+      (chatDoc) => ({
+        id: chatDoc.id,
+        title:
+          chatDoc.data().title || "New Chat",
+        preview:
+          chatDoc.data().preview || "",
       })
+    );
+
+    console.log(
+      "Recent chats loaded:",
+      chats
     );
 
     setRecentChats(chats);
 
-    console.log("Recent chats loaded:", chats);
   } catch (error) {
     console.error(
-      "Failed to load recent chats:",
+      "FAILED TO LOAD RECENT CHATS:",
       error
     );
 
     setRecentChats([]);
   }
 };
-
 
  /* =========================================================
    CHAT
@@ -158,45 +180,43 @@ useEffect(() => {
 /* =========================================================
    LOAD SAVED ACCOUNT
 ========================================================= */
-
 useEffect(() => {
-  const loadSavedAccount = async () => {
-    try {
-      const savedUser =
-        localStorage.getItem("js-ai-user");
+  const unsubscribe = onAuthStateChanged(
+    auth,
+    async (firebaseUser) => {
+      if (!firebaseUser) {
+        setUser(null);
+        setRecentChats([]);
+        return;
+      }
 
-      if (!savedUser) return;
+      const restoredUser: UserAccount = {
+        uid: firebaseUser.uid,
+        name: firebaseUser.displayName || "Google User",
+        email: firebaseUser.email || "",
+        photo: firebaseUser.photoURL || undefined,
+      };
 
-      const parsedUser =
-        JSON.parse(savedUser);
+      setUser(restoredUser);
 
-      setUser(parsedUser);
+      localStorage.setItem(
+        "js-ai-user",
+        JSON.stringify(restoredUser)
+      );
+
+      await loadRecentChats(firebaseUser.uid);
 
       setMessages([
         {
           role: "ai",
-          text: `Namaste ${parsedUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+          text: `Namaste ${restoredUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
         },
       ]);
-
-      // Load this account's recent chats
-      if (parsedUser.uid) {
-        await loadRecentChats(
-          parsedUser.uid
-        );
-      }
-
-    } catch (error) {
-      console.error(
-        "Failed to load saved account:",
-        error
-      );
     }
-  };
+  );
 
-  loadSavedAccount();
+  return () => unsubscribe();
 }, []);
-
 
 /* =========================================================
 SAVE USER TO FIRESTORE
