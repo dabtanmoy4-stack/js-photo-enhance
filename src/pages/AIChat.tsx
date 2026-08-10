@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  signOut,
   onAuthStateChanged,
 } from "firebase/auth";
 
@@ -35,13 +36,14 @@ import {
   getDocs,
   getDoc,
   setDoc,
+  updateDoc,
+  arrayUnion,
   query,
   orderBy,
   limit,
   serverTimestamp,
   doc,
-  updateDoc,
-  arrayUnion,
+  deleteDoc,
 } from "firebase/firestore";
 
 interface AIChatProps {
@@ -64,138 +66,362 @@ interface RecentChat {
   id: string;
   title: string;
   preview: string;
+  messages?: Message[];
 }
 
-export default function AIChat({ onBack }: AIChatProps) {
-  /* =========================================================
+export default function AIChat({
+  onBack,
+}: AIChatProps) {
+  /* =====================================================
      USER / AUTH
-  ========================================================= */
+  ===================================================== */
 
-  const [user, setUser] = useState<UserAccount | null>(null);
+  const [user, setUser] =
+    useState<UserAccount | null>(null);
 
-  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isSigningIn, setIsSigningIn] =
+    useState(false);
 
+  /* =====================================================
+     CHAT
+  ===================================================== */
 
-const loadRecentChats = async (uid: string) => {
-  try {
-    console.log("Loading recent chats for UID:", uid);
+  const [message, setMessage] = useState("");
 
-    const chatsRef = collection(
-      db,
-      "users",
-      uid,
-      "recentChats"
-    );
+  const [messages, setMessages] =
+    useState<Message[]>([]);
 
-    const snapshot = await getDocs(chatsRef);
+  const [isTyping, setIsTyping] =
+    useState(false);
 
-    console.log(
-      "Firestore recent chat documents:",
-      snapshot.docs.length
-    );
+  const [activeChatId, setActiveChatId] =
+    useState<string | null>(null);
 
-    const chats: RecentChat[] = snapshot.docs.map(
-      (chatDoc) => ({
-        id: chatDoc.id,
-        title: chatDoc.data().title || "New Chat",
-        preview: chatDoc.data().preview || "",
-      })
-    );
+  /* =====================================================
+     RECENT CHATS
+  ===================================================== */
 
-    console.log(
-      "Recent chats loaded:",
-      chats
-    );
+  const [recentChats, setRecentChats] =
+    useState<RecentChat[]>([]);
 
-    setRecentChats(chats);
-  } catch (error) {
-    console.error(
-      "FAILED TO LOAD RECENT CHATS:",
-      error
-    );
+  /* =====================================================
+     UI
+  ===================================================== */
 
-    setRecentChats([]);
-  }
-};
+  const [menuOpen, setMenuOpen] =
+    useState(false);
 
- /* =========================================================
-   CHAT
-========================================================= */
+  const [recentOpen, setRecentOpen] =
+    useState(false);
 
-const [message, setMessage] = useState("");
+  const [settingsOpen, setSettingsOpen] =
+    useState(false);
 
-const [isTyping, setIsTyping] = useState(false);
+  const [accountOpen, setAccountOpen] =
+    useState(false);
 
-const [messages, setMessages] = useState<Message[]>([]);
+  const [darkMode, setDarkMode] =
+    useState(false);
 
-const [activeChatId, setActiveChatId] =
-  useState<string | null>(null);
+  /* =====================================================
+     REFS
+  ===================================================== */
 
-const messagesEndRef =
-  useRef<HTMLDivElement | null>(null);
+  const messagesEndRef =
+    useRef<HTMLDivElement | null>(null);
 
+  /* =====================================================
+     AUTO SCROLL
+  ===================================================== */
 
-/* =========================================================
-   UI
-========================================================= */
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages, isTyping]);
 
-  const [menuOpen, setMenuOpen] = useState(false);
+  /* =====================================================
+     LOAD RECENT CHATS
+  ===================================================== */
 
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const loadRecentChats = async (
+    uid: string
+  ) => {
+    try {
+      const chatsRef = collection(
+        db,
+        "users",
+        uid,
+        "recentChats"
+      );
 
-  const [accountOpen, setAccountOpen] = useState(false);
+      const chatsQuery = query(
+        chatsRef,
+        orderBy("updatedAt", "desc"),
+        limit(20)
+      );
 
-  const [recentOpen, setRecentOpen] = useState(false);
+      const snapshot =
+        await getDocs(chatsQuery);
 
-  const [darkMode, setDarkMode] = useState(false);
-/* =========================================================
-   RECENT CHATS
-========================================================= */
+      const chats: RecentChat[] =
+        snapshot.docs.map((chatDoc) => {
+          const data = chatDoc.data();
 
-const [recentChats, setRecentChats] =
-  useState<RecentChat[]>([]);
+          return {
+            id: chatDoc.id,
+            title:
+              data.title || "New Chat",
+            preview:
+              data.preview || "",
+            messages:
+              data.messages || [],
+          };
+        });
 
-/* =========================================================
-AUTO SCROLL
-========================================================= */
+      setRecentChats(chats);
+    } catch (error) {
+      console.error(
+        "Failed to load recent chats:",
+        error
+      );
 
-useEffect(() => {
-  messagesEndRef.current?.scrollIntoView({
-    behavior: "smooth",
-  });
-}, [messages, isTyping]);
+      /*
+       * Fallback in case old documents do not
+       * have updatedAt yet.
+       */
 
-/* =========================================================
-   RESTORE FIREBASE ACCOUNT
-========================================================= */
+      try {
+        const chatsRef = collection(
+          db,
+          "users",
+          uid,
+          "recentChats"
+        );
 
-useEffect(() => {
-  const unsubscribe = onAuthStateChanged(
-    auth,
-    async (firebaseUser) => {
-      if (!firebaseUser) {
-        setUser(null);
+        const snapshot =
+          await getDocs(chatsRef);
+
+        const chats: RecentChat[] =
+          snapshot.docs.map((chatDoc) => {
+            const data = chatDoc.data();
+
+            return {
+              id: chatDoc.id,
+              title:
+                data.title || "New Chat",
+              preview:
+                data.preview || "",
+              messages:
+                data.messages || [],
+            };
+          });
+
+        setRecentChats(
+          chats.slice(0, 20)
+        );
+      } catch (fallbackError) {
+        console.error(
+          "Fallback recent chat loading failed:",
+          fallbackError
+        );
+
         setRecentChats([]);
+      }
+    }
+  };
+
+  /* =====================================================
+     FIREBASE AUTH RESTORE
+  ===================================================== */
+
+  useEffect(() => {
+    const unsubscribe =
+      onAuthStateChanged(
+        auth,
+        async (firebaseUser) => {
+          if (!firebaseUser) {
+            setUser(null);
+            setRecentChats([]);
+            setMessages([]);
+            return;
+          }
+
+          const restoredUser: UserAccount = {
+            uid: firebaseUser.uid,
+
+            name:
+              firebaseUser.displayName ||
+              "Google User",
+
+            email:
+              firebaseUser.email || "",
+
+            photo:
+              firebaseUser.photoURL ||
+              undefined,
+          };
+
+          setUser(restoredUser);
+
+          localStorage.setItem(
+            "js-ai-user",
+            JSON.stringify(restoredUser)
+          );
+
+          await loadRecentChats(
+            firebaseUser.uid
+          );
+
+          setMessages([
+            {
+              role: "ai",
+              text: `Namaste ${restoredUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+            },
+          ]);
+        }
+      );
+
+    return () => unsubscribe();
+  }, []);
+
+  /* =====================================================
+     SAVE USER TO FIRESTORE
+  ===================================================== */
+
+  const saveUserToFirestore = async (
+    googleUser: UserAccount
+  ) => {
+    try {
+      if (!googleUser.email) {
         return;
       }
 
-      const restoredUser: UserAccount = {
+      const userRef = doc(
+        db,
+        "users",
+        googleUser.uid
+      );
+
+      const userSnapshot =
+        await getDoc(userRef);
+
+      if (!userSnapshot.exists()) {
+        await setDoc(userRef, {
+          uid: googleUser.uid,
+
+          name: googleUser.name,
+
+          email:
+            googleUser.email.toLowerCase(),
+
+          photo:
+            googleUser.photo || null,
+
+          createdAt:
+            serverTimestamp(),
+
+          lastLogin:
+            serverTimestamp(),
+
+          loginCount: 1,
+        });
+
+        console.log(
+          "New user registered:",
+          googleUser.email
+        );
+      } else {
+        const oldData =
+          userSnapshot.data();
+
+        await setDoc(
+          userRef,
+          {
+            name: googleUser.name,
+
+            email:
+              googleUser.email.toLowerCase(),
+
+            photo:
+              googleUser.photo || null,
+
+            lastLogin:
+              serverTimestamp(),
+
+            loginCount:
+              (oldData.loginCount || 0) + 1,
+          },
+          {
+            merge: true,
+          }
+        );
+
+        console.log(
+          "Existing user logged in:",
+          googleUser.email
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Failed to save user:",
+        error
+      );
+    }
+  };
+
+  /* =====================================================
+     GOOGLE LOGIN
+  ===================================================== */
+
+  const googleLogin = async () => {
+    if (isSigningIn) {
+      return;
+    }
+
+    setIsSigningIn(true);
+
+    try {
+      const provider =
+        new GoogleAuthProvider();
+
+      provider.setCustomParameters({
+        prompt: "select_account",
+      });
+
+      const result =
+        await signInWithPopup(
+          auth,
+          provider
+        );
+
+      const firebaseUser =
+        result.user;
+
+      const googleUser: UserAccount = {
         uid: firebaseUser.uid,
+
         name:
           firebaseUser.displayName ||
           "Google User",
+
         email:
           firebaseUser.email || "",
+
         photo:
           firebaseUser.photoURL ||
           undefined,
       };
 
-      setUser(restoredUser);
+      setUser(googleUser);
 
       localStorage.setItem(
         "js-ai-user",
-        JSON.stringify(restoredUser)
+        JSON.stringify(googleUser)
+      );
+
+      await saveUserToFirestore(
+        googleUser
       );
 
       await loadRecentChats(
@@ -205,354 +431,99 @@ useEffect(() => {
       setMessages([
         {
           role: "ai",
-          text: `Namaste ${restoredUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+          text: `Namaste ${googleUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
         },
       ]);
-    }
-  );
-
-  return () => unsubscribe();
-}, []);
-
-/* =========================================================
-SAVE USER TO FIRESTORE
-========================================================= */
-
-const saveUserToFirestore = async (
-  googleUser: UserAccount,
-  uid: string
-) => {
-  try {
-    if (!googleUser.email) return;
-
-   const userRef = doc(
-  db,
-  "users",
-  uid
-);
-
-    const userSnapshot = await getDoc(userRef);
-
-    if (!userSnapshot.exists()) {
-      // New user
-      await setDoc(userRef, {
-        name: googleUser.name,
-        email: googleUser.email.toLowerCase(),
-        photo: googleUser.photo || null,
-        createdAt: serverTimestamp(),
-        lastLogin: serverTimestamp(),
-        loginCount: 1,
-      });
 
       console.log(
-        "🎉 New user registered:",
-        googleUser.email
+        "Firebase Google login successful"
       );
-    } else {
-      // Existing user
-      const oldData = userSnapshot.data();
+    } catch (error) {
+      console.error(
+        "Firebase Google sign in error:",
+        error
+      );
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
 
-      await setDoc(
-        userRef,
-        {
-          name: googleUser.name,
-          photo: googleUser.photo || null,
-          lastLogin: serverTimestamp(),
-          loginCount: (oldData.loginCount || 0) + 1,
-        },
-        { merge: true }
+  const handleGoogleSignIn = () => {
+    googleLogin();
+  };
+
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+
+      localStorage.removeItem(
+        "js-ai-user"
       );
 
-      console.log(
-        "👤 Existing user logged in:",
-        googleUser.email
+      setUser(null);
+
+      setMessages([]);
+
+      setRecentChats([]);
+
+      setActiveChatId(null);
+
+      setMenuOpen(false);
+
+      setSettingsOpen(false);
+
+      setAccountOpen(false);
+
+      setRecentOpen(false);
+    } catch (error) {
+      console.error(
+        "Logout failed:",
+        error
       );
     }
-  } catch (error) {
-    console.error(
-      "Failed to save user:",
-      error
-    );
-  }
-};
+  };
 
+  /* =====================================================
+     NEW CHAT
+  ===================================================== */
 
-/* =========================================================
-GOOGLE SIGN IN
-========================================================= */
-     
-    
-const googleLogin = async () => {
-  setIsSigningIn(true);
+  const createNewChat = () => {
+    setActiveChatId(null);
 
-  try {
-    const provider = new GoogleAuthProvider();
-
-    const result = await signInWithPopup(
-      auth,
-      provider
-    );
-
-    const firebaseUser = result.user;
-
-   const googleUser: UserAccount = {
-  uid: firebaseUser.uid,
-
-  name:
-    firebaseUser.displayName ||
-    "Google User",
-
-  email:
-    firebaseUser.email ||
-    "",
-
-  photo:
-    firebaseUser.photoURL ||
-    undefined,
-};
-
-   setUser(googleUser);
-
-await loadRecentChats(firebaseUser.uid);
-
-// Save / update user in Firestore
-await saveUserToFirestore(
-  googleUser,
-  firebaseUser.uid
-);
-
-    // Save local session
-    localStorage.setItem(
-      "js-ai-user",
-      JSON.stringify(googleUser)
-    );
-
-    // Welcome message
     setMessages([
       {
         role: "ai",
-        text: `Namaste ${googleUser.name} 👋 I am JS AI Assistant. How can I help you today?`,
+        text: `Namaste ${
+          user?.name || "there"
+        } 👋 What would you like to talk about?`,
       },
     ]);
 
-    console.log(
-      "Firebase Google login successful"
-    );
+    setMessage("");
 
-    console.log(
-      "Firebase UID:",
-      firebaseUser.uid
-    );
-  } catch (error) {
-    console.error(
-      "Firebase Google sign in error:",
-      error
-    );
-  } finally {
-    setIsSigningIn(false);
-  }
-};
+    setIsTyping(false);
 
-const handleGoogleSignIn = () => {
-  googleLogin();
-};
-
-  /* =========================================================
-     LOGOUT
-  ========================================================= */
-
-  const handleLogout = () => {
-    localStorage.removeItem("js-ai-user");
-
-    setUser(null);
     setMenuOpen(false);
-    setSettingsOpen(false);
-    setAccountOpen(false);
-    setMessages([]);
+
+    setRecentOpen(false);
   };
 
-  /* =========================================================
-   NEW CHAT
-========================================================= */
+  /* =====================================================
+     OPEN RECENT CHAT
+  ===================================================== */
 
-const createNewChat = () => {
-  setActiveChatId(null);
-
-  setMessages([
-    {
-      role: "ai",
-      text: `Namaste ${user?.name || "there"} 👋 What would you like to talk about?`,
-    },
-  ]);
-
-  setMessage("");
-  setIsTyping(false);
-  setMenuOpen(false);
-};
-
-
-/* =========================================================
-   OPEN RECENT CHAT
-========================================================= */
-
-const openRecentChat = async (chatId: string) => {
-  if (!user?.uid) return;
-
-  try {
-    const chatRef = doc(
-      db,
-      "users",
-      user.uid,
-      "recentChats",
-      chatId
-    );
-
-    const snapshot = await getDoc(chatRef);
-
-    if (!snapshot.exists()) {
-      console.error("Chat not found");
+  const openRecentChat = async (
+    chatId: string
+  ) => {
+    if (!user?.uid) {
       return;
     }
 
-    const data = snapshot.data();
-
-    setActiveChatId(chatId);
-
-    setMessages(data.messages || []);
-
-    setRecentOpen(false);
-  } catch (error) {
-    console.error(
-      "Failed to open recent chat:",
-      error
-    );
-  }
-};
-
-/* =========================================================
-   SEND MESSAGE
-========================================================= */
-
-const sendMessage = async () => {
-  if (!message.trim() || isTyping) return;
-
-  const userMessage = message.trim();
-
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "user",
-      text: userMessage,
-    },
-  ]);
-
-  setMessage("");
-  setIsTyping(true);
-
-  try {
-    const response = await fetch("/api/ai-chat", {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        message: userMessage,
-        history: messages,
-        user: {
-          name: user?.name,
-          email: user?.email,
-        },
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        data.error || "Failed to get AI response"
-      );
-    }
-
-    /* =====================================================
-       SHOW AI RESPONSE
-    ===================================================== */
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "ai",
-        text: data.reply,
-      },
-    ]);
-
-  /* =================================================
-   SAVE / UPDATE CHAT IN FIRESTORE
-================================================= */
-
-if (user?.uid) {
-  try {
-    const title =
-      userMessage.length > 28
-        ? userMessage.slice(0, 28) + "..."
-        : userMessage;
-
-    const preview =
-      data.reply.length > 55
-        ? data.reply.slice(0, 55) + "..."
-        : data.reply;
-
-    const chatsRef = collection(
-      db,
-      "users",
-      user.uid,
-      "recentChats"
-    );
-
-    let chatId = activeChatId;
-
-    /* =================================================
-       FIRST MESSAGE → CREATE NEW CHAT
-    ================================================= */
-
-    if (!chatId) {
-      const newChatDoc = await addDoc(chatsRef, {
-        title,
-        preview,
-
-        messages: [
-          {
-            role: "user",
-            text: userMessage,
-          },
-          {
-            role: "ai",
-            text: data.reply,
-          },
-        ],
-
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-
-      chatId = newChatDoc.id;
-
-      setActiveChatId(chatId);
-
-      setRecentChats((prev) => [
-        {
-          id: chatId!,
-          title,
-          preview,
-        },
-        ...prev.slice(0, 19),
-      ]);
-    } else {
-      /* =================================================
-         EXISTING CHAT → ADD NEW MESSAGES
-      ================================================= */
-
+    try {
       const chatRef = doc(
         db,
         "users",
@@ -561,64 +532,396 @@ if (user?.uid) {
         chatId
       );
 
-      await updateDoc(chatRef, {
-        messages: arrayUnion(
-          {
-            role: "user",
-            text: userMessage,
-          },
-          {
-            role: "ai",
-            text: data.reply,
-          }
-        ),
+      const snapshot =
+        await getDoc(chatRef);
 
-        preview,
-        updatedAt: serverTimestamp(),
-      });
+      if (!snapshot.exists()) {
+        console.error(
+          "Chat not found"
+        );
+        return;
+      }
 
-      setRecentChats((prev) =>
-        prev.map((chat) =>
-          chat.id === chatId
-            ? {
-                ...chat,
-                preview,
-              }
-            : chat
-        )
+      const data =
+        snapshot.data();
+
+      setActiveChatId(chatId);
+
+      setMessages(
+        Array.isArray(data.messages)
+          ? data.messages
+          : []
+      );
+
+      setRecentOpen(false);
+
+      setMenuOpen(false);
+    } catch (error) {
+      console.error(
+        "Failed to open recent chat:",
+        error
       );
     }
-  } catch (firestoreError) {
-    console.error(
-      "Failed to save chat:",
-      firestoreError
-    );
-  }
-}
+  };
 
-  /* =========================================================
+  /* =====================================================
+     DELETE RECENT CHAT
+  ===================================================== */
+
+  const deleteRecentChat = async (
+    chatId: string
+  ) => {
+    if (!user?.uid) {
+      return;
+    }
+
+    try {
+      const chatRef = doc(
+        db,
+        "users",
+        user.uid,
+        "recentChats",
+        chatId
+      );
+
+      await deleteDoc(chatRef);
+
+      setRecentChats((prev) =>
+        prev.filter(
+          (chat) => chat.id !== chatId
+        )
+      );
+
+      if (activeChatId === chatId) {
+        setActiveChatId(null);
+
+        setMessages([
+          {
+            role: "ai",
+            text: `Namaste ${
+              user.name
+            } 👋 What would you like to talk about?`,
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error(
+        "Failed to delete recent chat:",
+        error
+      );
+    }
+  };
+    /* =====================================================
+     SEND MESSAGE
+  ===================================================== */
+
+  const sendMessage = async () => {
+    if (!message.trim() || isTyping) {
+      return;
+    }
+
+    if (!user?.uid) {
+      return;
+    }
+
+    const userMessage = message.trim();
+
+    const userMessageObject: Message = {
+      role: "user",
+      text: userMessage,
+    };
+
+    setMessages((prev) => [
+      ...prev,
+      userMessageObject,
+    ]);
+
+    setMessage("");
+    setIsTyping(true);
+
+    try {
+      /* =================================================
+         CALL AI API
+      ================================================= */
+
+      const response = await fetch(
+        "/api/ai-chat",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            message: userMessage,
+
+            history: messages,
+
+            user: {
+              uid: user.uid,
+              name: user.name,
+              email: user.email,
+            },
+          }),
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+            "Failed to get AI response"
+        );
+      }
+
+      const aiReply =
+        data.reply ||
+        "Sorry, I could not generate a response.";
+
+      /* =================================================
+         ADD AI RESPONSE TO UI
+      ================================================= */
+
+      const aiMessageObject: Message = {
+        role: "ai",
+        text: aiReply,
+      };
+
+      setMessages((prev) => [
+        ...prev,
+        aiMessageObject,
+      ]);
+
+      /* =================================================
+         FIRESTORE CHAT SAVE
+      ================================================= */
+
+      try {
+        const title =
+          userMessage.length > 28
+            ? userMessage.slice(0, 28) +
+              "..."
+            : userMessage;
+
+        const preview =
+          aiReply.length > 55
+            ? aiReply.slice(0, 55) +
+              "..."
+            : aiReply;
+
+        const chatsRef = collection(
+          db,
+          "users",
+          user.uid,
+          "recentChats"
+        );
+
+        let chatId =
+          activeChatId;
+
+        /* =============================================
+           CREATE NEW CHAT
+        ============================================= */
+
+        if (!chatId) {
+          const newChatDoc =
+            await addDoc(
+              chatsRef,
+              {
+                title,
+
+                preview,
+
+                messages: [
+                  userMessageObject,
+                  aiMessageObject,
+                ],
+
+                createdAt:
+                  serverTimestamp(),
+
+                updatedAt:
+                  serverTimestamp(),
+              }
+            );
+
+          chatId =
+            newChatDoc.id;
+
+          setActiveChatId(chatId);
+
+          setRecentChats((prev) => [
+            {
+              id: chatId!,
+              title,
+              preview,
+              messages: [
+                userMessageObject,
+                aiMessageObject,
+              ],
+            },
+
+            ...prev.filter(
+              (chat) =>
+                chat.id !== chatId
+            ).slice(0, 19),
+          ]);
+        }
+
+        /* =============================================
+           UPDATE EXISTING CHAT
+        ============================================= */
+
+        else {
+          const chatRef = doc(
+            db,
+            "users",
+            user.uid,
+            "recentChats",
+            chatId
+          );
+
+          await updateDoc(
+            chatRef,
+            {
+              messages: arrayUnion(
+                userMessageObject,
+                aiMessageObject
+              ),
+
+              preview,
+
+              updatedAt:
+                serverTimestamp(),
+            }
+          );
+
+          setRecentChats((prev) =>
+            prev.map((chat) =>
+              chat.id === chatId
+                ? {
+                    ...chat,
+                    preview,
+                    messages: [
+                      ...(chat.messages ||
+                        []),
+                      userMessageObject,
+                      aiMessageObject,
+                    ],
+                  }
+                : chat
+            )
+          );
+        }
+      } catch (firestoreError) {
+        console.error(
+          "Failed to save chat:",
+          firestoreError
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Chat error:",
+        error
+      );
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          text:
+            "Sorry, something went wrong. Please try again.",
+        },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  /* =====================================================
      SIGN IN SCREEN
-  ========================================================= */
+  ===================================================== */
 
   if (!user) {
     return (
-      <div className="relative flex h-full min-h-screen items-center justify-center overflow-hidden bg-white px-5">
+      <div
+        className="
+          relative
+          flex
+          min-h-full
+          w-full
+          items-center
+          justify-center
+          overflow-hidden
+          bg-white
+          px-4
+        "
+      >
+        {/* =============================================
+            INDIAN FLAG AURORA
+        ============================================= */}
 
-        {/* Indian Flag Aurora */}
+        <div
+          className="
+            pointer-events-none
+            absolute
+            inset-0
+            overflow-hidden
+          "
+        >
+          <div
+            className="
+              absolute
+              -left-32
+              -top-40
+              h-96
+              w-96
+              rounded-full
+              bg-orange-400/20
+              blur-3xl
+              animate-pulse
+            "
+          />
 
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div
+            className="
+              absolute
+              -right-40
+              top-1/2
+              h-96
+              w-96
+              rounded-full
+              bg-green-500/20
+              blur-3xl
+              animate-pulse
+            "
+          />
 
-          <div className="absolute -top-40 -left-32 h-96 w-96 rounded-full bg-orange-400/20 blur-3xl" />
-
-          <div className="absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-green-500/20 blur-3xl" />
-
-          <div className="absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
-
+          <div
+            className="
+              absolute
+              bottom-[-140px]
+              left-1/3
+              h-96
+              w-96
+              rounded-full
+              bg-blue-500/10
+              blur-3xl
+              animate-pulse
+            "
+          />
         </div>
 
-        {/* Back */}
+        {/* =============================================
+            BACK BUTTON
+        ============================================= */}
 
         <button
+          type="button"
           onClick={onBack}
           className="
             absolute
@@ -635,7 +938,10 @@ if (user?.uid) {
             shadow-lg
             backdrop-blur-xl
             transition
+            duration-200
             hover:bg-white
+            hover:scale-105
+            active:scale-95
           "
         >
           <ArrowLeft
@@ -644,7 +950,9 @@ if (user?.uid) {
           />
         </button>
 
-        {/* Sign In Card */}
+        {/* =============================================
+            SIGN IN CARD
+        ============================================= */}
 
         <div
           className="
@@ -661,13 +969,25 @@ if (user?.uid) {
             backdrop-blur-xl
           "
         >
-
           {/* Flag stripe */}
 
-          <div className="h-2 bg-gradient-to-r from-orange-500 via-white to-green-500" />
+          <div
+            className="
+              h-2
+              bg-gradient-to-r
+              from-orange-500
+              via-white
+              to-green-500
+            "
+          />
 
-          <div className="px-7 py-10 text-center">
-
+          <div
+            className="
+              px-7
+              py-10
+              text-center
+            "
+          >
             {/* Logo */}
 
             <div
@@ -687,28 +1007,59 @@ if (user?.uid) {
                 via-white
                 to-green-400
                 shadow-xl
+                animate-pulse
               "
             >
-            
+              <Bot
+                size={34}
+                className="text-blue-700"
+              />
             </div>
 
-            <h1 className="text-2xl font-black text-black">
+            <h1
+              className="
+                text-2xl
+                font-black
+                text-black
+              "
+            >
               JS AI Assistant
             </h1>
 
-            <p className="mt-2 text-sm text-gray-600">
+            <p
+              className="
+                mt-2
+                text-sm
+                text-gray-600
+              "
+            >
               Your personal AI companion 🇮🇳
             </p>
 
-            <p className="mx-auto mt-5 max-w-sm text-sm leading-6 text-gray-500">
-              Sign in with your Google account to start
-              chatting with JS AI Assistant.
+            <p
+              className="
+                mx-auto
+                mt-5
+                max-w-sm
+                text-sm
+                leading-6
+                text-gray-500
+              "
+            >
+              Sign in with your Google
+              account to start chatting
+              with JS AI Assistant.
             </p>
 
-            {/* Google button */}
+            {/* =========================================
+                GOOGLE BUTTON
+            ========================================= */}
 
             <button
-              onClick={handleGoogleSignIn}
+              type="button"
+              onClick={
+                handleGoogleSignIn
+              }
               disabled={isSigningIn}
               className="
                 mt-8
@@ -727,12 +1078,14 @@ if (user?.uid) {
                 text-black
                 shadow-md
                 transition
+                duration-200
                 hover:shadow-xl
+                hover:-translate-y-0.5
                 active:scale-[0.98]
+                disabled:cursor-not-allowed
                 disabled:opacity-60
               "
             >
-
               {isSigningIn ? (
                 <>
                   <div
@@ -771,10 +1124,21 @@ if (user?.uid) {
                   Continue with Google
                 </>
               )}
-
             </button>
 
-            <div className="mt-7 flex items-center justify-center gap-2 text-xs text-gray-500">
+            {/* Security */}
+
+            <div
+              className="
+                mt-7
+                flex
+                items-center
+                justify-center
+                gap-2
+                text-xs
+                text-gray-500
+              "
+            >
               <ShieldCheck
                 size={15}
                 className="text-green-600"
@@ -782,32 +1146,37 @@ if (user?.uid) {
 
               Your account stays protected
             </div>
-
           </div>
 
           {/* Flag stripe */}
 
-          <div className="h-2 bg-gradient-to-r from-orange-500 via-white to-green-500" />
-
+          <div
+            className="
+              h-2
+              bg-gradient-to-r
+              from-orange-500
+              via-white
+              to-green-500
+            "
+          />
         </div>
-
       </div>
     );
   }
+    /* =====================================================
+     MAIN CHAT UI
+  ===================================================== */
 
-  /* =========================================================
-     MAIN CHAT
-  ========================================================= */
-
-return (
-  <div
-    className={`relative
-      flex
-      h-screen
-      min-h-0
-      flex-col
-      overflow-hidden
-
+  return (
+    <div
+      className={`
+        relative
+        flex
+        h-full
+        min-h-0
+        w-full
+        flex-col
+        overflow-hidden
         ${
           darkMode
             ? "bg-gray-950 text-white"
@@ -815,13 +1184,18 @@ return (
         }
       `}
     >
+      {/* =================================================
+          INDIAN FLAG AURORA BACKGROUND
+      ================================================= */}
 
-      {/* =====================================================
-          INDIAN FLAG BACKGROUND
-      ===================================================== */}
-
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          overflow-hidden
+        "
+      >
         <div
           className={`
             absolute
@@ -831,6 +1205,7 @@ return (
             w-[420px]
             rounded-full
             blur-3xl
+            animate-pulse
             ${
               darkMode
                 ? "bg-orange-600/10"
@@ -848,6 +1223,7 @@ return (
             w-[420px]
             rounded-full
             blur-3xl
+            animate-pulse
             ${
               darkMode
                 ? "bg-green-600/10"
@@ -865,6 +1241,7 @@ return (
             w-[420px]
             rounded-full
             blur-3xl
+            animate-pulse
             ${
               darkMode
                 ? "bg-blue-700/10"
@@ -872,12 +1249,11 @@ return (
             }
           `}
         />
-
       </div>
 
-      {/* =====================================================
+      {/* =================================================
           HEADER
-      ===================================================== */}
+      ================================================= */}
 
       <header
         className={`
@@ -898,21 +1274,24 @@ return (
           }
         `}
       >
+        {/* LEFT SIDE */}
 
-        {/* Left */}
-
-        <div className="flex items-center gap-3">
-
+        <div className="flex min-w-0 items-center gap-3">
           <button
+            type="button"
             onClick={onBack}
             className={`
               flex
               h-10
               w-10
+              shrink-0
               items-center
               justify-center
               rounded-full
               transition
+              duration-200
+              hover:scale-105
+              active:scale-95
               ${
                 darkMode
                   ? "hover:bg-gray-800"
@@ -933,6 +1312,7 @@ return (
               flex
               h-11
               w-11
+              shrink-0
               items-center
               justify-center
               overflow-hidden
@@ -948,7 +1328,11 @@ return (
               <img
                 src={user.photo}
                 alt={user.name}
-                className="h-full w-full object-cover"
+                className="
+                  h-full
+                  w-full
+                  object-cover
+                "
               />
             ) : (
               <Bot
@@ -958,10 +1342,10 @@ return (
             )}
           </div>
 
-          <div>
-
+          <div className="min-w-0">
             <h1
               className={`
+                truncate
                 text-base
                 font-black
                 ${
@@ -976,6 +1360,7 @@ return (
 
             <p
               className={`
+                truncate
                 text-xs
                 ${
                   darkMode
@@ -984,25 +1369,33 @@ return (
                 }
               `}
             >
-              Online • Ready to help {user.name}
+              Online • Ready to help{" "}
+              {user.name}
             </p>
-
           </div>
-
         </div>
 
-        {/* Three dot */}
+        {/* THREE DOT */}
 
         <button
-          onClick={() => setMenuOpen((prev) => !prev)}
+          type="button"
+          onClick={() =>
+            setMenuOpen(
+              (prev) => !prev
+            )
+          }
           className={`
             flex
             h-10
             w-10
+            shrink-0
             items-center
             justify-center
             rounded-full
             transition
+            duration-200
+            hover:scale-105
+            active:scale-95
             ${
               darkMode
                 ? "hover:bg-gray-800"
@@ -1026,10 +1419,15 @@ return (
 
         {menuOpen && (
           <>
-
             <div
-              className="fixed inset-0 z-40"
-              onClick={() => setMenuOpen(false)}
+              className="
+                fixed
+                inset-0
+                z-40
+              "
+              onClick={() =>
+                setMenuOpen(false)
+              }
             />
 
             <div
@@ -1050,10 +1448,10 @@ return (
                 }
               `}
             >
-
               {/* New Chat */}
 
               <button
+                type="button"
                 onClick={createNewChat}
                 className="
                   flex
@@ -1087,12 +1485,20 @@ return (
                   New Chat
                 </span>
 
-                <ChevronRight size={16} />
+                <ChevronRight
+                  size={16}
+                  className={
+                    darkMode
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }
+                />
               </button>
 
-              {/* Recent */}
+              {/* Recent Chats */}
 
               <button
+                type="button"
                 onClick={() => {
                   setRecentOpen(true);
                   setMenuOpen(false);
@@ -1129,12 +1535,15 @@ return (
                   Recent Chats
                 </span>
 
-                <ChevronRight size={16} />
+                <ChevronRight
+                  size={16}
+                />
               </button>
 
               {/* Account */}
 
               <button
+                type="button"
                 onClick={() => {
                   setAccountOpen(true);
                   setMenuOpen(false);
@@ -1171,12 +1580,15 @@ return (
                   Account
                 </span>
 
-                <ChevronRight size={16} />
+                <ChevronRight
+                  size={16}
+                />
               </button>
 
               {/* Settings */}
 
               <button
+                type="button"
                 onClick={() => {
                   setSettingsOpen(true);
                   setMenuOpen(false);
@@ -1213,90 +1625,92 @@ return (
                   Settings
                 </span>
 
-                <ChevronRight size={16} />
+                <ChevronRight
+                  size={16}
+                />
               </button>
-
             </div>
           </>
         )}
-
       </header>
 
-      {/* =====================================================
+      {/* =================================================
           CHAT AREA
-      ===================================================== */}
+      ================================================= */}
 
       <main
-  className="
-    relative
-    z-10
-    min-h-0
-    flex-1
-    overflow-y-auto
-    px-4
-    pb-32
-    pt-6
-  "
->
-
-        <div className="mx-auto max-w-4xl space-y-5">
-
-          {messages.map((msg, index) => (
-
-            <div
-              key={index}
-              className={
-                msg.role === "user"
-                  ? "flex justify-end"
-                  : "flex justify-start"
-              }
-            >
-
+        className="
+          relative
+          z-10
+          min-h-0
+          flex-1
+          overflow-y-auto
+          px-4
+          pb-32
+          pt-6
+        "
+      >
+        <div
+          className="
+            mx-auto
+            max-w-4xl
+            space-y-5
+          "
+        >
+          {messages.map(
+            (msg, index) => (
               <div
-                className={`
-                  flex
-                  max-w-[82%]
-                  items-start
-                  gap-3
-                  rounded-3xl
-                  px-5
-                  py-3
-                  shadow-lg
-                  ${
-                    msg.role === "user"
-                      ? `
-                        rounded-br-lg
-                        bg-gradient-to-r
-                        from-orange-400
-                        to-orange-500
-                      `
-                      : `
-                        rounded-bl-lg
-                        bg-gradient-to-r
-                        from-green-400
-                        to-green-500
-                      `
-                  }
-                `}
+                key={`${index}-${msg.role}`}
+                className={
+                  msg.role === "user"
+                    ? "flex justify-end"
+                    : "flex justify-start"
+                }
               >
-
-             
-                <span
-                  className="
-                    whitespace-pre-wrap
-                    break-words
-                    leading-7
-                    text-black
-                  "
+                <div
+                  className={`
+                    flex
+                    max-w-[82%]
+                    items-start
+                    gap-3
+                    rounded-3xl
+                    px-5
+                    py-3
+                    shadow-lg
+                    transition
+                    duration-200
+                    ${
+                      msg.role ===
+                      "user"
+                        ? `
+                          rounded-br-lg
+                          bg-gradient-to-r
+                          from-orange-400
+                          to-orange-500
+                        `
+                        : `
+                          rounded-bl-lg
+                          bg-gradient-to-r
+                          from-green-400
+                          to-green-500
+                        `
+                    }
+                  `}
                 >
-                  {msg.text}
-                </span>
-
+                  <span
+                    className="
+                      whitespace-pre-wrap
+                      break-words
+                      leading-7
+                      text-black
+                    "
+                  >
+                    {msg.text}
+                  </span>
+                </div>
               </div>
-
-            </div>
-
-          ))}
+            )
+          )}
 
           {/* =================================================
               TYPING INDICATOR
@@ -1304,7 +1718,6 @@ return (
 
           {isTyping && (
             <div className="flex justify-start">
-
               <div
                 className="
                   flex
@@ -1320,7 +1733,6 @@ return (
                   shadow-lg
                 "
               >
-
                 <span
                   className="
                     h-2
@@ -1352,21 +1764,17 @@ return (
                     [animation-delay:300ms]
                   "
                 />
-
               </div>
-
             </div>
           )}
 
           <div ref={messagesEndRef} />
-
         </div>
-
       </main>
 
-      {/* =====================================================
+      {/* =================================================
           FIXED INPUT
-      ===================================================== */}
+      ================================================= */}
 
       <div
         className={`
@@ -1387,112 +1795,152 @@ return (
           }
         `}
       >
-
-     <div className="mx-auto flex max-w-5xl items-end gap-3">
-
-  {/* Moving light */}
-  <div
-    className="
-      relative
-      flex-1
-      rounded-3xl
-      p-[3px]
-      overflow-hidden
-    "
-  >
-
-    <div
-      className="
-        absolute
-        inset-[-100%]
-        bg-[conic-gradient(from_0deg,#8B0000,#FFD700,#8B0000,#FFD700,#8B0000)]
-        animate-[borderRun_3s_linear_infinite]
-      "
-    />
-
-    <textarea
-      value={message}
-      onChange={(e) => setMessage(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
-      }}
-      rows={1}
-      placeholder={`Ask anything, ${user.name}...`}
-      disabled={isTyping}
-      className={`
-        relative
-        z-10
-        block
-        max-h-40
-        w-full
-        resize-none
-        overflow-y-auto
-        rounded-[21px]
-        border-0
-        px-5
-        py-4
-        outline-none
-        shadow-md
-        ${
-          darkMode
-            ? `
-              bg-gray-900
-              text-white
-              placeholder:text-gray-500
-            `
-            : `
-              bg-white
-              text-black
-              placeholder:text-gray-400
-            `
-        }
-      `}
-    />
-
-  </div>
-
-  <button
-    onClick={sendMessage}
-    disabled={!message.trim() || isTyping}
-    className="
-      flex
-      h-14
-      w-14
-      shrink-0
-      items-center
-      justify-center
-      rounded-full
-      bg-blue-700
-      text-white
-      shadow-xl
-      transition
-      hover:bg-blue-800
-      hover:scale-105
-      active:scale-95
-      disabled:cursor-not-allowed
-      disabled:opacity-40
-    "
-  >
-    <Send size={22} />
-  </button>
-
-</div>
-
-</div>
-
-      {/* =====================================================
-          SETTINGS PANEL
-      ===================================================== */}
-
-      {settingsOpen && (
-        <div className="absolute inset-0 z-[100]">
+        <div
+          className="
+            mx-auto
+            flex
+            max-w-5xl
+            items-end
+            gap-3
+          "
+        >
+          {/* Input wrapper */}
 
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={() => setSettingsOpen(false)}
+            className="
+              relative
+              flex-1
+              overflow-hidden
+              rounded-[23px]
+              p-[1.5px]
+            "
+          >
+            {/* Moving light */}
+
+            <div
+              className="
+                absolute
+                inset-[-100%]
+                animate-[spin_3s_linear_infinite]
+                bg-[conic-gradient(from_0deg,#8B0000,#FFD700,#8B0000,#FFD700,#8B0000)]
+              "
+            />
+
+            <div
+              className={`
+                relative
+                rounded-[21px]
+                ${
+                  darkMode
+                    ? "bg-gray-900"
+                    : "bg-white"
+                }
+              `}
+            >
+              <textarea
+                value={message}
+                onChange={(e) =>
+                  setMessage(
+                    e.target.value
+                  )
+                }
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" &&
+                    !e.shiftKey
+                  ) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
+                rows={1}
+                placeholder={`Ask anything, ${user.name}...`}
+                disabled={isTyping}
+                className={`
+                  block
+                  max-h-40
+                  w-full
+                  resize-none
+                  overflow-y-auto
+                  rounded-[21px]
+                  border-0
+                  bg-transparent
+                  px-5
+                  py-4
+                  outline-none
+                  shadow-md
+                  ${
+                    darkMode
+                      ? `
+                        text-white
+                        placeholder:text-gray-500
+                      `
+                      : `
+                        text-black
+                        placeholder:text-gray-400
+                      `
+                  }
+                `}
+              />
+            </div>
+          </div>
+
+          {/* Send */}
+
+          <button
+            type="button"
+            onClick={sendMessage}
+            disabled={
+              !message.trim() ||
+              isTyping
+            }
+            className="
+              flex
+              h-14
+              w-14
+              shrink-0
+              items-center
+              justify-center
+              rounded-full
+              bg-blue-700
+              text-white
+              shadow-xl
+              transition
+              duration-200
+              hover:scale-105
+              hover:bg-blue-800
+              active:scale-95
+              disabled:cursor-not-allowed
+              disabled:opacity-40
+            "
+          >
+            <Send size={22} />
+          </button>
+        </div>
+      </div>
+
+      {/* =================================================
+          SETTINGS PANEL
+      ================================================= */}
+
+      {settingsOpen && (
+        <div
+          className="
+            absolute
+            inset-0
+            z-[100]
+          "
+        >
+          <div
+            className="
+              absolute
+              inset-0
+              bg-black/30
+              backdrop-blur-sm
+            "
+            onClick={() =>
+              setSettingsOpen(false)
+            }
           />
 
           <div
@@ -1513,39 +1961,64 @@ return (
               }
             `}
           >
-
-            <div className="mb-5 flex items-center justify-between">
-
-              <h2 className="text-xl font-black">
+            <div
+              className="
+                mb-5
+                flex
+                items-center
+                justify-between
+              "
+            >
+              <h2
+                className="
+                  text-xl
+                  font-black
+                "
+              >
                 Settings
               </h2>
 
               <button
-                onClick={() => setSettingsOpen(false)}
-                className="rounded-full p-2 hover:bg-gray-100"
+                type="button"
+                onClick={() =>
+                  setSettingsOpen(false)
+                }
+                className="
+                  rounded-full
+                  p-2
+                  transition
+                  hover:bg-gray-100
+                "
               >
                 <X size={20} />
               </button>
-
             </div>
 
             {/* Theme */}
 
             <button
-              onClick={() => setDarkMode((prev) => !prev)}
-              className="
+              type="button"
+              onClick={() =>
+                setDarkMode(
+                  (prev) => !prev
+                )
+              }
+              className={`
                 flex
                 w-full
                 items-center
                 gap-4
                 rounded-2xl
                 border
-                border-gray-200
                 p-4
                 text-left
-              "
+                ${
+                  darkMode
+                    ? "border-gray-700"
+                    : "border-gray-200"
+                }
+              `}
             >
-
               {darkMode ? (
                 <Moon className="text-blue-500" />
               ) : (
@@ -1553,7 +2026,6 @@ return (
               )}
 
               <div className="flex-1">
-
                 <p className="font-bold">
                   Dark Theme
                 </p>
@@ -1563,7 +2035,6 @@ return (
                     ? "Dark mode is active"
                     : "Switch to dark mode"}
                 </p>
-
               </div>
 
               <div
@@ -1595,13 +2066,15 @@ return (
                   `}
                 />
               </div>
-
             </button>
 
-            {/* Add account */}
+            {/* Add Account */}
 
             <button
-              onClick={handleGoogleSignIn}
+              type="button"
+              onClick={
+                handleGoogleSignIn
+              }
               className="
                 mt-3
                 flex
@@ -1613,31 +2086,35 @@ return (
                 border-gray-200
                 p-4
                 text-left
+                transition
+                hover:bg-green-50
               "
             >
-
-              <UserPlus className="text-green-600" />
+              <UserPlus
+                className="text-green-600"
+              />
 
               <div className="flex-1">
-
                 <p className="font-bold">
                   Add Account
                 </p>
 
                 <p className="text-xs text-gray-500">
-                  Sign in with another Google account
+                  Sign in with another Google
+                  account
                 </p>
-
               </div>
 
               <ChevronRight size={18} />
-
             </button>
 
             {/* Logout */}
 
             <button
-              onClick={handleLogout}
+              type="button"
+              onClick={
+                handleLogout
+              }
               className="
                 mt-3
                 flex
@@ -1650,13 +2127,13 @@ return (
                 p-4
                 text-left
                 text-red-600
+                transition
+                hover:bg-red-50
               "
             >
-
               <LogOut size={20} />
 
               <div className="flex-1">
-
                 <p className="font-bold">
                   Log Out
                 </p>
@@ -1664,28 +2141,36 @@ return (
                 <p className="text-xs text-gray-500">
                   Sign out of this account
                 </p>
-
               </div>
 
               <ChevronRight size={18} />
-
             </button>
-
           </div>
-
         </div>
       )}
 
-      {/* =====================================================
+      {/* =================================================
           ACCOUNT PANEL
-      ===================================================== */}
+      ================================================= */}
 
       {accountOpen && (
-        <div className="absolute inset-0 z-[100]">
-
+        <div
+          className="
+            absolute
+            inset-0
+            z-[100]
+          "
+        >
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={() => setAccountOpen(false)}
+            className="
+              absolute
+              inset-0
+              bg-black/30
+              backdrop-blur-sm
+            "
+            onClick={() =>
+              setAccountOpen(false)
+            }
           />
 
           <div
@@ -1706,24 +2191,46 @@ return (
               }
             `}
           >
-
-            <div className="mb-6 flex items-center justify-between">
-
-              <h2 className="text-xl font-black">
+            <div
+              className="
+                mb-6
+                flex
+                items-center
+                justify-between
+              "
+            >
+              <h2
+                className="
+                  text-xl
+                  font-black
+                "
+              >
                 Account
               </h2>
 
               <button
-                onClick={() => setAccountOpen(false)}
-                className="rounded-full p-2"
+                type="button"
+                onClick={() =>
+                  setAccountOpen(false)
+                }
+                className="
+                  rounded-full
+                  p-2
+                  transition
+                  hover:bg-gray-100
+                "
               >
                 <X size={20} />
               </button>
-
             </div>
 
-            <div className="flex items-center gap-4">
-
+            <div
+              className="
+                flex
+                items-center
+                gap-4
+              "
+            >
               <div
                 className="
                   flex
@@ -1738,14 +2245,18 @@ return (
                   from-orange-400
                   via-white
                   to-green-400
+                  shadow-md
                 "
               >
-
                 {user.photo ? (
                   <img
                     src={user.photo}
                     alt={user.name}
-                    className="h-full w-full object-cover"
+                    className="
+                      h-full
+                      w-full
+                      object-cover
+                    "
                   />
                 ) : (
                   <User
@@ -1753,175 +2264,287 @@ return (
                     className="text-blue-700"
                   />
                 )}
-
               </div>
 
-              <div>
-
-                <p className="text-lg font-black">
+              <div className="min-w-0">
+                <p
+                  className="
+                    truncate
+                    text-lg
+                    font-black
+                  "
+                >
                   {user.name}
                 </p>
 
-                <p className="text-sm text-gray-500">
+                <p
+                  className="
+                    truncate
+                    text-sm
+                    text-gray-500
+                  "
+                >
                   {user.email}
                 </p>
-
               </div>
-
             </div>
 
-            <div className="mt-6 rounded-2xl bg-gray-50 p-4">
-
-              <div className="flex items-center gap-2">
-
+            <div
+              className={`
+                mt-6
+                rounded-2xl
+                p-4
+                ${
+                  darkMode
+                    ? "bg-gray-800"
+                    : "bg-gray-50"
+                }
+              `}
+            >
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-2
+                "
+              >
                 <Check
                   size={17}
                   className="text-green-600"
                 />
 
-                <span className="text-sm font-semibold">
+                <span
+                  className="
+                    text-sm
+                    font-semibold
+                  "
+                >
                   Google account connected
                 </span>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
       )}
 
-      {/* =====================================================
-          RECENT CHATS
-      ===================================================== */}
+      {/* =================================================
+          RECENT CHATS PANEL
+      ================================================= */}
 
       {recentOpen && (
-        <div className="absolute inset-0 z-[100]">
-
+        <div
+          className="
+            absolute
+            inset-0
+            z-[100]
+          "
+        >
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={() => setRecentOpen(false)}
+            className="
+              absolute
+              inset-0
+              bg-black/30
+              backdrop-blur-sm
+            "
+            onClick={() =>
+              setRecentOpen(false)
+            }
           />
 
-        <div
-  className={`
-    absolute
-    right-0
-    top-0
-    bottom-0
-    w-full
-    max-w-md
-    overflow-y-auto
-    p-6
-    shadow-2xl
-    ${
-      darkMode
-        ? "bg-gray-900 text-white"
-        : "bg-white text-black"
-    }
-  `}
->
+          <div
+            className={`
+              absolute
+              right-0
+              top-0
+              bottom-0
+              w-full
+              max-w-md
+              overflow-y-auto
+              p-6
+              shadow-2xl
+              ${
+                darkMode
+                  ? "bg-gray-900 text-white"
+                  : "bg-white text-black"
+              }
+            `}
+          >
+            <div
+              className="
+                mb-5
+                flex
+                items-center
+                justify-between
+              "
+            >
+              <div>
+                <h2
+                  className="
+                    text-xl
+                    font-black
+                  "
+                >
+                  Recent Chats
+                </h2>
 
-            <div className="mb-5 flex items-center justify-between">
-
-              <h2 className="text-xl font-black">
-                Recent Chats
-              </h2>
+                <p
+                  className="
+                    mt-1
+                    text-xs
+                    text-gray-500
+                  "
+                >
+                  Your latest conversations
+                </p>
+              </div>
 
               <button
-                onClick={() => setRecentOpen(false)}
-                className="rounded-full p-2"
+                type="button"
+                onClick={() =>
+                  setRecentOpen(false)
+                }
+                className="
+                  rounded-full
+                  p-2
+                  transition
+                  hover:bg-gray-100
+                "
               >
                 <X size={20} />
               </button>
-
             </div>
 
+            {/* Empty */}
+
             {recentChats.length === 0 ? (
-              <div className="py-10 text-center text-gray-500">
-                No recent chats yet.
+              <div
+                className="
+                  py-16
+                  text-center
+                  text-gray-500
+                "
+              >
+                <History
+                  size={36}
+                  className="
+                    mx-auto
+                    mb-3
+                    opacity-40
+                  "
+                />
+
+                <p className="font-semibold">
+                  No recent chats yet.
+                </p>
+
+                <p className="mt-1 text-xs">
+                  Start a conversation to
+                  see it here.
+                </p>
               </div>
             ) : (
               <div className="space-y-2">
+                {recentChats.map(
+                  (chat) => (
+                    <div
+                      key={chat.id}
+                      className={`
+                        flex
+                        items-center
+                        gap-3
+                        rounded-2xl
+                        border
+                        p-3
+                        transition
+                        ${
+                          darkMode
+                            ? "border-gray-800 hover:bg-gray-800"
+                            : "border-gray-100 hover:bg-gray-50"
+                        }
+                      `}
+                    >
+                      {/* History icon */}
 
-  {recentChats.map((chat) => (
+                      <History
+                        size={19}
+                        className="
+                          mt-1
+                          shrink-0
+                          text-blue-600
+                        "
+                      />
 
-  <div
-    key={chat.id}
-    className="
-      flex
-      w-full
-      items-start
-      gap-3
-      rounded-2xl
-      border
-      border-gray-200
-      p-4
-      transition
-      hover:bg-gray-50
-    "
-  >
+                      {/* Chat */}
 
-    {/* History icon */}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openRecentChat(
+                            chat.id
+                          )
+                        }
+                        className="
+                          min-w-0
+                          flex-1
+                          text-left
+                        "
+                      >
+                        <p
+                          className="
+                            truncate
+                            font-bold
+                          "
+                        >
+                          {chat.title}
+                        </p>
 
-    <History
-      size={19}
-      className="mt-1 shrink-0 text-blue-600"
-    />
+                        <p
+                          className="
+                            mt-1
+                            truncate
+                            text-xs
+                            text-gray-500
+                          "
+                        >
+                          {chat.preview}
+                        </p>
+                      </button>
 
-    {/* Chat content */}
+                      {/* Delete */}
 
-    <button
-      type="button"
-      onClick={() => openRecentChat(chat.id)}
-      className="min-w-0 flex-1 text-left"
-    >
-      <p className="truncate font-bold">
-        {chat.title}
-      </p>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
 
-      <p className="mt-1 truncate text-xs text-gray-500">
-        {chat.preview}
-      </p>
-    </button>
-
-    {/* Delete */}
-
-    <button
-      type="button"
-      onClick={(e) => {
-        e.stopPropagation();
-
-        setRecentChats((prev) =>
-          prev.filter((item) => item.id !== chat.id)
-        );
-      }}
-      className="
-        shrink-0
-        rounded-full
-        p-2
-        text-gray-400
-        transition
-        hover:bg-red-50
-        hover:text-red-600
-      "
-      title="Delete chat"
-    >
-      <Trash2 size={18} />
-    </button>
-
-  </div>
-
-))}
+                          deleteRecentChat(
+                            chat.id
+                          );
+                        }}
+                        className="
+                          shrink-0
+                          rounded-full
+                          p-2
+                          text-gray-400
+                          transition
+                          hover:bg-red-50
+                          hover:text-red-600
+                        "
+                        title="Delete chat"
+                        aria-label="Delete chat"
+                      >
+                        <Trash2
+                          size={18}
+                        />
+                      </button>
+                    </div>
+                  )
+                )}
               </div>
             )}
-
           </div>
-
         </div>
       )}
-
     </div>
   );
 }
