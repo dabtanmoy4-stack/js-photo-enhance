@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 import {
@@ -20,9 +20,17 @@ import {
   LogIn,
 } from "lucide-react";
 
+/* ========================================================= */
+/* ======================= PROPS ============================ */
+/* ========================================================= */
+
 interface JSVoiceAssistantProps {
   onBack?: () => void;
 }
+
+/* ========================================================= */
+/* ================= ASSISTANT STATES ======================= */
+/* ========================================================= */
 
 type AssistantState =
   | "idle"
@@ -31,7 +39,7 @@ type AssistantState =
   | "speaking";
 
 /* ========================================================= */
-/* ================= SPEECH TYPES ========================== */
+/* ================= SPEECH RECOGNITION ===================== */
 /* ========================================================= */
 
 interface SpeechRecognitionEvent extends Event {
@@ -48,6 +56,7 @@ interface SpeechRecognitionInstance {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
+
   start: () => void;
   stop: () => void;
   abort: () => void;
@@ -70,35 +79,77 @@ declare global {
 }
 
 /* ========================================================= */
-/* ================= MAIN COMPONENT ======================== */
+/* ======================= COMPONENT ======================== */
 /* ========================================================= */
 
 export const JSVoiceAssistant: React.FC<
   JSVoiceAssistantProps
 > = ({ onBack }) => {
+  /* ======================================================= */
+  /* ======================= AUTH =========================== */
+  /* ======================================================= */
+
   const [user, setUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [signingIn, setSigningIn] = useState(false);
+
+  /* ======================================================= */
+  /* ================= ASSISTANT STATE ====================== */
+  /* ======================================================= */
 
   const [assistantState, setAssistantState] =
     useState<AssistantState>("idle");
 
   /* ======================================================= */
-  /* ================= SPEECH STATE ======================== */
+  /* ================= SPEECH STATE ========================= */
   /* ======================================================= */
 
   const [transcript, setTranscript] = useState("");
   const [interimTranscript, setInterimTranscript] =
     useState("");
 
+  const [aiResponse, setAiResponse] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const [speechSupported, setSpeechSupported] =
     useState(true);
+
+  const [speechSynthesisSupported, setSpeechSynthesisSupported] =
+    useState(true);
+
+  /* ======================================================= */
+  /* ======================= REFS =========================== */
+  /* ======================================================= */
 
   const recognitionRef =
     useRef<SpeechRecognitionInstance | null>(null);
 
+  const assistantStateRef =
+    useRef<AssistantState>("idle");
+
+  const transcriptRef =
+    useRef("");
+
+  const requestInProgressRef =
+    useRef(false);
+
+  const speechSessionRef =
+    useRef(0);
+
   /* ======================================================= */
-  /* ================= AUTH STATE ========================== */
+  /* =============== KEEP STATE IN SYNC ===================== */
+  /* ======================================================= */
+
+  useEffect(() => {
+    assistantStateRef.current = assistantState;
+  }, [assistantState]);
+
+  useEffect(() => {
+    transcriptRef.current = transcript;
+  }, [transcript]);
+
+  /* ======================================================= */
+  /* ================= GOOGLE AUTH ========================== */
   /* ======================================================= */
 
   useEffect(() => {
@@ -114,11 +165,241 @@ export const JSVoiceAssistant: React.FC<
   }, []);
 
   /* ======================================================= */
-  /* ================= SPEECH SETUP ======================== */
+  /* ================= STOP SPEECH ========================== */
+  /* ======================================================= */
+
+  const stopSpeaking = useCallback(() => {
+    speechSessionRef.current += 1;
+
+    if (
+      typeof window !== "undefined" &&
+      "speechSynthesis" in window
+    ) {
+      window.speechSynthesis.cancel();
+    }
+
+    if (
+      assistantStateRef.current === "speaking"
+    ) {
+      setAssistantState("idle");
+    }
+  }, []);
+
+  /* ======================================================= */
+  /* ================= TEXT TO SPEECH ======================= */
+  /* ======================================================= */
+
+  const speakResponse = useCallback(
+    (text: string) => {
+      if (
+        typeof window === "undefined" ||
+        !("speechSynthesis" in window)
+      ) {
+        setSpeechSynthesisSupported(false);
+        setAssistantState("idle");
+        return;
+      }
+
+      const cleanText = text.trim();
+
+      if (!cleanText) {
+        setAssistantState("idle");
+        return;
+      }
+
+      const sessionId =
+        ++speechSessionRef.current;
+
+      window.speechSynthesis.cancel();
+
+      const utterance =
+        new SpeechSynthesisUtterance(cleanText);
+
+      /*
+       * Prefer Indian English for English responses.
+       * Browser will automatically fallback if unavailable.
+       */
+      utterance.lang = "en-IN";
+      utterance.rate = 0.95;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      const voices =
+        window.speechSynthesis.getVoices();
+
+      const preferredVoice =
+        voices.find((voice) =>
+          /en-IN/i.test(voice.lang)
+        ) ||
+        voices.find((voice) =>
+          /en-US/i.test(voice.lang)
+        ) ||
+        voices.find((voice) =>
+          /en-GB/i.test(voice.lang)
+        );
+
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+
+      utterance.onstart = () => {
+        if (
+          sessionId !== speechSessionRef.current
+        ) {
+          return;
+        }
+
+        setAssistantState("speaking");
+      };
+
+      utterance.onend = () => {
+        if (
+          sessionId !== speechSessionRef.current
+        ) {
+          return;
+        }
+
+        setAssistantState("idle");
+      };
+
+      utterance.onerror = (event) => {
+        console.error(
+          "Speech synthesis error:",
+          event
+        );
+
+        if (
+          sessionId !== speechSessionRef.current
+        ) {
+          return;
+        }
+
+        setAssistantState("idle");
+      };
+
+      setAssistantState("speaking");
+
+      window.speechSynthesis.speak(
+        utterance
+      );
+    },
+    []
+  );
+
+  /* ======================================================= */
+  /* ================== SEND TO AI ========================== */
+  /* ======================================================= */
+
+  const sendMessageToAI = useCallback(
+    async (message: string) => {
+      const cleanMessage = message.trim();
+
+      if (!cleanMessage) {
+        setAssistantState("idle");
+        return;
+      }
+
+      if (requestInProgressRef.current) {
+        return;
+      }
+
+      requestInProgressRef.current = true;
+
+      setIsProcessing(true);
+      setAssistantState("thinking");
+      setAiResponse("");
+
+      try {
+        const response = await fetch(
+          "/api/chat",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              message: cleanMessage,
+              history: [],
+            }),
+          }
+        );
+
+        let data: any = null;
+
+        try {
+          data = await response.json();
+        } catch {
+          data = null;
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data?.error ||
+              `AI request failed with status ${response.status}`
+          );
+        }
+
+        const reply =
+          typeof data?.reply === "string"
+            ? data.reply.trim()
+            : "";
+
+        if (!reply) {
+          throw new Error(
+            "AI returned an empty response."
+          );
+        }
+
+        console.log(
+          "🤖 JS AI Response:",
+          reply
+        );
+
+        setAiResponse(reply);
+
+        /*
+         * Speak the AI response.
+         */
+        speakResponse(reply);
+      } catch (error) {
+        console.error(
+          "❌ Voice AI Error:",
+          error
+        );
+
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to get AI response.";
+
+        setAiResponse(
+          "Sorry, I couldn't process that request."
+        );
+
+        setAssistantState("idle");
+
+        console.error(
+          "AI error message:",
+          errorMessage
+        );
+      } finally {
+        setIsProcessing(false);
+        requestInProgressRef.current =
+          false;
+      }
+    },
+    [speakResponse]
+  );
+
+  /* ======================================================= */
+  /* ================= SPEECH SETUP ========================= */
   /* ======================================================= */
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     const SpeechRecognitionAPI =
       window.SpeechRecognition ||
@@ -129,21 +410,34 @@ export const JSVoiceAssistant: React.FC<
       return;
     }
 
-    const recognition = new SpeechRecognitionAPI();
+    setSpeechSupported(true);
 
-    recognition.continuous = true;
+    if (
+      typeof window !== "undefined" &&
+      !("speechSynthesis" in window)
+    ) {
+      setSpeechSynthesisSupported(false);
+    }
+
+    const recognition =
+      new SpeechRecognitionAPI();
+
+    recognition.continuous = false;
     recognition.interimResults = true;
 
     /*
-     * English works reliably in Chrome.
+     * Indian English.
      *
-     * Later we can make this automatically
-     * detect Bengali / Hindi / English.
+     * Chrome can recognize Bengali/Hindi
+     * reasonably well when browser language
+     * settings support them.
      */
     recognition.lang = "en-IN";
 
     recognition.onstart = () => {
-      console.log("🎙️ Speech recognition started");
+      console.log(
+        "🎙️ Speech recognition started"
+      );
 
       setAssistantState("listening");
     };
@@ -171,9 +465,15 @@ export const JSVoiceAssistant: React.FC<
         }
       }
 
-      if (finalText) {
-        setTranscript((previous) =>
-          `${previous} ${finalText}`.trim()
+      if (finalText.trim()) {
+        const newFinalText =
+          finalText.trim();
+
+        transcriptRef.current =
+          newFinalText;
+
+        setTranscript(
+          newFinalText
         );
       }
 
@@ -186,30 +486,69 @@ export const JSVoiceAssistant: React.FC<
       event: SpeechRecognitionErrorEvent
     ) => {
       console.error(
-        "Speech recognition error:",
-        event.error
+        "🎙️ Speech recognition error:",
+        event.error,
+        event.message || ""
       );
 
-      setAssistantState("idle");
       setInterimTranscript("");
+
+      /*
+       * "no-speech" is not treated as a fatal error.
+       */
+      if (
+        event.error === "no-speech"
+      ) {
+        setAssistantState("idle");
+        return;
+      }
+
+      if (
+        event.error === "aborted"
+      ) {
+        return;
+      }
+
+      setAssistantState("idle");
     };
 
     recognition.onend = () => {
-      console.log("🎙️ Speech recognition ended");
+      console.log(
+        "🎙️ Speech recognition ended"
+      );
+
+      const currentTranscript =
+        transcriptRef.current.trim();
 
       /*
-       * Don't automatically restart here.
-       *
-       * Part 3 will decide what happens after
-       * the user finishes speaking.
+       * If there is a transcript,
+       * send it to the AI.
        */
+      if (
+        currentTranscript &&
+        !requestInProgressRef.current
+      ) {
+        sendMessageToAI(
+          currentTranscript
+        );
 
-      if (assistantState === "listening") {
+        return;
+      }
+
+      /*
+       * No transcript means simply return
+       * to idle state.
+       */
+      if (
+        assistantStateRef.current ===
+        "listening"
+      ) {
         setAssistantState("idle");
       }
     };
 
-    recognitionRef.current = recognition;
+    recognitionRef.current =
+      recognition;
 
     return () => {
       try {
@@ -220,19 +559,48 @@ export const JSVoiceAssistant: React.FC<
 
       recognitionRef.current = null;
     };
-  }, [user]);
+  }, [user, sendMessageToAI]);
 
   /* ======================================================= */
-  /* ================= GOOGLE LOGIN ======================== */
+  /* ================= CLEANUP ON UNMOUNT ================== */
+  /* ======================================================= */
+
+  useEffect(() => {
+    return () => {
+      try {
+        recognitionRef.current?.abort();
+      } catch {
+        // Ignore
+      }
+
+      if (
+        typeof window !== "undefined" &&
+        "speechSynthesis" in window
+      ) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  /* ======================================================= */
+  /* ================= GOOGLE LOGIN ========================= */
   /* ======================================================= */
 
   const handleGoogleLogin = async () => {
     try {
       setSigningIn(true);
 
-      const provider = new GoogleAuthProvider();
+      const provider =
+        new GoogleAuthProvider();
 
-      await signInWithPopup(auth, provider);
+      provider.setCustomParameters({
+        prompt: "select_account",
+      });
+
+      await signInWithPopup(
+        auth,
+        provider
+      );
     } catch (error) {
       console.error(
         "Google Sign-In Error:",
@@ -244,7 +612,7 @@ export const JSVoiceAssistant: React.FC<
   };
 
   /* ======================================================= */
-  /* ================= MICROPHONE ========================== */
+  /* ================= MICROPHONE =========================== */
   /* ======================================================= */
 
   const handleMic = () => {
@@ -267,41 +635,53 @@ export const JSVoiceAssistant: React.FC<
       return;
     }
 
-    /* ================================================ */
-    /* STOP LISTENING                                   */
-    /* ================================================ */
+    /* ==================================================== */
+    /* STOP SPEAKING */
+    /* ==================================================== */
 
-    if (assistantState === "listening") {
+    if (
+      assistantState === "speaking"
+    ) {
+      stopSpeaking();
+      return;
+    }
+
+    /* ==================================================== */
+    /* THINKING / PROCESSING */
+    /* ==================================================== */
+
+    if (
+      assistantState === "thinking" ||
+      isProcessing
+    ) {
+      return;
+    }
+
+    /* ==================================================== */
+    /* STOP LISTENING MANUALLY */
+    /* ==================================================== */
+
+    if (
+      assistantState === "listening"
+    ) {
       try {
         recognition.stop();
       } catch {
         // Ignore
       }
 
-      setAssistantState("thinking");
-
-      setInterimTranscript("");
-
       return;
     }
 
-    /* ================================================ */
-    /* RESET AFTER SPEAKING / THINKING                  */
-    /* ================================================ */
-
-    if (
-      assistantState === "speaking" ||
-      assistantState === "thinking"
-    ) {
-      return;
-    }
-
-    /* ================================================ */
-    /* START MICROPHONE                                 */
-    /* ================================================ */
+    /* ==================================================== */
+    /* START LISTENING */
+    /* ==================================================== */
 
     setTranscript("");
+    transcriptRef.current = "";
+
     setInterimTranscript("");
+    setAiResponse("");
 
     try {
       recognition.start();
@@ -314,14 +694,16 @@ export const JSVoiceAssistant: React.FC<
   };
 
   /* ======================================================= */
-  /* ================= AUTH CHECK ========================== */
+  /* ================= AUTH CHECK =========================== */
   /* ======================================================= */
 
   if (checkingAuth) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-black">
         <motion.div
-          animate={{ rotate: 360 }}
+          animate={{
+            rotate: 360,
+          }}
           transition={{
             duration: 1,
             repeat: Infinity,
@@ -420,14 +802,19 @@ export const JSVoiceAssistant: React.FC<
           </h1>
 
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Talk naturally with your AI assistant using your voice.
+            Talk naturally with your AI
+            assistant using your voice.
           </p>
 
           <motion.button
             onClick={handleGoogleLogin}
             disabled={signingIn}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{
+              scale: 1.02,
+            }}
+            whileTap={{
+              scale: 0.97,
+            }}
             className="
               mt-8
               flex
@@ -463,7 +850,8 @@ export const JSVoiceAssistant: React.FC<
           </motion.button>
 
           <p className="mt-4 text-[11px] text-zinc-600">
-            Sign in to start using JS AI Voice Assistant
+            Sign in to start using JS AI
+            Voice Assistant
           </p>
         </motion.div>
       </div>
@@ -511,20 +899,24 @@ export const JSVoiceAssistant: React.FC<
           "
           animate={{
             scale:
-              assistantState === "speaking"
+              assistantState ===
+              "speaking"
                 ? [1, 1.25, 1]
-                : assistantState === "listening"
+                : assistantState ===
+                  "listening"
                 ? [1, 1.15, 1]
                 : [1, 1.08, 1],
 
             opacity:
-              assistantState === "speaking"
+              assistantState ===
+              "speaking"
                 ? [0.3, 0.6, 0.3]
                 : [0.25, 0.4, 0.25],
           }}
           transition={{
             duration:
-              assistantState === "speaking"
+              assistantState ===
+              "speaking"
                 ? 1.2
                 : 4,
             repeat: Infinity,
@@ -627,33 +1019,42 @@ export const JSVoiceAssistant: React.FC<
             className="mb-6 text-center"
           >
             <h2 className="text-lg font-bold text-white">
-              {assistantState === "idle" &&
+              {assistantState ===
+                "idle" &&
                 `Hi ${
-                  user.displayName?.split(" ")[0] ||
-                  "there"
+                  user.displayName?.split(
+                    " "
+                  )[0] || "there"
                 } 👋`}
 
-              {assistantState === "listening" &&
+              {assistantState ===
+                "listening" &&
                 "I'm listening..."}
 
-              {assistantState === "thinking" &&
+              {assistantState ===
+                "thinking" &&
                 "Let me think..."}
 
-              {assistantState === "speaking" &&
+              {assistantState ===
+                "speaking" &&
                 "JS AI is speaking..."}
             </h2>
 
             <p className="mt-1 text-xs text-zinc-500">
-              {assistantState === "idle" &&
+              {assistantState ===
+                "idle" &&
                 "Tap the microphone and start talking"}
 
-              {assistantState === "listening" &&
+              {assistantState ===
+                "listening" &&
                 "Speak naturally"}
 
-              {assistantState === "thinking" &&
+              {assistantState ===
+                "thinking" &&
                 "Processing your request"}
 
-              {assistantState === "speaking" &&
+              {assistantState ===
+                "speaking" &&
                 "Listen to your AI assistant"}
             </p>
           </motion.div>
@@ -673,7 +1074,8 @@ export const JSVoiceAssistant: React.FC<
         {/* ================================================= */}
 
         <AnimatePresence>
-          {(transcript || interimTranscript) && (
+          {(transcript ||
+            interimTranscript) && (
             <motion.div
               initial={{
                 opacity: 0,
@@ -716,36 +1118,83 @@ export const JSVoiceAssistant: React.FC<
         </AnimatePresence>
 
         {/* ================================================= */}
+        {/* AI RESPONSE */}
+        {/* ================================================= */}
+
+        <AnimatePresence>
+          {aiResponse &&
+            assistantState !==
+              "speaking" && (
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: 10,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: -10,
+                }}
+                className="
+                  mt-4
+                  w-full
+                  max-w-lg
+                  rounded-2xl
+                  border
+                  border-fuchsia-500/20
+                  bg-zinc-950/70
+                  px-5
+                  py-4
+                  text-center
+                  backdrop-blur-xl
+                "
+              >
+                <p className="text-sm leading-relaxed text-zinc-300">
+                  {aiResponse}
+                </p>
+              </motion.div>
+            )}
+        </AnimatePresence>
+
+        {/* ================================================= */}
         {/* WAVEFORM */}
         {/* ================================================= */}
 
         <div className="mt-8 h-10">
-          {assistantState === "listening" ||
-          assistantState === "speaking" ? (
+          {assistantState ===
+            "listening" ||
+          assistantState ===
+            "speaking" ? (
             <div className="flex h-full items-center gap-1.5">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(
-                (bar) => (
-                  <motion.div
-                    key={bar}
-                    className="w-1 rounded-full bg-violet-400"
-                    animate={{
-                      height: [
-                        8,
-                        28,
-                        12,
-                        32,
-                        8,
-                      ],
-                    }}
-                    transition={{
-                      duration:
-                        0.45 + bar * 0.04,
-                      repeat: Infinity,
-                      repeatType: "mirror",
-                    }}
-                  />
-                )
-              )}
+              {[
+                1, 2, 3, 4, 5, 6,
+                7, 8, 9,
+              ].map((bar) => (
+                <motion.div
+                  key={bar}
+                  className="w-1 rounded-full bg-violet-400"
+                  animate={{
+                    height: [
+                      8,
+                      28,
+                      12,
+                      32,
+                      8,
+                    ],
+                  }}
+                  transition={{
+                    duration:
+                      0.45 +
+                      bar * 0.04,
+                    repeat: Infinity,
+                    repeatType:
+                      "mirror",
+                  }}
+                />
+              ))}
             </div>
           ) : (
             <div className="h-10" />
@@ -757,7 +1206,8 @@ export const JSVoiceAssistant: React.FC<
         {/* ================================================= */}
 
         <div className="relative mt-6">
-          {assistantState === "listening" && (
+          {assistantState ===
+            "listening" && (
             <>
               <motion.div
                 className="
@@ -768,8 +1218,12 @@ export const JSVoiceAssistant: React.FC<
                   border-violet-500/30
                 "
                 animate={{
-                  scale: [1, 1.25, 1],
-                  opacity: [0.8, 0, 0.8],
+                  scale: [
+                    1, 1.25, 1,
+                  ],
+                  opacity: [
+                    0.8, 0, 0.8,
+                  ],
                 }}
                 transition={{
                   duration: 1.5,
@@ -786,8 +1240,12 @@ export const JSVoiceAssistant: React.FC<
                   border-fuchsia-500/30
                 "
                 animate={{
-                  scale: [1, 1.15, 1],
-                  opacity: [0.6, 0, 0.6],
+                  scale: [
+                    1, 1.15, 1,
+                  ],
+                  opacity: [
+                    0.6, 0, 0.6,
+                  ],
                 }}
                 transition={{
                   duration: 1.2,
@@ -800,21 +1258,24 @@ export const JSVoiceAssistant: React.FC<
           <motion.button
             onClick={handleMic}
             disabled={
-              assistantState === "thinking"
+              assistantState ===
+              "thinking"
             }
             whileTap={{
               scale: 0.9,
             }}
             animate={{
               scale:
-                assistantState === "listening"
+                assistantState ===
+                "listening"
                   ? [1, 1.08, 1]
                   : 1,
             }}
             transition={{
               duration: 1,
               repeat:
-                assistantState === "listening"
+                assistantState ===
+                "listening"
                   ? Infinity
                   : 0,
             }}
@@ -839,15 +1300,21 @@ export const JSVoiceAssistant: React.FC<
                   : assistantState ===
                     "speaking"
                   ? "border-fuchsia-400 bg-fuchsia-500"
+                  : assistantState ===
+                    "thinking"
+                  ? "border-violet-400/50 bg-violet-600/70"
                   : "border-violet-500/40 bg-gradient-to-br from-violet-600 to-fuchsia-600"
               }
             `}
           >
-            {assistantState === "thinking" ? (
+            {assistantState ===
+            "thinking" ? (
               <Loader2 className="h-7 w-7 animate-spin text-white" />
-            ) : assistantState === "speaking" ? (
+            ) : assistantState ===
+              "speaking" ? (
               <Volume2 className="h-8 w-8 text-white" />
-            ) : assistantState === "listening" ? (
+            ) : assistantState ===
+              "listening" ? (
               <MicOff className="h-8 w-8 text-white" />
             ) : (
               <Mic className="h-8 w-8 text-white" />
@@ -855,7 +1322,9 @@ export const JSVoiceAssistant: React.FC<
           </motion.button>
         </div>
 
-        {/* Status */}
+        {/* ================================================= */}
+        {/* STATUS */}
+        {/* ================================================= */}
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -872,16 +1341,20 @@ export const JSVoiceAssistant: React.FC<
             className="mt-5"
           >
             <span className="text-xs font-medium text-zinc-500">
-              {assistantState === "idle" &&
+              {assistantState ===
+                "idle" &&
                 "Tap to speak"}
 
-              {assistantState === "listening" &&
+              {assistantState ===
+                "listening" &&
                 "Listening..."}
 
-              {assistantState === "thinking" &&
+              {assistantState ===
+                "thinking" &&
                 "Thinking..."}
 
-              {assistantState === "speaking" &&
+              {assistantState ===
+                "speaking" &&
                 "Speaking..."}
             </span>
           </motion.div>
@@ -889,8 +1362,16 @@ export const JSVoiceAssistant: React.FC<
 
         {!speechSupported && (
           <p className="mt-3 text-center text-xs text-red-400">
-            Speech recognition is not supported in
-            this browser. Please use Google Chrome.
+            Speech recognition is not
+            supported in this browser.
+            Please use Google Chrome.
+          </p>
+        )}
+
+        {!speechSynthesisSupported && (
+          <p className="mt-3 text-center text-xs text-red-400">
+            Text-to-speech is not
+            supported in this browser.
           </p>
         )}
       </div>
@@ -933,7 +1414,7 @@ export const JSVoiceAssistant: React.FC<
 };
 
 /* ========================================================= */
-/* ====================== ROBOT ============================ */
+/* ======================= ROBOT ============================ */
 /* ========================================================= */
 
 interface RobotProps {
@@ -1111,12 +1592,24 @@ const Robot: React.FC<RobotProps> = ({
           animate={{
             width:
               state === "speaking"
-                ? [38, 46, 34, 50, 38]
+                ? [
+                    38,
+                    46,
+                    34,
+                    50,
+                    38,
+                  ]
                 : 38,
 
             height:
               state === "speaking"
-                ? [10, 18, 12, 20, 10]
+                ? [
+                    10,
+                    18,
+                    12,
+                    20,
+                    10,
+                  ]
                 : 10,
           }}
           transition={{
