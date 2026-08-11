@@ -20,6 +20,7 @@ import { StudioScreen } from "./components/StudioScreen";
 import { GalleryScreen } from "./components/GalleryScreen";
 import { SettingsScreen } from "./components/SettingsScreen";
 import AIChat from "./pages/AIChat";
+import JSVoiceAssistant from "./pages/JSVoiceAssistant";
 
 import { AILoadingOverlay } from "./components/AILoadingOverlay";
 import { AIEnhanceModal } from "./components/AIEnhanceModal";
@@ -261,7 +262,8 @@ onClose={vm.closeRecentProjectsModal}
 {/* TOP BAR */}
 
 
-{vm.activeTab !== "chat" && (
+{vm.activeTab !== "chat" &&
+ vm.activeTab !== "voice" && (
   <TopAppBar
     vm={vm}
   />
@@ -389,7 +391,51 @@ flex-col
 
 }
 
+{/* ================= JS AI VOICE ASSISTANT ================= */}
 
+{
+vm.activeTab === "voice" && (
+
+<motion.div
+
+key="voice"
+
+initial={{
+opacity:0,
+x:10
+}}
+
+animate={{
+opacity:1,
+x:0
+}}
+
+exit={{
+opacity:0,
+x:-10
+}}
+
+transition={{
+duration:0.2
+}}
+
+className="
+flex-1
+flex
+flex-col
+overflow-hidden
+"
+
+>
+
+<JSVoiceAssistant
+  onBack={() => vm.setActiveTab("home")}
+/>
+
+</motion.div>
+
+)
+}
 
 
 
@@ -548,7 +594,8 @@ flex-col
 {/* ================= BOTTOM NAVIGATION ================= */}
 
 
-{vm.activeTab !== "chat" && (
+{vm.activeTab !== "chat" &&
+ vm.activeTab !== "voice" && (
   <BottomNavigation
     vm={vm}
   />
