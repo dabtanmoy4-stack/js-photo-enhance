@@ -15,6 +15,7 @@ import {
   Smartphone,
   Languages,
   ShieldCheck,
+  Mic,
 } from "lucide-react";
 interface HomeScreenProps {
   vm: AppViewModel;
@@ -240,119 +241,103 @@ AI Chat
 {/* IMAGE AI */}
 
 {[
-{
-name:"Image AI",
-icon:Sparkles
-},
-{
-name:"JS AI Video",
-icon:Video
-},
-{
-name:"JS AI Music",
-icon:Music4
-},
-{
-name:"JS AI Code",
-icon:Code2
-},
-{
-name:"JS AI App Builder",
-icon:Smartphone
-},
-{
-name:"JS AI Translator",
-icon:Languages
-},
-{
-name:"JS AI Writer",
-icon:Bot
-}
+  {
+    name: "JS AI Voice Assistant",
+    icon: Mic,
+    active: true,
+  },
+  {
+    name: "Image AI",
+    icon: Sparkles,
+  },
+  {
+    name: "JS AI Video",
+    icon: Video,
+  },
+  {
+    name: "JS AI Music",
+    icon: Music4,
+  },
+  {
+    name: "JS AI Code",
+    icon: Code2,
+  },
+  {
+    name: "JS AI App Builder",
+    icon: Smartphone,
+  },
+  {
+    name: "JS AI Translator",
+    icon: Languages,
+  },
+  {
+    name: "JS AI Writer",
+    icon: Bot,
+  },
+].map((tool, index) => {
+  const Icon = tool.icon;
 
-].map((tool,index)=>{
+  return (
+    <button
+      key={index}
+      onClick={() =>
+        tool.active
+          ? vm.setActiveTab("voice")
+          : vm.showToast(`${tool.name} - Coming Soon`)
+      }
+      className="
+        ai-tool-card
+        p-5
+        transition-all
+        duration-300
+        hover:scale-[1.03]
+        hover:shadow-[0_0_30px_rgba(168,85,247,0.35)]
+      "
+    >
+      <div
+        className="
+          mb-4
+          flex
+          h-12
+          w-12
+          items-center
+          justify-center
+          rounded-2xl
+          bg-violet-500/20
+        "
+      >
+        <Icon
+          className="
+            h-6
+            w-6
+            text-violet-400
+          "
+        />
+      </div>
 
+      <h3
+        className="
+          text-sm
+          font-bold
+          text-white
+        "
+      >
+        {tool.name}
+      </h3>
 
-const Icon = tool.icon;
-
-
-return (
-
-<button
-
-key={index}
-
-onClick={() =>
-vm.showToast(`${tool.name} - Coming Soon`)
-}
-
-className="
-ai-tool-card
-p-5
-transition-all
-duration-300
-hover:scale-[1.03]
-hover:shadow-[0_0_30px_rgba(168,85,247,0.35)]
-"
-
->
-
-
-<div
-className="
-mb-4
-flex
-h-12
-w-12
-items-center
-justify-center
-rounded-2xl
-bg-violet-500/20
-"
->
-
-<Icon
-className="
-h-6
-w-6
-text-violet-400
-"
-/>
-
-</div>
-
-
-<h3
-className="
-text-sm
-font-bold
-text-white
-"
->
-
-{tool.name}
-
-</h3>
-
-
-<p
-className="
-mt-1
-text-xs
-text-zinc-400
-"
->
-
-Coming Soon
-
-</p>
-
-
-</button>
-
-
-)
-
-
+      {!tool.active && (
+        <p
+          className="
+            mt-1
+            text-xs
+            text-zinc-400
+          "
+        >
+          Coming Soon
+        </p>
+      )}
+    </button>
+  );
 })}
 
 
