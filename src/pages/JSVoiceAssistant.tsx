@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 import {
@@ -31,6 +31,45 @@ type AssistantState =
   | "speaking";
 
 /* ========================================================= */
+/* ================= SPEECH TYPES ========================== */
+/* ========================================================= */
+
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message?: string;
+}
+
+interface SpeechRecognitionInstance {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognitionInstance;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  }
+}
+
+/* ========================================================= */
 /* ================= MAIN COMPONENT ======================== */
 /* ========================================================= */
 
@@ -43,6 +82,20 @@ export const JSVoiceAssistant: React.FC<
 
   const [assistantState, setAssistantState] =
     useState<AssistantState>("idle");
+
+  /* ======================================================= */
+  /* ================= SPEECH STATE ======================== */
+  /* ======================================================= */
+
+  const [transcript, setTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] =
+    useState("");
+
+  const [speechSupported, setSpeechSupported] =
+    useState(true);
+
+  const recognitionRef =
+    useRef<SpeechRecognitionInstance | null>(null);
 
   /* ======================================================= */
   /* ================= AUTH STATE ========================== */
@@ -61,6 +114,115 @@ export const JSVoiceAssistant: React.FC<
   }, []);
 
   /* ======================================================= */
+  /* ================= SPEECH SETUP ======================== */
+  /* ======================================================= */
+
+  useEffect(() => {
+    if (!user) return;
+
+    const SpeechRecognitionAPI =
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
+
+    if (!SpeechRecognitionAPI) {
+      setSpeechSupported(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognitionAPI();
+
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    /*
+     * English works reliably in Chrome.
+     *
+     * Later we can make this automatically
+     * detect Bengali / Hindi / English.
+     */
+    recognition.lang = "en-IN";
+
+    recognition.onstart = () => {
+      console.log("🎙️ Speech recognition started");
+
+      setAssistantState("listening");
+    };
+
+    recognition.onresult = (
+      event: SpeechRecognitionEvent
+    ) => {
+      let finalText = "";
+      let temporaryText = "";
+
+      for (
+        let i = event.resultIndex;
+        i < event.results.length;
+        i++
+      ) {
+        const result = event.results[i];
+
+        const text =
+          result[0]?.transcript || "";
+
+        if (result.isFinal) {
+          finalText += text;
+        } else {
+          temporaryText += text;
+        }
+      }
+
+      if (finalText) {
+        setTranscript((previous) =>
+          `${previous} ${finalText}`.trim()
+        );
+      }
+
+      setInterimTranscript(
+        temporaryText.trim()
+      );
+    };
+
+    recognition.onerror = (
+      event: SpeechRecognitionErrorEvent
+    ) => {
+      console.error(
+        "Speech recognition error:",
+        event.error
+      );
+
+      setAssistantState("idle");
+      setInterimTranscript("");
+    };
+
+    recognition.onend = () => {
+      console.log("🎙️ Speech recognition ended");
+
+      /*
+       * Don't automatically restart here.
+       *
+       * Part 3 will decide what happens after
+       * the user finishes speaking.
+       */
+
+      if (assistantState === "listening") {
+        setAssistantState("idle");
+      }
+    };
+
+    recognitionRef.current = recognition;
+
+    return () => {
+      try {
+        recognition.abort();
+      } catch {
+        // Ignore cleanup errors
+      }
+
+      recognitionRef.current = null;
+    };
+  }, [user]);
+
+  /* ======================================================= */
   /* ================= GOOGLE LOGIN ======================== */
   /* ======================================================= */
 
@@ -72,7 +234,10 @@ export const JSVoiceAssistant: React.FC<
 
       await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error("Google Sign-In Error:", error);
+      console.error(
+        "Google Sign-In Error:",
+        error
+      );
     } finally {
       setSigningIn(false);
     }
@@ -83,31 +248,68 @@ export const JSVoiceAssistant: React.FC<
   /* ======================================================= */
 
   const handleMic = () => {
-    if (assistantState === "idle") {
-      setAssistantState("listening");
+    if (!speechSupported) {
+      alert(
+        "Speech recognition is not supported in this browser. Please use Google Chrome."
+      );
 
-      /*
-       * PART 1 DEMO FLOW
-       *
-       * Real microphone + speech recognition
-       * will be added in Part 2.
-       */
+      return;
+    }
 
-      setTimeout(() => {
-        setAssistantState("thinking");
-      }, 4000);
+    const recognition =
+      recognitionRef.current;
 
-      setTimeout(() => {
-        setAssistantState("speaking");
-      }, 6000);
+    if (!recognition) {
+      console.error(
+        "Speech recognition is not initialized."
+      );
 
-      setTimeout(() => {
-        setAssistantState("idle");
-      }, 10000);
-    } else if (assistantState === "listening") {
+      return;
+    }
+
+    /* ================================================ */
+    /* STOP LISTENING                                   */
+    /* ================================================ */
+
+    if (assistantState === "listening") {
+      try {
+        recognition.stop();
+      } catch {
+        // Ignore
+      }
+
       setAssistantState("thinking");
-    } else if (assistantState === "speaking") {
-      setAssistantState("idle");
+
+      setInterimTranscript("");
+
+      return;
+    }
+
+    /* ================================================ */
+    /* RESET AFTER SPEAKING / THINKING                  */
+    /* ================================================ */
+
+    if (
+      assistantState === "speaking" ||
+      assistantState === "thinking"
+    ) {
+      return;
+    }
+
+    /* ================================================ */
+    /* START MICROPHONE                                 */
+    /* ================================================ */
+
+    setTranscript("");
+    setInterimTranscript("");
+
+    try {
+      recognition.start();
+    } catch (error) {
+      console.error(
+        "Unable to start microphone:",
+        error
+      );
     }
   };
 
@@ -150,8 +352,6 @@ export const JSVoiceAssistant: React.FC<
           px-5
         "
       >
-        {/* Background Glow */}
-
         <motion.div
           className="
             pointer-events-none
@@ -200,8 +400,6 @@ export const JSVoiceAssistant: React.FC<
             backdrop-blur-xl
           "
         >
-          {/* Robot */}
-
           <div className="mb-7 flex justify-center">
             <Robot
               state="idle"
@@ -315,6 +513,8 @@ export const JSVoiceAssistant: React.FC<
             scale:
               assistantState === "speaking"
                 ? [1, 1.25, 1]
+                : assistantState === "listening"
+                ? [1, 1.15, 1]
                 : [1, 1.08, 1],
 
             opacity:
@@ -469,6 +669,53 @@ export const JSVoiceAssistant: React.FC<
         />
 
         {/* ================================================= */}
+        {/* TRANSCRIPT */}
+        {/* ================================================= */}
+
+        <AnimatePresence>
+          {(transcript || interimTranscript) && (
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
+              className="
+                mt-6
+                w-full
+                max-w-lg
+                rounded-2xl
+                border
+                border-violet-500/20
+                bg-zinc-950/70
+                px-5
+                py-4
+                text-center
+                backdrop-blur-xl
+              "
+            >
+              <p className="text-sm leading-relaxed text-zinc-300">
+                {transcript}
+
+                {interimTranscript && (
+                  <span className="text-violet-400">
+                    {" "}
+                    {interimTranscript}
+                  </span>
+                )}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ================================================= */}
         {/* WAVEFORM */}
         {/* ================================================= */}
 
@@ -476,31 +723,29 @@ export const JSVoiceAssistant: React.FC<
           {assistantState === "listening" ||
           assistantState === "speaking" ? (
             <div className="flex h-full items-center gap-1.5">
-              {[
-                1, 2, 3, 4, 5,
-                6, 7, 8, 9,
-              ].map((bar) => (
-                <motion.div
-                  key={bar}
-                  className="w-1 rounded-full bg-violet-400"
-                  animate={{
-                    height: [
-                      8,
-                      28,
-                      12,
-                      32,
-                      8,
-                    ],
-                  }}
-                  transition={{
-                    duration:
-                      0.45 +
-                      bar * 0.04,
-                    repeat: Infinity,
-                    repeatType: "mirror",
-                  }}
-                />
-              ))}
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(
+                (bar) => (
+                  <motion.div
+                    key={bar}
+                    className="w-1 rounded-full bg-violet-400"
+                    animate={{
+                      height: [
+                        8,
+                        28,
+                        12,
+                        32,
+                        8,
+                      ],
+                    }}
+                    transition={{
+                      duration:
+                        0.45 + bar * 0.04,
+                      repeat: Infinity,
+                      repeatType: "mirror",
+                    }}
+                  />
+                )
+              )}
             </div>
           ) : (
             <div className="h-10" />
@@ -512,8 +757,6 @@ export const JSVoiceAssistant: React.FC<
         {/* ================================================= */}
 
         <div className="relative mt-6">
-          {/* Listening pulse */}
-
           {assistantState === "listening" && (
             <>
               <motion.div
@@ -525,16 +768,8 @@ export const JSVoiceAssistant: React.FC<
                   border-violet-500/30
                 "
                 animate={{
-                  scale: [
-                    1,
-                    1.25,
-                    1,
-                  ],
-                  opacity: [
-                    0.8,
-                    0,
-                    0.8,
-                  ],
+                  scale: [1, 1.25, 1],
+                  opacity: [0.8, 0, 0.8],
                 }}
                 transition={{
                   duration: 1.5,
@@ -551,16 +786,8 @@ export const JSVoiceAssistant: React.FC<
                   border-fuchsia-500/30
                 "
                 animate={{
-                  scale: [
-                    1,
-                    1.15,
-                    1,
-                  ],
-                  opacity: [
-                    0.6,
-                    0,
-                    0.6,
-                  ],
+                  scale: [1, 1.15, 1],
+                  opacity: [0.6, 0, 0.6],
                 }}
                 transition={{
                   duration: 1.2,
@@ -572,25 +799,22 @@ export const JSVoiceAssistant: React.FC<
 
           <motion.button
             onClick={handleMic}
+            disabled={
+              assistantState === "thinking"
+            }
             whileTap={{
               scale: 0.9,
             }}
             animate={{
               scale:
-                assistantState ===
-                "listening"
-                  ? [
-                      1,
-                      1.08,
-                      1,
-                    ]
+                assistantState === "listening"
+                  ? [1, 1.08, 1]
                   : 1,
             }}
             transition={{
               duration: 1,
               repeat:
-                assistantState ===
-                "listening"
+                assistantState === "listening"
                   ? Infinity
                   : 0,
             }}
@@ -619,14 +843,11 @@ export const JSVoiceAssistant: React.FC<
               }
             `}
           >
-            {assistantState ===
-            "thinking" ? (
+            {assistantState === "thinking" ? (
               <Loader2 className="h-7 w-7 animate-spin text-white" />
-            ) : assistantState ===
-              "speaking" ? (
+            ) : assistantState === "speaking" ? (
               <Volume2 className="h-8 w-8 text-white" />
-            ) : assistantState ===
-              "listening" ? (
+            ) : assistantState === "listening" ? (
               <MicOff className="h-8 w-8 text-white" />
             ) : (
               <Mic className="h-8 w-8 text-white" />
@@ -665,6 +886,13 @@ export const JSVoiceAssistant: React.FC<
             </span>
           </motion.div>
         </AnimatePresence>
+
+        {!speechSupported && (
+          <p className="mt-3 text-center text-xs text-red-400">
+            Speech recognition is not supported in
+            this browser. Please use Google Chrome.
+          </p>
+        )}
       </div>
 
       {/* ================================================= */}
@@ -750,9 +978,7 @@ const Robot: React.FC<RobotProps> = ({
         ease: "easeInOut",
       }}
     >
-      {/* ================================================= */}
       {/* ROBOT GLOW */}
-      {/* ================================================= */}
 
       <motion.div
         className="
@@ -784,9 +1010,7 @@ const Robot: React.FC<RobotProps> = ({
         }}
       />
 
-      {/* ================================================= */}
-      {/* ROBOT BODY / HEAD */}
-      {/* ================================================= */}
+      {/* ROBOT BODY */}
 
       <motion.div
         className="
@@ -823,9 +1047,7 @@ const Robot: React.FC<RobotProps> = ({
               : 0,
         }}
       >
-        {/* ================================================= */}
         {/* ANTENNA */}
-        {/* ================================================= */}
 
         <div
           className="
@@ -865,18 +1087,14 @@ const Robot: React.FC<RobotProps> = ({
           }}
         />
 
-        {/* ================================================= */}
         {/* EYES */}
-        {/* ================================================= */}
 
         <div className="absolute top-10 flex gap-8">
           <RobotEye state={state} />
           <RobotEye state={state} />
         </div>
 
-        {/* ================================================= */}
         {/* MOUTH */}
-        {/* ================================================= */}
 
         <motion.div
           className="
@@ -893,24 +1111,12 @@ const Robot: React.FC<RobotProps> = ({
           animate={{
             width:
               state === "speaking"
-                ? [
-                    38,
-                    46,
-                    34,
-                    50,
-                    38,
-                  ]
+                ? [38, 46, 34, 50, 38]
                 : 38,
 
             height:
               state === "speaking"
-                ? [
-                    10,
-                    18,
-                    12,
-                    20,
-                    10,
-                  ]
+                ? [10, 18, 12, 20, 10]
                 : 10,
           }}
           transition={{
@@ -949,9 +1155,7 @@ const Robot: React.FC<RobotProps> = ({
           )}
         </motion.div>
 
-        {/* ================================================= */}
         {/* CHEST BRANDING */}
-        {/* ================================================= */}
 
         <motion.div
           className="
@@ -1011,7 +1215,7 @@ const Robot: React.FC<RobotProps> = ({
           </span>
         </motion.div>
 
-        {/* Face Highlight */}
+        {/* FACE HIGHLIGHT */}
 
         <div
           className="
@@ -1027,9 +1231,7 @@ const Robot: React.FC<RobotProps> = ({
         />
       </motion.div>
 
-      {/* ================================================= */}
       {/* NECK */}
-      {/* ================================================= */}
 
       <div
         className="
